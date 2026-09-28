@@ -1,6 +1,10 @@
-:root {
+:root, [data-md-color-scheme="default"] {
   --md-primary-fg-color: #194f8c;
   --md-accent-fg-color: #2467b1;
+  --md-accent-bg-color: #ffffff;
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-default-fg-color--light: #526174;
+  --md-default-fg-color--lighter: #526174;
   --warp-border: #dbe5ef;
   --warp-subtle: #f4f8fc;
 }
@@ -8,8 +12,22 @@
   --md-default-bg-color: #111b29;
   --md-primary-fg-color: #173e68;
   --md-accent-fg-color: #8bb9f3;
+  --md-accent-bg-color: #111b29;
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-default-fg-color: #d9e2ee;
+  --md-default-fg-color--light: #b7c6da;
+  --md-default-fg-color--lighter: #97aac4;
+  --md-code-hl-number-color: #f3998b;
+  --md-code-hl-constant-color: #b4a0ff;
   --warp-border: #30445b;
   --warp-subtle: #19283b;
+}
+[data-md-color-scheme] {
+  --md-code-hl-operator-color: var(--md-default-fg-color--light);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color--light);
+  --md-code-hl-comment-color: var(--md-default-fg-color--light);
+  --md-code-hl-generic-color: var(--md-default-fg-color--light);
+  --md-code-hl-variable-color: var(--md-default-fg-color--light);
 }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .md-grid { max-width: 78rem; }
@@ -21,10 +39,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .md-typeset h1 { color: var(--md-default-fg-color); font-weight: 700; letter-spacing: -.035em; }
 .md-typeset h2 { font-weight: 650; letter-spacing: -.02em; }
 .md-typeset { line-height: 1.7; }
+.md-typeset p a:not(.md-button), .md-typeset li a, .md-typeset td a { text-decoration: underline; text-underline-offset: .15em; }
 .md-typeset table:not([class]) { border-radius: .45rem; overflow: hidden; border-color: var(--warp-border); }
 .md-typeset table:not([class]) th { background: var(--warp-subtle); }
 .md-typeset pre > code { border: 1px solid var(--warp-border); border-radius: .45rem; }
+.md-typeset .md-button { transition: border-color .15s, box-shadow .15s; }
 .md-typeset .md-button:not(.md-button--primary) { color: var(--md-accent-fg-color); border-color: var(--md-accent-fg-color); }
+.md-typeset .md-button:is(:hover, :focus) {
+  color: var(--md-accent-bg-color);
+  background-color: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+}
+.md-typeset .md-button:focus-visible { outline: 2px solid var(--md-default-fg-color); outline-offset: 3px; }
 .md-sidebar--primary .md-nav__link--active { color: var(--md-accent-fg-color); }
 .warp-hero { padding: 1.7rem; border: 1px solid #accbe8; border-radius: .8rem; background: linear-gradient(120deg, #1d65ac0d, #705bc511); margin-bottom: 1.5rem; }
 .warp-hero h1 { margin-top: 0; margin-bottom: .6rem; font-size: 2rem; }
