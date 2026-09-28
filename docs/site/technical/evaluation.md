@@ -1,10 +1,25 @@
 # Evaluation pipeline
 
-The evaluator is a Node/Express service backed by browser/tool processes. Its typed response is consumed by the Python worker. The evaluator does not invoke an LLM to invent missing findings.
+The evaluator is a Node/Express service that runs browser-based accessibility tools. It returns their measurements, captured evidence and execution metadata to the Python worker.
 
 ## Interface
 
-`GET /health` returns service/tool health metadata. `POST /evaluate` accepts an experiment ID, a nonempty URL array and explicit tool/runtime controls. The internal HTTP interface is not an authenticated public cloud API.
+The evaluator endpoints are implemented in `evaluator/server.js`. With the supplied Compose configuration:
+
+| Method | Full URL from the host | Purpose |
+| --- | --- | --- |
+| GET | `http://localhost:3000/health` | Service and tool health metadata |
+| POST | `http://localhost:3000/evaluate` | Evaluate an experiment ID, nonempty URL array and explicit tool/runtime controls |
+
+The application itself is at `http://localhost/` (port 80), so `http://localhost/health` addresses a different service. Inside the Docker network, the worker reaches these endpoints at `http://evaluator:3000/health` and `http://evaluator:3000/evaluate`. Different host bindings or a reverse proxy change the host URLs; service DNS names continue to use internal ports.
+
+For a host-side health check:
+
+```bash
+curl --fail http://localhost:3000/health
+```
+
+The evaluator HTTP interface is intended for the local deployment. Normal acquisition submission uses the web application and its persistent queue.
 
 ```json
 {
@@ -22,7 +37,7 @@ Calling this endpoint visits pages and writes artifacts. For normal research wor
 
 ## Execution
 
-For each requested URL, the service runs isolated Axe acquisition and Lighthouse work, plus WAVE if requested. Tool promises are collected so failures retain their individual error context. The outer response can be completed while some items failed; consumers must inspect each item.
+For each requested URL, the service runs isolated Axe acquisition and Lighthouse work, plus WAVE if requested. Each tool result includes its status and error details. A batch response can finish with a mixture of successful and failed page items; the item status identifies which measurements are available.
 
 The Axe acquisition path provides rendered HTML, optional response-source HTML, screenshot and page/load features. It gathers the required rule evidence and variants so display choices can be separated from the underlying capture.
 
@@ -30,9 +45,9 @@ Lighthouse uses its own controlled process/browser path. Its accessibility score
 
 ## Quality checks
 
-`acquisition_quality.js` validates the requested quality policy and evaluates available acquisition evidence. The Python worker refuses to turn an item with failed status into a valid stored observation. Remediation additionally requires both Axe and Lighthouse measurements before ranking a candidate.
+`evaluator/acquisition_quality.js` validates the requested quality policy and checks the acquisition evidence. The worker stores unsuccessful items with failed status and error details, separately from valid observations. Candidate ranking in remediation uses both Axe and Lighthouse measurements.
 
-A challenge response, unusable capture or incomplete evaluator response is a technical problem, not evidence that the page has no accessibility barriers. Keep original tool errors when diagnosing it.
+Challenge responses, unusable captures and incomplete tool responses appear as acquisition problems, with the original error available for diagnosis.
 
 ## Response contents
 
@@ -46,7 +61,7 @@ The service writes raw reports and captured sources under the experiment's artif
 
 ## Resource isolation
 
-Browser/tool execution is separated into helper processes to contain timeout/crash effects. Docker remains a local research environment, not a guarantee that arbitrary hostile HTML is harmless. Restrict the reachable network and protect credentials; see [Security](security.md).
+Browser/tool execution uses helper processes to contain timeout and crash effects. Network restrictions and credential isolation are configured at deployment level; see [Security](security.md).
 
 ## Tests
 
@@ -56,4 +71,4 @@ The evaluator package includes policy, score and process tests:
 docker compose exec evaluator npm test
 ```
 
-Use a bounded live-page pilot separately. Unit tests do not establish that every current website is reachable or that independent tools will observe the same dynamic state.
+The tests cover tool responses, acquisition policies and process handling with controlled inputs. A live-page pilot can additionally check rendering and connectivity for the sites in a planned collection.

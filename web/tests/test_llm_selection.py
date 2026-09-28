@@ -65,10 +65,10 @@ class LlmSelectionTestCase(unittest.TestCase):
         self.assertIn(b'name="include_wave"', response.data)
         self.assertNotIn(b'id="processingBox"', response.data)
         self.assertIn(b"submitButton.disabled = true", response.data)
-        self.assertIn(b"0 / 100", response.data)
-        self.assertIn(b"maxManualUrls = 100", response.data)
+        self.assertIn(b'id="urlCount"', response.data)
+        self.assertNotIn(b"maxManualUrls", response.data)
 
-    def test_manual_acquisition_rejects_more_than_one_hundred_urls(self):
+    def test_manual_acquisition_accepts_more_than_one_hundred_urls(self):
         connection = FakeConnection()
         urls = "\n".join(f"https://example.com/page-{index}" for index in range(101))
 
@@ -76,8 +76,10 @@ class LlmSelectionTestCase(unittest.TestCase):
             response = self.client.post("/run", data={"source_type": "url", "urls": urls})
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.location.endswith("/acquisition/new"))
-        self.assertEqual(connection.cursor_instance.executions, [])
+        self.assertTrue(response.location.endswith("/experiments/42"))
+        statement, parameters = connection.cursor_instance.executions[-1]
+        self.assertIn("INSERT INTO experiments", statement)
+        self.assertEqual(len(parameters[1].splitlines()), 101)
 
     def test_manual_acquisition_accepts_one_hundred_urls(self):
         connection = FakeConnection()

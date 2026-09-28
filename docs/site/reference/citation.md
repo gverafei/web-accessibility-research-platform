@@ -8,7 +8,7 @@ Cite the repository together with the exact revision or release you used. Includ
 
 ```bibtex
 @software{warp_platform,
-  author = {Vera-Amaro, Guillermo},
+  author = {Vera-Amaro, Guillermo and Rojano-Cáceres, José Rafael},
   title = {WARP: Web Accessibility Research Platform},
   url = {https://github.com/gverafei/web-accessibility-research-platform},
   note = {Specify the release or commit used in the experiment}
@@ -25,4 +25,4 @@ W3C ACT examples retain their source/license attribution. Platform-authored comp
 
 ## Reporting research
 
-Describe WARP's role in acquisition, measurement, remediation and comparison. Report actual settings/usage rather than presenting a catalogue order as validated model superiority. Keep empirical claims scoped to the demonstrated evidence and distinguish stored/reused observations from fresh visits.
+The acquisition, remediation and comparison records provide source provenance, configured controls, measured results and resource usage for a methods section. Capture dates and reuse links distinguish fresh acquisitions from imported or previously stored evidence.

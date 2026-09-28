@@ -12,7 +12,7 @@ curl --fail --output experiment-42.warp \
   http://localhost/experiments/42/json
 ```
 
-Only files that exist within the allowed artifact root can be encoded. Inspect completeness before sharing. An exported archive is not a promise that unavailable artifacts have been reconstructed.
+The export includes available supported artifacts from the result's artifact directory. Its contents reflect the evidence present in the installation at export time.
 
 ## Inspect offline
 
@@ -36,13 +36,13 @@ This reads the package without importing records or executing its HTML. Keep the
 
 Open **Import**, select a supported WARP package and submit it. The importer validates metadata, URLs, duplicates and artifacts, restores files to allowed destinations and records import provenance. Local IDs may differ from the source installation; original source links remain provenance, not an instruction to join against the destination's coincidentally equal IDs.
 
-Do not rename an arbitrary ZIP to `.warp` and assume it is supported. Local HTML ingestion is a different workflow. The importer also handles compatible legacy payload forms where implemented, but new exchanges should use the current UI export.
+The `.warp` importer expects the package structure created by WARP's export action. A ZIP of HTML files belongs in the local HTML acquisition workflow. Supported legacy payloads are handled by the importer as well.
 
 ## Compose a collection
 
 Open **Combine evaluations**, select source results and create a new collection. WARP clones stored results and their available artifacts with source identifiers and composition provenance. It does not perform a fresh visit or add fresh evaluation charges for the copy.
 
-If the same normalized URL is represented more than once, inspect how the composition resolves duplicates and choose the correct temporal/experimental observation. Mixing different acquisition policies or dates can be useful, but must not be described as a simultaneous homogeneous crawl.
+When source evaluations contain the same normalized URL, the selected record determines which capture is included. Stored acquisition dates, settings and provenance help distinguish observations collected under different conditions.
 
 ## What this does not export
 

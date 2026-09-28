@@ -23,7 +23,7 @@ The source record, model snapshot and applicable targets are retained with the r
 | 4 | HTML regeneration | Generate a complete page from the acquired HTML using a selected design base; later refinements are localized |
 | 5 | Markdown regeneration | Generate a complete page from quality-checked Markdown and retained content evidence; later refinements are localized |
 
-The policies constrain operations deterministically after generation. An LLM instruction alone is not the boundary. For example, minimal patches reject element replacement and global body/HTML CSS overrides.
+WARP validates generated operations against the selected policy before applying them. For example, minimal patches allow local changes while rejecting element replacement and global body/HTML CSS overrides.
 
 For regeneration, the web module offers Bootstrap, Pico and Bulma design bases. The extension uses Bootstrap. A regeneration run retains the initial complete generation and can refine it without discarding the best measured candidate.
 
@@ -31,7 +31,7 @@ For regeneration, the web module offers Bootstrap, Pico and Bulma design bases. 
 
 **Iterative ATPGE** coordinates Acquire, Transform, Prompt, Generate and Evaluate, with deterministic decisions about refinement and retention. The selected intervention determines how much the page can change.
 
-**Zero-shot — single call** is an independent baseline. It uses one generation, no adaptive ACT retrieval and subsequent measurement. It is not a shorter version of every specialist/refinement step. A failed parse or measurement is not success simply because the provider returned HTML.
+**Zero-shot — single call** provides an independent baseline: one generation followed by validation and measurement, without adaptive ACT retrieval or iterative refinement. Its report includes the generated candidate and any validation or measurement errors.
 
 ## Shared targets and level-specific recipe
 
@@ -45,7 +45,7 @@ Targets are configurable under General settings and remain constant across inter
 | 4 | 3 | 0.50 | US$0.40 | 600 s |
 | 5 | 3 | 0.50 | US$0.50 | 600 s |
 
-*A provider request sends temperature only where the selected model supports it. Model capabilities and recorded usage govern the actual call; the UI recipe is not a promise that every model accepts every parameter.*
+*Temperature is included when supported by the selected model. The saved model capabilities determine which parameters are sent.*
 
 The zero-shot recipe uses one iteration, temperature 0.20, US$0.15 and 240 seconds. Cost/time thresholds control continuation after actual calls; they cannot guarantee an exact maximum provider bill. Some calls or evaluation work can finish after a threshold is crossed.
 
@@ -55,8 +55,8 @@ The report distinguishes **accepted** (configured targets reached) from **comple
 
 A regression does not replace a better evaluated candidate merely because it is newer. Ranking considers target distance first, then retained content, with a visual tie-break for repair levels 1–3. See [runtime](../technical/agent-runtime.md) and [preservation measurements](../technical/preservation.md).
 
-The current UI emphasizes the five policies and shared Configuration controls. Older expert fields remain in some internal handlers for compatibility; they are not a separately advertised advanced-control panel. Do not change a study by submitting legacy controls without documenting them.
+The five policies share target settings from **Configuration → General**. Each submitted run retains those targets together with its selected intervention and model.
 
 ## A controlled experiment
 
-Keep the source cohort, targets, model/reasoning, intervention, RAG condition and acquisition/tool policy explicit. Preserve all pair denominators and warnings. A single stochastic repair is an illustrative result, not a causal ranking of the available strategies or models.
+A controlled study can hold the source cohort and targets fixed while varying the model, reasoning, intervention or retrieval condition. Source links, run settings, pair counts and warnings support comparisons of the resulting candidates.

@@ -37,20 +37,20 @@
                     </div>
 
                     <div class="mb-3" id="urlSourceFields">
-                        <div class="field-label-row"><label for="urls" class="form-label mb-0">{{ _("URLs to evaluate") }}</label><output id="urlCount" for="urls" aria-live="polite">0 / {{ max_manual_urls }}</output></div>
+                        <div class="field-label-row"><label for="urls" class="form-label mb-0">{{ _("URLs to evaluate") }}</label><output id="urlCount" for="urls" aria-live="polite">0</output></div>
                         <textarea 
                             class="form-control font-monospace"
                             id="urls" 
                             name="urls" 
                             rows="7"
                             placeholder="{{ _("Enter one URL per line. If left empty, the internal dataset will be used.") }}"></textarea>
-                        <div class="form-text">{{ _("Enter one URL per line. If left empty, the internal dataset will be used. Maximum: %(count)s manually entered URLs.", count=max_manual_urls) }}</div>
+                        <div class="form-text">{{ _("Enter one URL per line. If left empty, the internal dataset will be used.") }} {{ _("There is no fixed observation-count limit. Larger evaluations require more processing time and storage.") }}</div>
                     </div>
 
                     <div id="localSourceFields" hidden>
                         <div class="alert alert-info py-2">
                             {{ _("Select one or more HTML files, or a ZIP containing HTML files. No special folder structure or manifest is required. Local HTML is evaluated without WAVE because the remote WAVE API cannot access it.") }}
-                            {{ _("Maximum: 1,000 HTML observations per experiment.") }}
+                            {{ _("There is no fixed observation-count limit. Larger evaluations require more processing time and storage.") }}
                         </div>
                         <div class="mb-3">
                             <label for="html_files" class="form-label">{{ _("HTML files") }}</label>
@@ -85,13 +85,13 @@
                         <div class="mb-3">
                             <span class="form-label d-block">{{ _("Sites to evaluate by popularity group") }}</span>
                             <div class="definition-grid">
-                                <article class="definition-card"><label for="tranco_count_rank_1_500"><strong>{{ _("Global top 500") }}</strong><small class="d-block text-muted">{{ _("Ranks 1–500 · maximum 100") }}</small></label><input class="form-control mt-2" type="number" min="0" max="100" id="tranco_count_rank_1_500" name="tranco_count_rank_1_500" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_501_5000"><strong>{{ _("Very high popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 501–5,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_501_5000" name="tranco_count_rank_501_5000" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_5001_50000"><strong>{{ _("High popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 5,001–50,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_5001_50000" name="tranco_count_rank_5001_50000" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_50001_250000"><strong>{{ _("Medium popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 50,001–250,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_50001_250000" name="tranco_count_rank_50001_250000" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_250001_1000000"><strong>{{ _("Popularity tail") }}</strong><small class="d-block text-muted">{{ _("Ranks 250,001–1,000,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_250001_1000000" name="tranco_count_rank_250001_1000000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_1_500"><strong>{{ _("Global top 500") }}</strong><small class="d-block text-muted">{{ _("Ranks 1–500") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_1_500" name="tranco_count_rank_1_500" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_501_5000"><strong>{{ _("Very high popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 501–5,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_501_5000" name="tranco_count_rank_501_5000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_5001_50000"><strong>{{ _("High popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 5,001–50,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_5001_50000" name="tranco_count_rank_5001_50000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_50001_250000"><strong>{{ _("Medium popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 50,001–250,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_50001_250000" name="tranco_count_rank_50001_250000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_250001_1000000"><strong>{{ _("Popularity tail") }}</strong><small class="d-block text-muted">{{ _("Ranks 250,001–1,000,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_250001_1000000" name="tranco_count_rank_250001_1000000" value="10"></article>
                             </div>
-                            <div class="form-text">{{ _("Enter 0 to exclude a group. The Global top 500 accepts up to 100 sites; other groups accept up to 200. WARP creates and uses reserves automatically.") }}</div>
+                            <div class="form-text">{{ _("Choose any whole-number target within each group's available domains; enter 0 to exclude a group. WARP uses unused domains from the same group as reserves. If that group is exhausted, the target remains unmet; other groups are not used to fill it.") }}</div>
                         </div>
                     </div>
                     </fieldset>
@@ -151,14 +151,10 @@ const htmlFilesInput = document.getElementById("html_files");
 const htmlZipInput = document.getElementById("dataset_archive");
 const urlsInput = document.getElementById("urls");
 const urlCount = document.getElementById("urlCount");
-const maxManualUrls = {{ max_manual_urls }};
 
 function updateUrlCount() {
     const count = urlsInput.value.split(/\r?\n/).filter(line => line.trim()).length;
-    urlCount.textContent = `${count} / ${maxManualUrls}`;
-    const exceeded = count > maxManualUrls;
-    urlCount.classList.toggle("limit-exceeded", exceeded);
-    urlsInput.setCustomValidity(exceeded ? {{ _("Manual acquisition accepts at most %(count)s URLs.", count=max_manual_urls)|tojson }} : "");
+    urlCount.textContent = String(count);
 }
 
 function updateLocalUploadChoice(changedInput) {

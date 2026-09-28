@@ -73,4 +73,4 @@ Acquisition and ordinary Axe/Lighthouse evaluation do **not** call an LLM. Model
 - **Developer:** [architecture](technical/architecture.md), [HTTP interfaces](technical/api.md), and [verification](development/testing.md).
 - **Administrator:** [settings](technical/settings.md), [storage](technical/storage.md), and [security](technical/security.md).
 
-This site describes the source on the repository's main branch. A model listed in the bundled catalogue is a configurable research choice, not a guarantee of current provider availability or a measured ranking of model quality. Pin a source revision and retain the run's configuration for a published experiment.
+This site describes the source on the repository's main branch. The editable model catalogue and saved run configurations let researchers adapt experiments to available providers while retaining the settings used for each result.

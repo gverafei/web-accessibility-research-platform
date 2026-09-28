@@ -19,7 +19,7 @@ flowchart LR
   E -->|stop| C
 ```
 
-`AgentRuntime.move()` validates a fixed transition map and records from/to states, iteration, reason and timestamp. The complete state has no outgoing transition. The model cannot grant itself more iterations or change a source's identity.
+`AgentRuntime.move()` in `web/app/remediation_agent_runtime.py` validates the transition map and records from/to states, iteration, reason and timestamp. The complete state has no outgoing transition. Iteration limits and source identifiers are taken from the submitted run configuration.
 
 ## Versioned skills
 
@@ -33,13 +33,13 @@ flowchart LR
 | `adaptive-evidence-grounding` | Conditional attributed ACT evidence |
 | `measured-evaluation-and-rollback` | Evaluation, preservation measurements and deterministic selection |
 
-The catalogue validates its schema and hashes each complete skill definition as well as the manifest bytes. Activated skills retain their ID, version, digest, allowed tools and sources in evidence. Change the version and test the behavior when changing a contract; a familiar label must not hide a different procedure.
+The catalogue validates its schema and hashes each complete skill definition and the manifest bytes. Iteration evidence includes the ID, version, digest, allowed tools and sources of every activated skill, making procedure changes identifiable across runs.
 
 ## Typed tools
 
-`ToolContract` declares name, version, description, required inputs, output type, deterministic flag and whether a tool mutates the candidate. `ToolRegistry.invoke()` checks registration/required inputs and supported output-type contracts, then records completion/failure and duration.
+In `web/app/remediation_tool_registry.py`, `ToolContract` declares a tool's name, version, description, required inputs, output type, deterministic flag and whether it mutates the candidate. `ToolRegistry.invoke()` checks registration, required inputs and output-type contracts, then records completion/failure and duration.
 
-The registry is a typed application boundary, not a sandbox automatically proving every handler safe. Handlers must enforce HTML/selectors/scope/preservation validation. A model response is untrusted data.
+The registry checks tool interfaces. Individual handlers additionally validate generated HTML, selectors, permitted change scope and preservation requirements before applying operations.
 
 ```python
 # docs-test: offline
@@ -75,8 +75,8 @@ A worse iteration rolls back to the best evaluated candidate. Feedback refers to
 
 ## Deterministic stopping and accounting
 
-Cost, time, iteration limits, plateau and marginal-improvement rules control continuation. Paid usage is persisted before parsing can fail. An incomplete evaluator item keeps its error. Acceptance derives from measured criteria, never a reviewer's unsupported statement.
+Cost, time, iteration limits, plateau and marginal-improvement rules control continuation. Usage records cover responses that subsequently fail parsing, and incomplete evaluator items retain their error details. Candidate acceptance uses the recorded measurements and configured targets.
 
-Cost checks occur after calls and before further work at defined boundaries, so thresholds are not exact prepaid caps. Provider changes require a new explicit choice, not silent fallback.
+Cost checks occur after calls and before subsequent work, so the final charge can exceed a threshold by the cost of an in-flight call. Each run keeps its selected provider and model configuration; changing that selection creates a new run.
 
 See [evidence](../guide/evidence.md), [preservation](preservation.md) and [verification tests](../development/testing.md) for the observable contracts.

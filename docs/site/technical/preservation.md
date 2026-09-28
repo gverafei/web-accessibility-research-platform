@@ -4,7 +4,7 @@ Accessibility gains can accompany undesirable content, structure or interaction 
 
 ## DOM divergence
 
-`dom_distance()` parses start/end tag tokens and selected accessibility-relevant attributes: role, type, ARIA naming/description/live attributes, alt, for and name. It applies Python `SequenceMatcher` with `autojunk=False` to the two token sequences.
+`dom_distance()` in `web/app/remediation_jobs.py` parses start/end tag tokens and selected accessibility-relevant attributes: role, type, ARIA naming/description/live attributes, alt, for and name. It applies Python `SequenceMatcher` with `autojunk=False` to the two token sequences.
 
 Let `M` be the matched token count and `T_o`, `T_c` the sequence lengths:
 
@@ -13,9 +13,9 @@ Similarity = 2M / (T_o + T_c)
 DOM divergence (%) = 100 × (1 − similarity)
 ```
 
-An unchanged token sequence produces zero divergence. This is not a DOM tree-edit distance: it excludes many attributes and text content. The returned sequence lengths include end-tag tokens and must not be mislabeled as the evaluator's DOM-node counts.
+An unchanged token sequence produces zero divergence. The measure compares token sequences rather than DOM tree-edit operations. Sequence lengths include end tags and differ from the evaluator's count of DOM element nodes.
 
-`dom_change_summary()` separately counts added/removed element tags and added accessibility attributes. The current run evidence records DOM divergence without enforcing it as an automatic rejection threshold.
+`dom_change_summary()`, also in `web/app/remediation_jobs.py`, counts added/removed element tags and added accessibility attributes. DOM divergence appears in iteration evidence for inspection rather than as an automatic rejection threshold.
 
 ## Content retention
 

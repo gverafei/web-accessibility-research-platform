@@ -23,7 +23,7 @@ Open the completed evaluation. The report initially displays a loading state whe
 - The available source HTML, raw tool reports and environment metadata.
 - The charts and their sample counts. Missing measurements are not successful zero-issue results.
 
-If acquisition fails, use the recorded error and [troubleshooting guide](../reference/troubleshooting.md). Do not interpret a browser/network failure as an accessibility finding.
+Acquisition failures include browser or network error details. The [troubleshooting guide](../reference/troubleshooting.md) explains recovery steps.
 
 ## 3. Configure one model
 

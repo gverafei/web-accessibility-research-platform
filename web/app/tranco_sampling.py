@@ -7,6 +7,7 @@ import hashlib
 import io
 import re
 import zipfile
+from collections.abc import Mapping
 
 import requests
 
@@ -19,13 +20,6 @@ TRANCO_STRATA = (
     ("rank_50001_250000", "Medium popularity", 50_001, 250_000),
     ("rank_250001_1000000", "Popularity tail", 250_001, 1_000_000),
 )
-MAX_SAMPLE_BY_STRATUM = {
-    "rank_1_500": 100,
-    "rank_501_5000": 200,
-    "rank_5001_50000": 200,
-    "rank_50001_250000": 200,
-    "rank_250001_1000000": 200,
-}
 LIST_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{3,100}$")
 
 
@@ -137,8 +131,24 @@ def parse_tranco(upload_bytes: bytes, filename: str) -> tuple[list[tuple[int, st
     }
 
 
-def sample_tranco(ranking, list_id: str, seed: str, sample_per_stratum: int,
-                  reserve_per_stratum: int, *, strata_definitions=None):
+def _stratum_counts(value, definitions):
+    """Accept researcher-defined counts, not example-specific sample limits."""
+    labels = {label for label, _name, _lower, _upper in definitions}
+    if isinstance(value, int) and not isinstance(value, bool):
+        counts = dict.fromkeys(labels, value)
+    elif isinstance(value, Mapping) and not set(value).difference(labels):
+        counts = {label: value.get(label, 0) for label in labels}
+    else:
+        raise TrancoImportError("Use whole-number counts for the defined Tranco strata.")
+    if any(isinstance(count, bool) or not isinstance(count, int) or count < 0
+           for count in counts.values()):
+        raise TrancoImportError("Tranco sample and reserve counts must be nonnegative whole numbers.")
+    return counts
+
+
+def sample_tranco(ranking, list_id: str, seed: str, sample_per_stratum: int | Mapping,
+                  reserve_per_stratum: int | Mapping, *, strata_definitions=None):
+    """Select exact targets; reserve requests use only remaining ranked domains."""
     if not LIST_ID_PATTERN.fullmatch(list_id):
         raise TrancoImportError("Enter the permanent Tranco list ID shown on tranco-list.eu.")
     if not seed or len(seed) > 100:
@@ -151,29 +161,10 @@ def sample_tranco(ranking, list_id: str, seed: str, sample_per_stratum: int,
         raise TrancoImportError("Tranco strata must have valid rank boundaries.")
     if any(left[3] >= right[2] for left, right in zip(definitions, definitions[1:])):
         raise TrancoImportError("Tranco strata must not overlap.")
-    sample_counts = (
-        {label: sample_per_stratum for label, _name, _lower, _upper in definitions}
-        if isinstance(sample_per_stratum, int) else dict(sample_per_stratum)
-    )
-    reserve_counts = (
-        {label: reserve_per_stratum for label, _name, _lower, _upper in definitions}
-        if isinstance(reserve_per_stratum, int) else dict(reserve_per_stratum)
-    )
+    sample_counts = _stratum_counts(sample_per_stratum, definitions)
+    reserve_counts = _stratum_counts(reserve_per_stratum, definitions)
     if not any(sample_counts.get(label, 0) for label, _name, _lower, _upper in definitions):
         raise TrancoImportError("Select at least one site from one Tranco popularity group.")
-    if strata_definitions is None:
-        if any(not 0 <= sample_counts.get(label, 0) <= MAX_SAMPLE_BY_STRATUM[label]
-               for label, _name, _lower, _upper in definitions):
-            raise TrancoImportError(
-                "Global top 500 accepts 0 to 100 sites; other groups accept 0 to 200."
-            )
-        if any(not 0 <= reserve_counts.get(label, 0) <= 200
-               for label, _name, _lower, _upper in definitions):
-            raise TrancoImportError("Reserve sites per stratum must be between 0 and 200.")
-    elif any(not 0 <= sample_counts.get(label, 0) <= upper - lower + 1 or
-             not 0 <= reserve_counts.get(label, 0) <= upper - lower + 1 - sample_counts.get(label, 0)
-             for label, _name, lower, upper in definitions):
-        raise TrancoImportError("The selected and reserve counts exceed a Tranco stratum.")
 
     candidates = []
     strata = []
@@ -277,11 +268,12 @@ def extend_ordered_reserves(ranking, list_id, seed, candidates, strata_labels,
 def expand_stratified_sample(ranking, list_id, seed, candidates, strata, current_urls,
                              target_per_stratum=100, reserve_per_stratum=100):
     """Add deterministic sampling slots while preserving all prior recovery history."""
+    _stratum_counts(target_per_stratum, TRANCO_STRATA)
+    _stratum_counts(reserve_per_stratum, TRANCO_STRATA)
     if target_per_stratum < 1:
         raise TrancoImportError("The expanded target must include at least one site per stratum.")
-    limits = {label: limit for label, limit in MAX_SAMPLE_BY_STRATUM.items()}
-    if any(target_per_stratum > limits[item["label"]] for item in strata):
-        raise TrancoImportError("The expanded target exceeds the allowed stratum size.")
+    if any(target_per_stratum > int(item["frame_count"]) for item in strata):
+        raise TrancoImportError("The expanded target exceeds the available domains in a Tranco stratum.")
 
     urls = list(dict.fromkeys(current_urls))
     active = set(urls)
@@ -291,6 +283,8 @@ def expand_stratified_sample(ranking, list_id, seed, candidates, strata, current
         label = stratum["label"]
         current_target = int(stratum.get("selected_count") or 0)
         needed = max(0, target_per_stratum - current_target)
+        if not needed:
+            continue
         display_name, lower, upper = definitions[label]
         pool = [(rank, domain) for rank, domain in ranking if lower <= rank <= upper]
         pool.sort(key=lambda item: hashlib.sha256(

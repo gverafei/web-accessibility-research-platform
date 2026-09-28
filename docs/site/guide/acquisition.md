@@ -5,13 +5,21 @@ The URL workflow visits public HTTP(S) pages, captures evidence and measures acc
 ## Create an evaluation
 
 1. Open **New acquisition** and choose URLs.
-2. Enter one address per line, up to 100 manually entered URLs per submission.
+2. Enter one address per line; choose the collection size required by your study.
 3. Give the evaluation a recognizable name, up to 160 characters.
 4. Decide whether to reuse compatible stored results.
 5. Enable WAVE only if needed and configured.
 6. Submit and follow the job in **Evaluations**.
 
-The ordinary acquisition form limits an evaluation to 1,000 observations. A research-specific script/protocol can define a different collection, but that does not change the UI limit. For a ranking-based sample, use the [Tranco workflow](tranco.md); for captured files, use [local HTML](local-html.md).
+There is no fixed observation-count cap in the acquisition form or queueing handler, for either URLs, Tranco samples or local HTML. For a ranking-based sample, use the [Tranco workflow](tranco.md); for captured files, use [local HTML](local-html.md).
+
+## Collection size and resource planning
+
+A researcher can request thousands of pages or a million-page collection. WARP does not reject it because it exceeds an illustrative example, but removing that policy cap does not make processing free or instantaneous. Plan for browser time, memory, evidence storage and, if enabled, WAVE charges. Acquisition itself does not use LLMs. Run a pilot before committing a large collection.
+
+The URL list is stored as MySQL `LONGTEXT`, including an automatic widening migration for older installations. The HTTP request byte budget is configured by `MAX_DATASET_UPLOAD_BYTES` (default 1,610,612,736 bytes); individual form fields use that same budget, rather than Flask's smaller default. Local archive byte/path protections still apply. Database packet limits, available RAM/disk, proxy request limits and deployment timeouts can also constrain a very large submission. Configure these deployment resources for the planned workload.
+
+Submit large collections through the background evaluation workflow. The job persists independently of the browser, and pause/resume remain available. The supplied deployment uses one worker; see [scheduling](../technical/jobs.md#scheduling-order) for its processing order.
 
 ## Fresh versus reused observations
 
@@ -29,7 +37,7 @@ Recorded processing seconds are not necessarily the elapsed wall-clock duration.
 
 Successful results can include rendered source HTML, response HTML when available, a screenshot, raw Axe/Lighthouse reports, optional WAVE output, page features and acquisition metadata. Completeness depends on the actual tool response and the acquisition type. Confirm the artifacts rather than assuming a completed counter guarantees every file is present.
 
-An error, challenge page or incomplete tool response must not become a successful zero-issue observation. WARP's quality/recovery handling is described in [Evaluation pipeline](../technical/evaluation.md) and [Jobs and recovery](../technical/jobs.md).
+Acquisition failures and incomplete tool responses appear with their status and error details. WARP's quality/recovery handling is described in [Evaluation pipeline](../technical/evaluation.md) and [Jobs and recovery](../technical/jobs.md).
 
 ## Practical pilot
 

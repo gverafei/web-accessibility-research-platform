@@ -1,10 +1,27 @@
 import os
 from zoneinfo import ZoneInfo
+from flask import Request, current_app
 from settings import READONLY_MODEL_DEFAULTS
+
+
+class ResearchRequest(Request):
+    """Apply deployment byte limits on Flask 3.0 and newer releases alike."""
+
+    @property
+    def max_form_memory_size(self):
+        return current_app.config["MAX_FORM_MEMORY_SIZE"]
+
+    @property
+    def max_form_parts(self):
+        return current_app.config["MAX_FORM_PARTS"]
 
 
 class Config:
     MAX_CONTENT_LENGTH = int(os.getenv("MAX_DATASET_UPLOAD_BYTES", "1610612736"))
+    # Large URL fields and multi-file corpora share the request byte budget;
+    # they must not inherit Flask's 500 KB field / 1,000-part defaults.
+    MAX_FORM_MEMORY_SIZE = MAX_CONTENT_LENGTH
+    MAX_FORM_PARTS = None
     # Esta no se usa por el momento, pero es buena práctica tenerla para futuras configuraciones cuando se implemente un sistema de autenticación de usuarios.
     SECRET_KEY = os.getenv(
         "SECRET_KEY",

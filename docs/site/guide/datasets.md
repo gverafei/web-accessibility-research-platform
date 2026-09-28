@@ -6,7 +6,7 @@ WARP helps turn a costly sequence of browser visits, accessibility measurements 
 
 Decide whether the corpus describes the released pages, compares popularity strata, supports paired remediation, or estimates a property of a defined ranking population. Those goals can require different allocations and analyses.
 
-Define content eligibility, acquisition success, required artifacts, replacement rules and the ranking date before reviewing accessibility scores. An inability to acquire a domain can create nonresponse bias that a larger sample alone does not remove.
+A collection protocol specifies content eligibility, acquisition success, required artifacts, replacement rules and the ranking date. Acquisition success rates help characterize coverage and nonresponse.
 
 ## Run an acquisition pilot
 
@@ -16,7 +16,9 @@ The acquisition-success proportion is not automatically the `p` in a sample-size
 
 ## Choose allocation deliberately
 
-The bundled UI supports independent counts in five popularity strata, up to 900 pages in total. The Python selector also supports custom strata and allocations. Choose counts to balance group-level analysis, acquisition cost and full-frame precision, and retain the design in the sampling manifest. The interface's default limits are not a statistical sample-size recommendation or fixed percentages of each stratum.
+The bundled UI supports researcher-defined, independent counts in five popularity strata, with no example-specific sample-size cap. Each target must fit the available domains in its rank interval. The Python selector also supports custom strata and allocations. Choose counts to balance group-level analysis, acquisition cost and full-frame precision, and retain the design in the sampling manifest. The form's initial values are not a statistical sample-size recommendation or fixed percentages of each stratum.
+
+Selecting an entire stratum leaves no unused replacement candidates. If some domains remain unrecoverable, retain the requested target and report the achieved count and nonresponse separately; do not expand the interval or replace them from another stratum without declaring a new design. The [Tranco recovery policy](tranco.md#when-a-stratum-cannot-reach-its-target) explains this boundary.
 
 For a stratified probability design:
 
@@ -26,13 +28,13 @@ Estimated population mean = Σ W_h × mean_h
 Estimated variance = Σ W_h² × (1 − n_h/N_h) × s_h²/n_h
 ```
 
-These expressions assume the corresponding within-stratum sampling design and usable inclusion information. Reserve substitution/content filtering complicates which population the final observed corpus represents. Describe that process and its limitations rather than claiming weights eliminate all bias.
+These expressions use within-stratum sample means, variances and sampling fractions. Eligibility and replacement records help establish which population the observed corpus represents; weights account for allocation, while nonresponse is considered separately.
 
-For a binary outcome, conservative `p=q=0.5` maximizes the simple-random-sample reference variance. A pilot can inform a different outcome-specific value, but do not replace it with a technical success rate for a different question. A reference margin from a simple-random formula is not a guarantee for every stratum or a disproportionate weighted estimate.
+For a binary outcome, `p=q=0.5` gives the maximum simple-random-sample reference variance. A pilot can estimate an outcome-specific proportion. Technical acquisition success and accessibility prevalence are different outcomes, each with its own proportion and precision calculation.
 
 ## Curate and validate evidence
 
-Retain valid pages regardless of their score, language or disagreement across tools. Review challenge/error/incomplete pages and defined out-of-scope content. Replace only ineligible observations through the predeclared same-stratum reserve, keeping a recoverable provenance trail.
+Review capture completeness and apply the study's content-eligibility criteria. The report exposes challenge/error responses and acquisition metadata to support that review. Tranco vacancies can be filled from the declared same-stratum reserve, with replacement provenance retained in the manifest.
 
 Before release, validate target counts, source HTML, screenshots, raw reports, tool versions, content digests and provenance. Categorize only after technical validation and review the inferred labels. Excluded research evidence should not be publicly exposed merely because it is retained internally for audit.
 
@@ -40,8 +42,8 @@ Before release, validate target counts, source HTML, screenshots, raw reports, t
 
 Provide a data dictionary, sampling manifest, source revision, non-secret configuration, artifact checksums, machine-readable measurements, reproduction scripts and an explanation of missingness/eligibility. Observe the captured material's licensing and privacy restrictions.
 
-A `.warp` export supports reuse of evaluation evidence; it is not itself the whole publication protocol. Keep the release package and the software documentation linked but distinct.
+A `.warp` export lets collaborators reuse evaluation evidence. A dataset release can complement it with the data dictionary, analysis routines and study protocol.
 
 ## Report resources honestly
 
-Sum recorded processing seconds and actual provider charges separately from elapsed wall time. Reused results and interrupted work have different accounting. An extrapolation to one million pages must identify assumptions, uncertainty and fixed/variable costs; do not promise equivalent results or invent unrecorded attempt durations.
+Recorded processing seconds and provider charges are separate from elapsed wall time. Reuse and interruption records explain which work contributes to each total. Per-stratum pilot durations can support workload planning when reported alongside the acquisition conditions and observed variability.

@@ -12,8 +12,6 @@ from urllib.parse import quote
 
 
 DATASET_ROOT = Path(os.getenv("DATASET_ROOT", "/datasets"))
-MAX_FILES = 10_000
-MAX_OBSERVATIONS = 1_000
 MAX_UNCOMPRESSED_BYTES = 1_500_000_000
 MAX_SINGLE_FILE_BYTES = 100_000_000
 MANIFEST_FIELDS = {
@@ -81,8 +79,6 @@ def extract_archive(upload, destination):
     except (zipfile.BadZipFile, OSError) as exc:
         raise DatasetImportError("The uploaded ZIP file is not valid.") from exc
     members = [item for item in archive.infolist() if not item.is_dir()]
-    if len(members) > MAX_FILES:
-        raise DatasetImportError(f"The dataset exceeds the limit of {MAX_FILES} files.")
     total_size = sum(item.file_size for item in members)
     if total_size > MAX_UNCOMPRESSED_BYTES:
         raise DatasetImportError("The uncompressed dataset is too large.")
@@ -164,10 +160,6 @@ def import_dataset(archive, html_files, manifest, title, resource_policy):
         )
         if not html_paths:
             raise DatasetImportError("The dataset does not contain HTML files.")
-        if len(html_paths) > MAX_OBSERVATIONS:
-            raise DatasetImportError(
-                f"A local HTML dataset can contain at most {MAX_OBSERVATIONS} HTML observations."
-            )
         manifest_rows = read_manifest(destination, manifest)
         if manifest_rows is None:
             manifest_rows = [
@@ -175,10 +167,6 @@ def import_dataset(archive, html_files, manifest, title, resource_policy):
                  "pair_id": "", "condition": "", "stratum": "", "expected_label": ""}
                 for path in html_paths
             ]
-        if len(manifest_rows) > MAX_OBSERVATIONS:
-            raise DatasetImportError(
-                f"A local HTML dataset can contain at most {MAX_OBSERVATIONS} HTML observations."
-            )
         observations = []
         dataset_digest = hashlib.sha256()
         for index, row in enumerate(manifest_rows, start=1):
@@ -236,8 +224,8 @@ def import_dataset_from_warp(archive, descriptor, title):
     destination.mkdir(parents=True, exist_ok=False)
     try:
         members = [item for item in archive.infolist() if not item.is_dir() and item.filename.startswith("dataset/")]
-        if not members or len(members) > MAX_FILES:
-            raise DatasetImportError("The packaged local dataset is empty or too large.")
+        if not members:
+            raise DatasetImportError("The packaged local dataset is empty.")
         if sum(item.file_size for item in members) > MAX_UNCOMPRESSED_BYTES:
             raise DatasetImportError("The packaged local dataset is too large.")
         for item in members:

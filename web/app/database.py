@@ -51,6 +51,14 @@ def ensure_column(cursor, table_name, column_name, definition):
         )
 
 
+def ensure_experiment_url_capacity(cursor):
+    """Widen legacy URL lists without deleting or rewriting observations."""
+    cursor.execute("SHOW COLUMNS FROM experiments LIKE 'urls'")
+    column = cursor.fetchone()
+    if column and column[1].lower() != "longtext":
+        cursor.execute("ALTER TABLE experiments MODIFY COLUMN urls LONGTEXT NOT NULL")
+
+
 def get_connection():
     # return mysql.connector.connect(
     #     host=os.getenv("DB_HOST", "db"),
@@ -141,7 +149,7 @@ def init_db():
                 CREATE TABLE IF NOT EXISTS experiments (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     title VARCHAR(255) NOT NULL,
-                    urls TEXT NOT NULL,
+                    urls LONGTEXT NOT NULL,
                     include_semantic BOOLEAN NOT NULL DEFAULT FALSE,
                     include_wave BOOLEAN NOT NULL DEFAULT FALSE,
                     semantic_provider VARCHAR(50) NULL,
@@ -159,6 +167,8 @@ def init_db():
                     last_resumed_at DATETIME NULL
                 )
             """)
+
+            ensure_experiment_url_capacity(cursor)
 
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS experiment_environment (

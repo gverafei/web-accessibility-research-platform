@@ -16,17 +16,17 @@ Inspect an iteration for:
 - The decision to accept, retain, refine or roll back.
 - Activated skill IDs, versions/digests and typed tool activity.
 
-A row is not automatically the final retained candidate. Follow the run's selected iteration and rollback decisions. An LLM's statement that a page is repaired is not a substitute for a completed evaluator response.
+The run identifies its retained iteration, which can differ from the last generated candidate after a rollback. Its recorded Axe and Lighthouse measurements support the acceptance decision.
 
 ## Agentic activity log
 
 Events expose the orchestrator's progress, for example acquisition/preparation, diagnosis, planning, generation, evaluator validation, regression rollback, budget stops and completion. Each event has an actor, type, message, timestamp and structured details where relevant.
 
-These actors describe implementation roles. They do not imply independent models make every decision: budgets, transitions, candidate ranking and persistence are deterministic application logic.
+Actors identify orchestration roles. The application manages budgets, state transitions, candidate ranking and persistence, while models perform the configured diagnosis and generation tasks.
 
 ## Error and cost evidence
 
-Cloud usage must be recorded before parsing or validating generated output can fail. A malformed paid answer still consumed resources. An incomplete evaluator response retains its error instead of receiving a fabricated score.
+Usage records include cloud responses that later fail output validation, so their tokens and charges remain visible in the run totals. Incomplete evaluator responses include their error details and identify the unavailable measurements.
 
 If an interruption occurs after a candidate was successfully measured and committed, the run can preserve that candidate with a warning when the applicable policy permits it. A failure before any completed candidate is different.
 
@@ -34,7 +34,7 @@ If an interruption occurs after a candidate was successfully measured and commit
 
 An `agent-runtime-v1` snapshot includes the state, run ID, intervention step, configured budgets, skill-manifest SHA-256, iteration and activated skills, tool contracts, invocation records and transition history. Individual skills carry their ID/version/digest and source references.
 
-These fields make it possible to distinguish a changed model from a changed procedure even if a UI label remains the same. Keep them with your analysis, rather than reporting only the final score.
+These fields help researchers distinguish changes in the model, procedure and experimental settings when comparing results.
 
 ## Research checklist
 

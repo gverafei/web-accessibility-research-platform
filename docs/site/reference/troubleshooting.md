@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Start with the affected record and service. Do not duplicate paid work, clear the database or rebuild the whole stack before identifying the failing boundary.
+The affected record, its error details and the corresponding service logs are the starting points for diagnosis.
 
 ## Evaluation remains queued
 
@@ -11,7 +11,7 @@ docker compose ps
 docker compose logs --tail=100 worker evaluator db
 ```
 
-If the evaluator is restarting/unavailable, repair that service first. Do not replace a valid candidate because a service outage prevented measurement.
+An unavailable evaluator leaves acquisition queued for recovery. Restoring that service allows processing to continue with the same candidates.
 
 ## Progress appears stalled
 
@@ -21,13 +21,11 @@ A complex page can spend significant time within bounded browser/tool work. Comp
 
 Configure both base URL and installed model. Refresh/test from the Local LLM panel. Confirm Docker can reach Ollama: container-local `localhost` is usually not the host service. An unavailable local model is not replaced automatically by a cloud model.
 
-For context errors, use a suitable explicit local model/context setting or a localized approach on that page. WARP should not hide the problem by truncating a complete source.
+Context-capacity errors identify a page that exceeds the selected model's input capacity. A model with a larger context window or a localized intervention may suit that page.
 
 ## Cloud model returns 401/403 or is unavailable
 
-Confirm the configured OpenRouter credential and exact model ID. Do not paste keys into an issue or this site's source. Catalogue discovery/metadata does not guarantee an account has access to every model.
-
-A 401 in a coding/chat application is not automatically a WARP provider error. Identify the service/URL associated with the failing call and compare it with WARP's run log before changing platform credentials.
+Check the configured OpenRouter credential, exact model ID and account access. The run log identifies the provider request and its error details. Credentials can be updated in the installation's private environment configuration.
 
 ## Missing thumbnail or incomplete capture
 
@@ -41,11 +39,11 @@ Check the persisted job and selected classifier before starting another. The cla
 
 ## Candidate retained with warnings
 
-Read target values, iteration decisions and activity events. The run may have produced a valid measured candidate without meeting targets before its limits or plateau stop. That is not equivalent to no output, and deleting the warning does not improve the experiment.
+Read the target values, iteration decisions and activity events. A warning can indicate that processing stopped at a budget or plateau limit while retaining a measured candidate below the configured target.
 
 ## Import or local dataset fails
 
-Distinguish `.warp` experiment exchange from HTML dataset ingestion. Check payload version, duplicate URLs, ZIP paths, size limits and relative resource references. Do not disable path/size validation to accept an untrusted archive.
+Use `.warp` for evaluation exchange and the local HTML workflow for captured files. Import error details identify payload-version, URL, path, size or resource-reference problems.
 
 ## Documentation deployment fails
 

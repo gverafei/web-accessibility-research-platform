@@ -73,8 +73,6 @@ from statistics import mean, median, stdev
 experiments_bp = Blueprint("experiments", __name__)
 
 AXE_STANDARDS = {"wcag20a", "wcag20aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"}
-MAX_EXPERIMENT_OBSERVATIONS = 1_000
-MAX_MANUAL_URLS = 100
 MAX_EXPERIMENT_NAME = 160
 TIMEZONE_GROUPS = (
     ("Universal", (("UTC", "UTC"),)),
@@ -240,7 +238,6 @@ def new_acquisition():
     return render_template(
         "index.html",
         wave_available=bool(settings["wave_api_key"]),
-        max_manual_urls=MAX_MANUAL_URLS,
     )
 
 
@@ -2799,6 +2796,10 @@ def experiment_report(experiment_id):
                     results_by_url.get(normalize_url(candidate.get("url")), {}).get("status") == "completed"
                     for candidate in active
                 )
+                failed = sum(
+                    results_by_url.get(normalize_url(candidate.get("url")), {}).get("status") == "failed"
+                    for candidate in active
+                )
                 excluded = sum(
                     candidate.get("role") == "excluded_failed"
                     for candidate in stratum_candidates
@@ -2817,7 +2818,7 @@ def experiment_report(experiment_id):
                 strata_quality.append({
                     **stratum,
                     "completed": completed,
-                    "domains_evaluated": completed + excluded,
+                    "domains_evaluated": completed + excluded + failed,
                     "excluded": excluded,
                     "controlled_retries": controlled_retries,
                     "replacement_share": round(
@@ -2883,9 +2884,21 @@ def experiment_report(experiment_id):
                 - tranco_quality["replaceable"],
             )
             target_size = tranco_quality["target_size"]
+            initial_failures = sum(
+                not candidate.get("replaces")
+                and (candidate.get("role") == "excluded_failed" or (
+                    candidate.get("role") == "selected"
+                    and results_by_url.get(normalize_url(candidate.get("url")), {}).get("status") == "failed"
+                ))
+                for candidate in tranco_sample.get("candidates") or []
+            )
             tranco_quality["initial_yield_percent"] = round(
-                100 * (target_size - tranco_quality["initial_excluded"]) / target_size, 1
+                100 * (target_size - initial_failures) / target_size, 1
             ) if target_size else None
+            if sum(item["completed"] for item in strata_quality) < target_size:
+                # A requested census with nonresponse must not display a
+                # zero sampling margin as though every domain was observed.
+                tranco_quality["worst_case_margin_95"] = None
 
     for item in results:
         findings = item.get("semantic_findings")
@@ -2998,10 +3011,6 @@ def run_experiment():
         source_type = "url"
     title = request.form.get("title", "").strip()
     urls_text = request.form.get("urls", "").strip()
-    manual_url_count = len([line for line in urls_text.splitlines() if line.strip()])
-    if source_type == "url" and manual_url_count > MAX_MANUAL_URLS:
-        flash(_("Manual acquisition accepts at most %(count)s URLs.", count=MAX_MANUAL_URLS), "danger")
-        return redirect(url_for("experiments.new_acquisition"))
     # Acquisition records and freezes the page. LLM work belongs to remediation.
     include_semantic = False
     include_wave = request.form.get("include_wave") == "on" and source_type in {"url", "tranco"}
@@ -3073,10 +3082,6 @@ def run_experiment():
         if not urls:
             flash(_("No URLs were provided and no valid internal dataset was found."), "danger")
             return redirect(url_for("experiments.new_acquisition"))
-
-    if len(urls) > MAX_EXPERIMENT_OBSERVATIONS:
-        flash(_("An experiment can contain at most %(count)s URLs or HTML observations.", count=MAX_EXPERIMENT_OBSERVATIONS), "danger")
-        return redirect(url_for("experiments.new_acquisition"))
 
     signature = evaluation_signature(
         settings, include_wave, include_semantic, stored_provider,
@@ -3173,10 +3178,6 @@ def run_experiment_sync():
     settings = get_settings()
     title = request.form.get("title", "").strip()
     urls_text = request.form.get("urls", "").strip()
-    manual_url_count = len([line for line in urls_text.splitlines() if line.strip()])
-    if manual_url_count > MAX_MANUAL_URLS:
-        flash(_("Manual acquisition accepts at most %(count)s URLs.", count=MAX_MANUAL_URLS), "danger")
-        return redirect(url_for("experiments.new_acquisition"))
     # Semantic LLM evaluation has been retired; preserve legacy columns only
     # so historical experiments remain readable.
     include_semantic = False

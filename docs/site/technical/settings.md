@@ -83,4 +83,4 @@ This verifies that intervention recipes can change continuation budgets while sh
 
 OpenRouter/WAVE keys are sensitive persisted settings. Treat database backups as secret-bearing files. The UI avoids requiring a key to be reentered for every unrelated save; inspect the explicit clear/replace behavior before removing one.
 
-Do not publish an unrestricted settings dump. To reproduce an experiment, share non-secret controls and the frozen model snapshot, never credentials.
+Non-secret controls and the frozen model snapshot provide the configuration needed to reproduce an experiment. Provider credentials stay in the installation's private environment.

@@ -1,12 +1,12 @@
 # Extending WARP
 
-Extend one boundary at a time and preserve the existing research contracts. An extension should not silently change what an old experiment means.
+WARP exposes extension points for models, tools, remediation procedures, measurements and sampling designs. Versioned configuration and evidence connect these components to the experiments that use them.
 
 ## Add a model without code changes
 
 Use the researcher-managed [catalogue](../guide/models.md). Discovery/manual provider-qualified identifiers, capabilities, reasoning, order and colors already cover ordinary future model additions. Change provider plumbing only when the request/response protocol actually differs.
 
-A new provider/model family must not become an automatic fallback for a failed selection. Keep explicit choice IDs and frozen snapshots in queued requests and runs.
+Provider integrations use the selected choice ID and its frozen configuration in queued requests and runs.
 
 ## Add a typed tool
 
@@ -27,15 +27,15 @@ A runtime procedure changes only when its manifest entry and implementation chan
 
 ## Add a measurement
 
-Implement a real typed evaluator result, preserve raw evidence and expose missing/failure states. Update database migration helpers, worker persistence, downloads, comparison denominators and portability as needed. Never fill a missing new score with zero to preserve a convenient chart shape.
+A new measurement integrates with evaluator responses, raw evidence storage, database migrations, worker persistence, downloads, comparisons and portable exports. Its response includes availability and failure status as well as the measured value.
 
-If the new tool has a paid or external dependency, make that selection explicit and record charges. Keep tool outputs distinct instead of pretending they observe an identical DOM.
+Paid or external tools need a configuration choice and usage accounting. Separate tool records preserve each tool's execution and page-state context.
 
 ## Change acquisition or sampling
 
-Version the policy and sampling-order namespace when changing behavior that affects reproducibility. Preserve pinned frames, source digests and ordered reserves. Do not retroactively mutate old cohorts to match a new selector.
+Acquisition policies and sampling-order namespaces are versioned alongside pinned frames, source digests and ordered reserves. Existing cohorts retain their original selector and recovery history.
 
-Acquisition and content eligibility must remain separate from accessibility outcomes. Validate changes with fixtures plus a bounded, authorized pilot, especially where replacements or nonresponse are involved.
+Sampling tests cover allocation, deterministic ordering, replacements and nonresponse. A live-page pilot can check acquisition behavior for a new policy or source.
 
 ## Changes needing a migration plan
 

@@ -37,4 +37,4 @@ The effective configuration combines environment defaults with persisted `app_se
 Keep secrets out of protocols, screenshots, exports and support tickets. Record the meaningful non-secret controls, source revision and actual run configuration instead. See the [settings reference](../technical/settings.md) for defaults, storage and validation.
 
 !!! warning "Maintenance actions"
-    Clearing evaluations or deleting runs is distinct from changing configuration. These actions remove research records and can remove associated artifacts. Export or back up the relevant data first; never use a cleanup action merely to fix an unreachable service.
+    Clearing evaluations or deleting runs removes research records and can remove associated artifacts. An export or backup preserves the relevant evidence before cleanup. Connection diagnostics are available separately from these data-removal actions.

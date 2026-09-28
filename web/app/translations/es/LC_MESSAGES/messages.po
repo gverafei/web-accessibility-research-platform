@@ -3539,12 +3539,6 @@ msgstr "Introduce el ID permanente de la lista Tranco mostrado en tranco-list.eu
 msgid "Enter a sampling seed of at most 100 characters."
 msgstr "Introduce una semilla de muestreo de máximo 100 caracteres."
 
-msgid "Sites per stratum must be between 1 and 100."
-msgstr "Los sitios por estrato deben estar entre 1 y 100."
-
-msgid "Reserve sites per stratum must be between 0 and 200."
-msgstr "Los sitios de reserva por estrato deben estar entre 0 y 200."
-
 msgid "Global top 100"
 msgstr "100 líderes globales"
 
@@ -3689,14 +3683,8 @@ msgstr "Fallos de reservas"
 msgid "Local HTML"
 msgstr "HTML local"
 
-msgid "Maximum: 50 per group (250 evaluated sites). WARP automatically records at least the same number of ordered reserves, with a minimum of 10 per group; reserves are contacted only when needed."
-msgstr "Máximo: 50 por grupo (250 sitios evaluados). WARP registra automáticamente al menos la misma cantidad de reservas ordenadas, con un mínimo de 10 por grupo; las reservas solo se contactan cuando son necesarias."
-
 msgid "Tranco sample size must be a whole number."
 msgstr "El tamaño de la muestra Tranco debe ser un número entero."
-
-msgid "Sites per stratum must be between 1 and 50."
-msgstr "Los sitios por estrato deben estar entre 1 y 50."
 
 msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites · %(reserve)s unused ordered reserves. WARP automatically retries each failed site once and then substitutes the next reserve from the same popularity group."
 msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo · %(reserve)s reservas ordenadas sin usar. WARP reintenta automáticamente una vez cada sitio fallido y después lo sustituye por la siguiente reserva del mismo grupo de popularidad."
@@ -3722,12 +3710,6 @@ msgstr "Posiciones 50,001–250,000"
 msgid "Ranks 250,001–1,000,000"
 msgstr "Posiciones 250,001–1,000,000"
 
-msgid "Maximum: 200 per group (1,000 evaluated sites). WARP automatically records the same number of ordered reserves, with a minimum of 10 per group; reserves are contacted only when needed."
-msgstr "Máximo: 200 por grupo (1,000 sitios evaluados). WARP registra automáticamente la misma cantidad de reservas ordenadas, con un mínimo de 10 por grupo; las reservas solo se contactan cuando son necesarias."
-
-msgid "Sites per stratum must be between 1 and 200."
-msgstr "Los sitios por estrato deben estar entre 1 y 200."
-
 msgid "WARP downloads and pins the latest standard Tranco ranking, then selects a reproducible sample from the popularity groups you choose."
 msgstr "WARP descarga y fija la lista estándar de Tranco más reciente y después selecciona una muestra reproducible de los grupos de popularidad elegidos."
 
@@ -3737,14 +3719,8 @@ msgstr "La semilla controla qué dominios se seleccionan. La misma lista fijada,
 msgid "Sites to evaluate by popularity group"
 msgstr "Sitios a evaluar por grupo de popularidad"
 
-msgid "Enter 0 to exclude a group. Values from 1 to 200 draw that many reproducible domains from the group; WARP creates and uses reserves automatically."
-msgstr "Introduce 0 para excluir un grupo. Los valores de 1 a 200 extraen esa cantidad de dominios reproducibles del grupo; WARP crea y utiliza las reservas automáticamente."
-
 msgid "Select at least one site from one Tranco popularity group."
 msgstr "Selecciona al menos un sitio de algún grupo de popularidad de Tranco."
-
-msgid "Sites per stratum must be between 0 and 200."
-msgstr "Los sitios por estrato deben estar entre 0 y 200."
 
 msgid "Acquisition failed — open for details"
 msgstr "Adquisición fallida — abre para ver detalles"
@@ -3814,15 +3790,6 @@ msgstr "WARP está reintentando los sitios fallidos y sustituyéndolos por reser
 
 msgid "Current group: %(name)s"
 msgstr "Grupo actual: %(name)s"
-
-msgid "Ranks 1–500 · maximum 100"
-msgstr "Posiciones 1–500 · máximo 100"
-
-msgid "Enter 0 to exclude a group. The Global top 500 accepts up to 100 sites; other groups accept up to 200. WARP creates and uses reserves automatically."
-msgstr "Introduce 0 para excluir un grupo. Global top 500 admite hasta 100 sitios; los demás grupos admiten hasta 200. WARP crea y utiliza las reservas automáticamente."
-
-msgid "Global top 500 accepts 0 to 100 sites; other groups accept 0 to 200."
-msgstr "Global top 500 admite de 0 a 100 sitios; los demás grupos admiten de 0 a 200."
 
 msgid "Acquisition review"
 msgstr "Revisión de adquisición"
@@ -3953,8 +3920,8 @@ msgstr "Candidatos de reemplazo excluidos"
 msgid "The sampling manifest preserves every excluded domain, operational reason, retry, and deterministic replacement."
 msgstr "El manifiesto de muestreo conserva cada dominio excluido, motivo operacional, reintento y reemplazo determinista."
 
-msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites. WARP retries unsuccessful acquisitions once and then follows the deterministic candidate order within the same popularity group until the target is complete."
-msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo. WARP reintenta una vez las adquisiciones fallidas y después sigue el orden determinista de candidatos dentro del mismo grupo de popularidad hasta completar el objetivo."
+msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites. WARP retries unsuccessful acquisitions once and then follows the deterministic candidate order within the same popularity group until the target is complete or no unused domains remain."
+msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo. WARP reintenta una vez las adquisiciones fallidas y después sigue el orden determinista de candidatos dentro del mismo grupo de popularidad hasta completar el objetivo o agotar los dominios sin usar."
 
 msgid "Tranco measurements by popularity group"
 msgstr "Mediciones Tranco por grupo de popularidad"
@@ -4021,15 +3988,6 @@ msgstr "Hallazgos LLM de severidad alta"
 
 msgid "Individual bar charts are omitted for large datasets because they obscure the distribution. URL-level measurements remain available in the paginated matrix and exported data."
 msgstr "Las gráficas de barras individuales se omiten en conjuntos grandes porque ocultan la distribución. Las mediciones por URL permanecen disponibles en la matriz paginada y en los datos exportados."
-
-msgid "An experiment can contain at most %(count)s URLs or HTML observations."
-msgstr "Un experimento puede contener como máximo %(count)s URLs u observaciones HTML."
-
-msgid "Enter one URL per line. If left empty, the internal dataset will be used. Maximum: 1,000 URLs per experiment."
-msgstr "Ingrese una URL por línea. Si se deja vacío, se usará el conjunto interno. Máximo: 1,000 URLs por experimento."
-
-msgid "Maximum: 1,000 HTML observations per experiment."
-msgstr "Máximo: 1,000 observaciones HTML por experimento."
 
 msgid "Share of Axe issue instances by stratum"
 msgstr "Proporción de incidencias Axe por estrato"
@@ -4233,13 +4191,7 @@ msgid "Acquire and freeze web content for reproducible automated evaluation and 
 msgstr "Adquiere y congela contenido web para su evaluación automatizada reproducible y posterior remediación."
 
 #, python-format
-msgid "Enter one URL per line. If left empty, the internal dataset will be used. Maximum: %(count)s manually entered URLs."
-msgstr "Ingrese una URL por línea. Si se deja vacío, se usará el conjunto interno. Máximo: %(count)s URLs ingresadas manualmente."
-
 #, python-format
-msgid "Manual acquisition accepts at most %(count)s URLs."
-msgstr "La adquisición manual acepta como máximo %(count)s URLs."
-
 msgid "Preservation references are 90 percent of source text and 85 percent of source link destinations. They are reported as evidence and do not change Automated metrics acceptance."
 msgstr "Las referencias de preservación son 90 por ciento del texto y 85 por ciento de los destinos de enlaces originales. Se reportan como evidencia y no cambian la aceptación con Métricas automáticas."
 
@@ -4980,3 +4932,21 @@ msgstr "No se activó ninguna skill de agente para esta línea base científica.
 
 msgid "No tool call was recorded."
 msgstr "No se registró ninguna llamada de herramienta."
+
+msgid "Choose any whole-number target within each group's available domains; enter 0 to exclude a group. WARP uses unused domains from the same group as reserves. If that group is exhausted, the target remains unmet; other groups are not used to fill it."
+msgstr "Elige un objetivo entero dentro de los dominios disponibles de cada grupo; introduce 0 para excluirlo. WARP utiliza como reservas los dominios sin usar del mismo grupo. Si se agota ese grupo, el objetivo queda incompleto; no se usan otros grupos para llenarlo."
+
+msgid "There is no fixed observation-count limit. Larger evaluations require more processing time and storage."
+msgstr "No hay un límite fijo de observaciones. Las evaluaciones más grandes requieren más tiempo de procesamiento y almacenamiento."
+
+msgid "Tranco sample and reserve counts must be nonnegative whole numbers."
+msgstr "Las cantidades de muestra y reserva de Tranco deben ser números enteros no negativos."
+
+msgid "Use whole-number counts for the defined Tranco strata."
+msgstr "Usa cantidades enteras para los estratos de Tranco definidos."
+
+msgid "Stratum recovery exhausted"
+msgstr "Recuperación del estrato agotada"
+
+msgid "%(count)s target slot(s) remain unmet after controlled retries and same-stratum recovery. The requested targets are unchanged; successful pages are retained and no other group is used to fill these slots."
+msgstr "Quedan %(count)s lugares del objetivo sin completar después de los reintentos controlados y la recuperación dentro del mismo estrato. Los objetivos solicitados no cambian; las páginas válidas se conservan y no se usa otro grupo para llenar esos lugares."

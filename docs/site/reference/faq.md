@@ -30,7 +30,7 @@ Not in this build. It submits the URL; WARP performs its own visit without expor
 
 ## Are processing seconds the time on my clock?
 
-Not necessarily. Recorded/summed tool and run durations differ from elapsed wall time, queue delays, overlapping work and reused observations. Preserve actual accounting instead of inventing interrupted durations.
+Recorded tool and run durations measure processing time. Elapsed wall time also reflects queue delays, overlapping work and reuse. Interrupted attempts have separate timing records when available.
 
 ## Can `.warp` migrate the whole installation?
 
@@ -46,4 +46,4 @@ No. It hosts this static documentation. Run the Docker application separately. P
 
 ## Where do I ask for help?
 
-Use the repository's issue tracker for a non-sensitive reproducible software issue. Include the source revision, affected workflow, sanitized error and relevant environment/tool versions. Never include keys or confidential page captures.
+The repository's issue tracker accepts reproducible software issues. A source revision, affected workflow, sanitized error and environment/tool versions help diagnose the problem while keeping credentials and private captures confidential.

@@ -160,17 +160,58 @@ class TrancoSamplingTests(unittest.TestCase):
         self.assertEqual(classify_failure("net::ERR_NAME_NOT_RESOLVED"), "dns_resolution")
         self.assertEqual(classify_failure("HTTP 403 access denied"), "access_restricted")
 
-    def test_sample_size_preserves_capacity_in_top_500_stratum(self):
-        counts = {label: 0 for label, _name, _lower, _upper in TRANCO_STRATA}
-        counts["rank_1_500"] = 101
-        with self.assertRaisesRegex(TrancoImportError, "Global top 500 accepts 0 to 100"):
-            sample_tranco([], "94XL2", "study-seed", counts, counts)
+    def test_entire_top_500_is_allowed_and_leaves_no_reserves(self):
+        ranking = [(rank, f"site-{rank}.example") for rank in range(1, 501)]
+        counts = {"rank_1_500": 500}
+        candidates, strata = sample_tranco(ranking, "94XL2", "study-seed", counts, counts)
+        self.assertEqual(len(candidates), 500)
+        self.assertTrue(all(item["role"] == "selected" for item in candidates))
+        self.assertEqual(strata[0]["selected_count"], 500)
+        self.assertEqual(strata[0]["reserve_count"], 0)
 
-    def test_other_strata_still_accept_up_to_200_sites(self):
-        counts = {label: 0 for label, _name, _lower, _upper in TRANCO_STRATA}
-        counts["rank_501_5000"] = 201
-        with self.assertRaisesRegex(TrancoImportError, "other groups accept 0 to 200"):
-            sample_tranco([], "94XL2", "study-seed", counts, counts)
+    def test_researcher_allocation_can_exceed_old_per_group_and_total_caps(self):
+        sizes = [200, 250, 300, 450, 600]
+        ranking = []
+        counts = {}
+        for (label, _name, lower, _upper), count in zip(TRANCO_STRATA, sizes):
+            counts[label] = count
+            ranking.extend((rank, f"site-{rank}.example")
+                           for rank in range(lower, lower + count + 25))
+        candidates, strata = sample_tranco(ranking, "94XL2", "study-seed", counts, counts)
+        self.assertEqual([item["selected_count"] for item in strata], sizes)
+        self.assertEqual(sum(item["role"] == "selected" for item in candidates), 1800)
+        self.assertEqual([item["reserve_count"] for item in strata], [25] * 5)
+        self.assertEqual(len({item["domain"] for item in candidates}), len(candidates))
+        self.assertEqual((candidates, strata),
+                         sample_tranco(ranking, "94XL2", "study-seed", counts, counts))
+
+    def test_target_cannot_exceed_actual_available_domains(self):
+        ranking = [(1, "one.example"), (2, "two.example")]
+        with self.assertRaisesRegex(TrancoImportError, "only 2 domains"):
+            sample_tranco(ranking, "94XL2", "study-seed", {"rank_1_500": 3}, 0)
+
+    def test_counts_require_nonnegative_whole_numbers(self):
+        for count in (-1, 1.5, True, "2"):
+            with self.subTest(count=count), self.assertRaisesRegex(TrancoImportError, "whole numbers"):
+                sample_tranco([], "94XL2", "study-seed", {"rank_1_500": count}, 0)
+        with self.assertRaisesRegex(TrancoImportError, "nonnegative"):
+            sample_tranco([], "94XL2", "study-seed", {"rank_1_500": 1}, -1)
+
+    def test_expansion_can_exceed_old_top_cap_and_preserves_existing_urls(self):
+        ranking = [(rank, f"site-{rank}.example") for rank in range(1, 501)]
+        candidates, strata = sample_tranco(ranking, "94XL2", "study", {"rank_1_500": 100}, 0)
+        # Expansion applies to enabled groups of this one-stratum collection.
+        strata = [strata[0]]
+        current = [item["url"] for item in candidates if item["role"] == "selected"]
+        urls, candidates, strata = expand_stratified_sample(
+            ranking, "94XL2", "study", candidates, strata, current, 300, 300
+        )
+        self.assertEqual(urls[:100], current)
+        self.assertEqual(len(urls), 300)
+        self.assertEqual(strata[0]["reserve_count"], 200)
+        self.assertEqual(expand_stratified_sample(
+            ranking, "94XL2", "study", candidates, strata, urls, 300, 300
+        )[0], urls)
 
     def test_custom_design_uses_its_own_rank_boundaries_and_reserve_order(self):
         definitions = (("top", "Top", 1, 4), ("tail", "Tail", 5, 12))

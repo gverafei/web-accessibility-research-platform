@@ -6,7 +6,7 @@ Comparison studies place original observations and generated candidates into lab
 
 Use **Comparisons** to create a study from stored evaluation results and/or remediation runs. A remediation report also offers an action to compare a run with its original. Give the study and group labels a meaning that is clear in exports.
 
-For a stratified remediation demonstration, keep five original groups and their five corresponding remediated groups. Each candidate must join to the same source result used for generation. A coincidentally identical domain name is not sufficient when multiple acquisitions exist.
+For a stratified comparison, create original and remediated groups for each stratum in the study. Candidate-to-source links identify the acquisition used for generation, including cases where a domain has multiple stored captures.
 
 ## Measures to read together
 
@@ -24,16 +24,16 @@ The report exposes group summaries and per-page changes. Interpret zero original
 
 ## Warnings are part of the comparison
 
-Target attainment and candidate availability are separate. A retained candidate with warnings can still supply measured evidence if included under your protocol. Do not silently remove it to make the average look better. State the inclusion rule and compare the corresponding original denominator.
+A retained candidate can have valid measurements while remaining below a target. Warning status and complete-pair counts help apply a consistent inclusion rule and interpret the comparison denominator.
 
 ## Example protocol
 
-Select 25 observations independently within each of five stored strata using a recorded seed, after explicit content/technical eligibility review. Freeze the 125 sources. Apply one model/reasoning, one intervention policy and the same targets. Then compare each retained candidate with its own original.
+Select observations independently within the study's strata using a recorded seed and the desired group sizes. Apply a model/reasoning choice, intervention policy and targets to the frozen sources, then compare each retained candidate with its own original.
 
-That is a demonstration of within-stratum paired analysis, not a population estimate or a strategy ranking. To compare interventions causally, predefine allocation, replicated runs, stochastic controls and analysis. A single successful cohort is not evidence that every model or level would behave the same way.
+This setup supports within-stratum paired analysis. A study comparing intervention strategies can extend it with randomized allocation, replicated runs and a predefined analysis plan.
 
 ## Editing a study
 
-Group names, display names, ordering and baseline selection are editable without changing raw stored measurements. Deleting a comparison member changes the analysis cohort. Record that change and confirm it was not based on the observed outcome.
+Group names, display names, ordering and baseline selection are editable without changing raw measurements. Adding or removing members updates the analysis cohort and its pair counts.
 
 The comparison implementation is in `routes/comparisons.py`. See [statistics](statistics.md) for rank/density summaries and [storage](../technical/storage.md) for source/run/member links.

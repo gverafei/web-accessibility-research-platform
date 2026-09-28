@@ -12,7 +12,7 @@ The extension endpoints allow cross-origin access for the local browser workflow
 
 Captured HTML and model output are untrusted. The browser/evaluator can reach network locations from the container network. HTTP(S) validation is not a full SSRF defense: restrict access to internal/private infrastructure and cloud metadata endpoints at the network layer when evaluating untrusted URL lists.
 
-Do not mount private directories or secrets into a browser container unnecessarily. Keep browser/runtime dependencies current and use controlled environments for inspecting generated HTML.
+Browser containers benefit from minimal filesystem mounts and current runtime dependencies. Controlled inspection environments isolate generated HTML from private files and credentials.
 
 ## Local dataset controls
 
@@ -22,16 +22,16 @@ Neither CSP nor filename validation makes all uploaded active content safe. Revi
 
 ## Model boundaries
 
-An LLM answer cannot alter budgets, expand permitted scope or claim a tool result. Validate JSON operations, selectors, complete HTML and preservation contracts before execution. Typed-tool records identify what actually ran; source-attributed examples must not be presented as official evidence they are not.
+Before applying generated changes, WARP validates JSON operations, selectors, complete HTML and preservation requirements. Run settings determine budgets and change scope. Tool records and source links identify the measurements and retrieved examples used during processing.
 
-Cloud models receive the prompt/context prepared by WARP, which can include captured content and screenshot evidence for supported workflows. Do not submit confidential/personal content unless you are authorized to send it to that provider and understand its data-handling terms.
+Cloud prompts can contain captured page content and, for supported workflows, screenshot evidence. Provider data-handling terms and authorization to share that content are relevant when choosing local or cloud processing.
 
 ## Secrets and backups
 
-Keep `.env`, API keys, database dumps and credential-bearing settings private. Do not embed them in README examples or documentation screenshots. The static GitHub Pages site contains documentation only; it does not host the live application, database or research artifacts.
+`.env`, API keys, database dumps and credential-bearing settings belong in private storage. The static GitHub Pages site serves documentation; the application, database and captured evidence run in the researcher's installation.
 
-Before publishing the repository, review tracked files and intended history. Before publishing a dataset, review third-party copyrights, personal information and excluded material separately. A software license does not automatically license captured websites.
+Captured websites retain their own copyright and privacy conditions, separately from the software license. These conditions affect which artifacts can be shared in a dataset release.
 
 ## Responsible maintenance
 
-Pause/stop work safely before a storage migration. Preserve valid sources and evidence. Avoid volume deletion as a repair technique and avoid duplicate workers as a performance shortcut. Report security issues privately to the maintainer before posting sensitive reproduction data in a public issue.
+Backups and a scheduling pause protect active research state during storage maintenance. Removing Docker volumes deletes persistent data. Security issues involving sensitive reproduction data can be reported privately to the maintainer.

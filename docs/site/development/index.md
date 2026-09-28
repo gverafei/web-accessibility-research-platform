@@ -24,7 +24,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-The single Compose file mounts `web/app` into the web and worker containers. It does not mount evaluator source: rebuild that image after evaluator changes. A worker process already running Python does not necessarily reload changed code. Coordinate a safe pause/restart before applying runtime changes to an ongoing study. Never interrupt paid or long-running work merely to inspect a template.
+The single Compose file mounts `web/app` into the web and worker containers. Evaluator changes require rebuilding its image. Python worker changes take effect after restarting that service; pause active work before a runtime update. Template changes use the mounted application files.
 
 For changes to image dependencies or Dockerfiles, rebuild the affected service. Browser extension changes require its separate browser reload action.
 
@@ -37,13 +37,11 @@ python -m pip install -r web/requirements.txt
 pybabel compile -d web/app/translations
 ```
 
-Tests often provide controlled mocks and fixtures; importing `main.py` initializes the application/database. Do not import it merely to call a pure helper in an offline example. Prefer module-level contracts such as `automatic_recipe`, `sample_tranco` and `ToolRegistry`.
+Tests use controlled mocks and fixtures. Importing `main.py` initializes the application and database, while helper modules such as `automatic_recipe`, `sample_tranco` and `ToolRegistry` can be exercised independently.
 
-## Change discipline
+## Runtime integration
 
-Acceptance, budgets and rollback are deterministic parts of the runtime. Model output is validated as untrusted data, and tool/skill versions are retained in each run's evidence. Changes to these contracts need regression tests, including source immutability and retention of the best evaluated candidate.
-
-Behavioral claims need a bounded pilot or ablation in addition to unit tests. A stochastic result from one page is exploratory evidence, not a model ranking.
+The worker coordinates acquisition and remediation through typed tool interfaces. Settings and run snapshots supply the experiment controls, while iteration records connect generated candidates with measurements and selection decisions. The [runtime reference](../technical/agent-runtime.md) describes these interfaces, and the [testing guide](testing.md) lists the available suites.
 
 ## Contribution workflow
 

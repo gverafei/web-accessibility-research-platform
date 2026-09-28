@@ -1,6 +1,6 @@
 # Source map
 
-This map connects the public documentation to the current implementation. Paths are relative to the repository root. The documentation checker verifies that these source files exist; behavior still requires code/tests and a relevant pilot.
+This map connects documentation topics to their implementation files. Paths are relative to the repository root.
 
 | Area | Primary implementation |
 | --- | --- |
@@ -39,9 +39,9 @@ Browse the [source repository](https://github.com/gverafei/web-accessibility-res
 
 ## Where to change common behavior
 
-- Change fresh cloud defaults in `default_catalog()`, not in duplicated extension markup.
-- Change shared target defaults/validation in settings and recipes, then verify freezing in both web and extension requests.
-- Change intervention constraints in `remediation_approaches.py`, not just a slider label.
-- Change ranking/rollback in `remediation_selection.py` and test retention of the best evaluated candidate.
-- Change acquisition policy in the evaluator/runtime settings and preserve actual environment evidence.
-- Change the published sidebar in `mkdocs.yml`; page sources are in `docs/site`.
+- Fresh cloud defaults: `default_catalog()` in `web/app/remediation_model_choices.py`.
+- Shared target defaults and validation: `web/app/settings.py` and `web/app/remediation_recipes.py`.
+- Intervention policies: `web/app/remediation_approaches.py`.
+- Candidate ranking and rollback: `web/app/remediation_selection.py`.
+- Acquisition policy: evaluator modules and runtime settings in `web/app/settings.py`.
+- Documentation sidebar: `mkdocs.yml`; page sources: `docs/site`.

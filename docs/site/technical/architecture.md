@@ -1,6 +1,6 @@
 # Software architecture
 
-WARP separates its researcher interface, persistent scheduler, browser evaluator and artifact-serving responsibilities. The model is a generator inside a bounded workflow, not the owner of the database or acceptance policy.
+WARP separates its researcher interface, persistent scheduler, browser evaluator and artifact-serving responsibilities. Models support generation and diagnosis within the remediation workflow; the worker coordinates processing and stores results.
 
 ```mermaid
 flowchart LR
@@ -36,6 +36,17 @@ The worker shares the web image/code but has no HTTP listener. Serving a report 
 Compose defines the bridge network `accessibility_net`; Docker normally prefixes its actual name with the Compose project. `db`, `evaluator`, `dataset-server` and `qdrant` are service DNS names within that network, not stable assigned IPs.
 
 The web host mapping is `80 → 5000`. MySQL's mapping is `3307 → 3306`: the host port and internal service port are deliberately different. The evaluator mapping is `3000 → 3000`. Dataset-server and Qdrant have no published host port in `docker-compose.yml`.
+
+| Service | Address from the host | Address inside Docker |
+| --- | --- | --- |
+| Application | `http://localhost/` | `http://web:5000/` |
+| Evaluator health | `http://localhost:3000/health` | `http://evaluator:3000/health` |
+| Evaluator processing | `http://localhost:3000/evaluate` | `http://evaluator:3000/evaluate` |
+| MySQL | `localhost:3307` (MySQL protocol) | `db:3306` |
+| Dataset files | Not published | `http://dataset-server:8080/<storage-key>/<path>` |
+| Qdrant | Not published | `http://qdrant:6333/` |
+
+Host URLs above use the supplied port mappings. MySQL is not an HTTP service; dataset and Qdrant addresses are reachable from the Docker network rather than directly from the host browser.
 
 ## Persistent storage
 

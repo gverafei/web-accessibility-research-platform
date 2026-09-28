@@ -18,7 +18,7 @@ Open `http://127.0.0.1:8001/web-accessibility-research-platform/`. The project p
 1. Add a Markdown file to the appropriate guide/technical/reference directory.
 2. Add it to `nav` in `mkdocs.yml`.
 3. Link related concepts with relative `.md` paths.
-4. Verify claims against the actual source and update the source map when needed.
+4. Add the relevant source files and full service URLs to technical references.
 5. Run the example/build/link checks and visually inspect the result.
 
 Keep credentials, captured pages and generated experiment outputs outside `docs/site`. Only this directory becomes public site content.
@@ -38,7 +38,7 @@ python docs/tools/check_site.py
 git diff --check
 ```
 
-Do not commit `site/`. Generated HTML/search assets are uploaded as a Pages artifact by the workflow, not mixed into the application's source.
+`site/` contains generated output and is ignored by Git. The workflow uploads it as a Pages artifact; Markdown and configuration remain the editable source.
 
 ## GitHub Pages setup
 
@@ -52,4 +52,4 @@ The source repository is private. Publishing Pages from a private repository req
 
 ## Scope and versions
 
-The main-branch site describes the current software. Cite a software revision/release and the run's evidence when reporting an experiment. Add release-specific documentation when maintained versions meaningfully diverge, rather than silently rewriting a historical workflow.
+The main-branch site describes the current software. A pinned revision or release connects an experiment to the corresponding source. Maintained versions can have separate documentation when their workflows differ.

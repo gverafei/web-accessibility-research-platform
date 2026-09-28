@@ -32,17 +32,9 @@ node --test web/tests/*.cjs
 
 Browser controls still need a real UI check after reloading the extension. A mocked API test alone does not verify a side panel in every Chromium-derived browser.
 
-## Required remediation checks
+## Remediation test coverage
 
-For remediation changes, verify at minimum:
-
-1. The stored source remains immutable.
-2. Paid calls are recorded before output parsing can fail.
-3. Incomplete evaluator responses keep their original error.
-4. Regressions retain the best evaluated candidate.
-5. The iteration report shows actual skill/tool versions and RAG usage.
-
-Also test invalid/missing catalogue choices, unsupported reasoning, unavailable local providers, malformed operations, budget stops and target configuration freezing. Never use a real paid request as an unbounded regression test.
+The remediation suites cover source preservation, usage accounting, evaluator errors, candidate selection and rollback, tool/skill versions and retrieval evidence. They also exercise catalogue validation, reasoning controls, unavailable providers, malformed operations, budget stops and frozen target settings. Model responses in regression tests use controlled fixtures.
 
 ## Documentation checks
 
@@ -53,10 +45,10 @@ mkdocs build --strict
 python docs/tools/check_site.py
 ```
 
-The example checker validates Python/JSON syntax, shell syntax and explicitly marked offline examples. It also checks source references maintained in the source map. The site checker verifies local HTML links/anchors and the search index. These checks do not claim every provider, public website or external link is available.
+The example checker validates Python/JSON syntax, shell syntax, marked offline examples and source references. The site checker verifies generated local links, anchors and the search index. Provider connectivity and live-site acquisition are checked separately.
 
 ## Visual and behavioral QA
 
 Preview the site/report in a real browser. Check left navigation, search, light/dark mode, narrow layouts, keyboard focus, code copy controls, chart legends and thumbnail loading. When checking scientific figures, inspect rendered output rather than only successful compilation.
 
-For job fixes, verify committed progress before/after a meaningful observation boundary. Container health alone is not evidence that a job advances. Do not duplicate a job or paid cohort to test a recovery fix.
+Job diagnostics combine container health with committed progress and event records. Offline recovery tests exercise retry, interruption and reserve-exhaustion paths without submitting a live cohort.

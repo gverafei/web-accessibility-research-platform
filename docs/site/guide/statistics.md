@@ -23,7 +23,7 @@ These normalize counts by a recorded page-size feature. They are descriptive eng
 
 Scatterplots compare raw measurements on linear axes, with graph-specific colors and dark point borders. A densely populated area can contain many overlapping pages. The legend represents the series; it is not another observation.
 
-Distribution plots show medians, quartiles, 1.5×IQR whiskers and outliers. Axe distribution displays can use a `log1p` transformation for readability while retaining original-count labels. Do not infer a transformed statistical analysis from that display alone.
+Distribution plots show medians, quartiles, 1.5×IQR whiskers and outliers. Axe distribution displays can use a `log1p` transformation for readability while retaining original-count labels. Summary statistics use the recorded values independently of the display scale.
 
 Stratum bars can show issue shares or mean Lighthouse scores. An issue share reflects that group's contribution to the **observed sample's** total issues, not automatically its contribution to the ranking population.
 

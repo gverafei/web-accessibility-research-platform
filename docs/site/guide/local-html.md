@@ -4,7 +4,7 @@ Use this workflow to measure files you already possess, including controlled tes
 
 ## Accepted inputs
 
-Upload individual `.html`/`.htm` files or a ZIP containing HTML and the resources it needs. Ordinary uploads do not require a manifest. A CSV found inside a ZIP does not silently select a different subset of pages.
+Upload individual `.html`/`.htm` files or a ZIP containing HTML and its resources. Ordinary uploads evaluate the HTML files found in the package, without requiring a manifest. Other bundled files are treated as resources.
 
 An example layout is:
 
@@ -31,18 +31,16 @@ Choose an external-resource policy only for a trusted dataset when those depende
 
 | Limit | Current value |
 | --- | ---: |
-| HTML observations | 1,000 |
-| ZIP files | 10,000 |
 | Total uncompressed size | 1,500,000,000 bytes |
 | Individual archived file | 100,000,000 bytes |
 | Default HTTP upload limit | 1,610,612,736 bytes |
 
-The importer rejects unsafe absolute/traversal paths, archive symlinks and oversized datasets. The HTTP upload limit can be changed through `MAX_DATASET_UPLOAD_BYTES`, but raising it does not remove the other validation limits.
+There is no fixed HTML-observation or archive-file count cap. The importer still rejects unsafe absolute/traversal paths, archive symlinks and oversized datasets. The HTTP upload limit can be changed through `MAX_DATASET_UPLOAD_BYTES`, but raising it does not remove the other byte/path protections. Multipart uploads do not use Flask's default 1,000-part cap. See [resource planning](acquisition.md#collection-size-and-resource-planning) before submitting a large corpus.
 
 ## What to inspect
 
 Check that CSS, images and scripts needed for your experiment are bundled and loaded under the chosen policy. Retain the dataset digest and each observation's content digest. If two stored observations are later paired, use explicit identifiers and conditions rather than matching them by their current filename alone.
 
-Do not modify the stored original in place to repair a result. Submit a remediation run, which creates candidates separately, or import a new version of the source corpus and document the change.
+Remediation creates candidates separately from the stored original. Importing a revised corpus creates new source records with their own content digests.
 
 The implementation is in `dataset_storage.py`; path checks and serving policy are explained in [storage](../technical/storage.md) and [security](../technical/security.md).

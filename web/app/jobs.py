@@ -343,19 +343,30 @@ def advance_tranco_recovery(cursor, experiment):
             candidate.get("stratum") for candidate in active_failed
             if candidate.get("url") not in covered
         }
-        try:
-            list_bytes, filename = fetch_pinned_standard_list(sample["list_id"])
-            ranking, metadata = parse_tranco(list_bytes, filename)
-            if metadata["list_sha256"] != sample["list_sha256"]:
-                raise TrancoImportError("The pinned Tranco list digest changed.")
-            extend_ordered_reserves(
-                ranking, sample["list_id"], sample["sampling_seed"], candidates,
-                exhausted_strata, strata_definitions=definitions,
-            )
-            replacements = plan_failed_replacements(candidates, failed_by_url)
-        except TrancoImportError:
-            # Preserve the failed rows so a later worker cycle can retry list acquisition.
-            raise
+        # A census of a stratum leaves no unseen reserve. Finish with the
+        # unmet target visible, rather than downloading the same list again.
+        frame_counts = {item["label"]: int(item.get("frame_count") or 0)
+                        for item in stored_strata}
+        expandable_strata = {
+            label for label in exhausted_strata
+            if not frame_counts.get(label) or len({
+                item["domain"] for item in candidates if item.get("stratum") == label
+            }) < frame_counts[label]
+        }
+        if expandable_strata:
+            try:
+                list_bytes, filename = fetch_pinned_standard_list(sample["list_id"])
+                ranking, metadata = parse_tranco(list_bytes, filename)
+                if metadata["list_sha256"] != sample["list_sha256"]:
+                    raise TrancoImportError("The pinned Tranco list digest changed.")
+                extend_ordered_reserves(
+                    ranking, sample["list_id"], sample["sampling_seed"], candidates,
+                    expandable_strata, strata_definitions=definitions,
+                )
+                replacements = plan_failed_replacements(candidates, failed_by_url)
+            except TrancoImportError:
+                # A list retrieval problem remains an error, not pool exhaustion.
+                raise
     if not replacements:
         return False
     urls = [value.strip() for value in experiment["urls"].splitlines() if value.strip()]

@@ -1,7 +1,7 @@
 from flask import Flask, current_app, render_template, session
 from flask_babel import Babel
 
-from config import Config
+from config import Config, ResearchRequest
 from database import init_db
 from routes.experiments import experiments_bp
 from routes.comparisons import comparisons_bp
@@ -20,6 +20,7 @@ def select_locale():
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.request_class = ResearchRequest
 
     Babel(app, locale_selector=select_locale)
 

@@ -42,9 +42,9 @@ Paths are an overview; use the database artifact columns as authoritative rather
 
 ## Immutability and identity
 
-Remediation reads a stored source and writes candidates separately. Source/result IDs and content/configuration digests identify which evidence was used. A copied/imported record has a new local ID, so do not assume IDs from two installations refer to the same page.
+Remediation reads a stored source and writes candidates separately. Source/result IDs and content/configuration digests identify the evidence used. Copied and imported records receive local IDs while retaining source provenance for cross-installation reference.
 
-`normalize_url()` lowercases the scheme/host, handles default ports, preserves the query and removes fragments/trailing path slashes as implemented. Normalized identity is useful for catalogue/reuse, but it is not a cryptographic content identity.
+`normalize_url()` in `web/app/result_portability.py` lowercases the scheme/host, handles default ports, preserves the query and removes fragments/trailing path slashes. The normalized URL supports catalogue matching and reuse; content digests separately identify captured evidence.
 
 ## Backup procedure
 
@@ -56,10 +56,10 @@ Remediation reads a stored source and writes candidates separately. Source/resul
 6. Record the source revision, image versions and checksums.
 7. Test restoration into an isolated installation before relying on the backup.
 
-Database tools and volume snapshots depend on your infrastructure; do not copy a live MySQL data directory and assume it is a consistent logical backup. A `.warp` file is an evaluation exchange package, not a complete installation backup.
+A consistent MySQL backup and matched artifact directories support installation recovery. Infrastructure-specific database tools or coordinated volume snapshots provide that consistency. Evaluation-level `.warp` exports complement a backup with portable research records.
 
 ## Cleanup
 
-Deleting a record through the UI can remove associated artifacts and invalidate derived comparisons. Export what you need first. Never use broad filesystem deletion or `docker compose down -v` to troubleshoot a temporary browser/provider error.
+Deleting a record through the UI can remove associated artifacts and affect derived comparisons. Exports preserve selected evaluations before cleanup. `docker compose down -v` also removes named persistent volumes, including the database.
 
-Failed attempts can be useful recovery/audit evidence, but are not valid released observations. Keep internal provenance distinct from the final distributable dataset and avoid indefinitely retaining bulky unusable artifacts without a declared need.
+Attempt records support recovery and explain acquisition outcomes. The completed-observation cohort and its available artifacts can be selected separately for a dataset release.
