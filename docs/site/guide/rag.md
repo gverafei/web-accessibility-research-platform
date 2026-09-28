@@ -27,7 +27,7 @@ Retrieved context is bounded. The routine favors complete positive/negative pair
 The following is an **administrator write operation**, not a health check:
 
 ```bash
-docker compose -f docker-compose-dev.yml exec worker python sync_act_rag.py
+docker compose exec worker python sync_act_rag.py
 ```
 
 It downloads the current upstream snapshot, deletes/recreates the configured ACT collection and loads the supplement. Back up a custom collection first. Do not synchronize during a controlled cohort unless the protocol calls for changing its retrieval snapshot.

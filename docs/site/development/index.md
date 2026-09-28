@@ -12,19 +12,19 @@ dataset_server/          Internal HTML/resource server
 browser_extension/       Chromium side panel and background worker
 docs/site/               Published user/developer documentation
 docs/tools/              Documentation verification helpers
-docker-compose*.yml      Service topology
+docker-compose.yml       Service topology and local builds
 ```
 
 The site's configured source is `docs/site`; generated files are ignored under `site/`.
 
-## Development stack
+## Build from source
 
 ```bash
 cp .env.example .env
-docker compose -f docker-compose-dev.yml up -d --build
+docker compose up -d --build
 ```
 
-The development file mounts `web/app` into the web and worker containers. It does not mount evaluator source: rebuild that image after evaluator changes. A worker process already running Python does not necessarily reload changed code. Coordinate a safe pause/restart before applying runtime changes to an ongoing study. Never interrupt paid or long-running work merely to inspect a template.
+The single Compose file mounts `web/app` into the web and worker containers. It does not mount evaluator source: rebuild that image after evaluator changes. A worker process already running Python does not necessarily reload changed code. Coordinate a safe pause/restart before applying runtime changes to an ongoing study. Never interrupt paid or long-running work merely to inspect a template.
 
 For changes to image dependencies or Dockerfiles, rebuild the affected service. Browser extension changes require its separate browser reload action.
 

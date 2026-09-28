@@ -24,12 +24,12 @@ git clone https://github.com/gverafei/web-accessibility-research-platform.git
 cd web-accessibility-research-platform
 cp .env.example .env
 # Edit .env: set private secrets/passwords before starting.
-docker compose -f docker-compose-dev.yml up -d --build
+docker compose up -d --build
 ```
 
 Open **http://localhost** and create a small evaluation under **New acquisition**. Start without WAVE or cloud calls, inspect the results, then configure a model if you want remediation.
 
-The development stack builds the checked-out source. The ordinary `docker-compose.yml` uses configured prebuilt web/evaluator images; their tags may differ from the current checkout. Read the [installation guide](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) for ports, first-start diagnostics and safe shutdown.
+The single `docker-compose.yml` builds web, worker, evaluator and dataset-server from the checked-out source; it does not use prebuilt WARP images from Docker Hub. MySQL and Qdrant use their official images. Read the [installation guide](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) for ports, first-start diagnostics and safe shutdown.
 
 > Local research deployment: the supplied application has no production multi-user authentication boundary. Restrict host/network access and do not expose it directly to the public Internet. Keep `.env`, provider keys and research captures private.
 

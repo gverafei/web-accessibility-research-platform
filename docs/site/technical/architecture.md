@@ -35,7 +35,7 @@ The worker shares the web image/code but has no HTTP listener. Serving a report 
 
 Compose defines the bridge network `accessibility_net`; Docker normally prefixes its actual name with the Compose project. `db`, `evaluator`, `dataset-server` and `qdrant` are service DNS names within that network, not stable assigned IPs.
 
-The web host mapping is `80 → 5000`. MySQL's mapping is `3307 → 3306`: the host port and internal service port are deliberately different. The development evaluator mapping is `3000 → 3000`; the ordinary Compose file does not publish it. Dataset-server and Qdrant have no published host port in these files.
+The web host mapping is `80 → 5000`. MySQL's mapping is `3307 → 3306`: the host port and internal service port are deliberately different. The evaluator mapping is `3000 → 3000`. Dataset-server and Qdrant have no published host port in `docker-compose.yml`.
 
 ## Persistent storage
 

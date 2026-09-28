@@ -46,8 +46,8 @@ The single persisted `url_category_jobs` record stores classifier, scope, totals
 ## Operational diagnostics
 
 ```bash
-docker compose -f docker-compose-dev.yml ps
-docker compose -f docker-compose-dev.yml logs --tail=100 worker evaluator
+docker compose ps
+docker compose logs --tail=100 worker evaluator
 ```
 
 Then inspect the active evaluation/run in the application. A running container alone does not establish that its current job is progressing; verify a meaningful change in committed observations or progress evidence.

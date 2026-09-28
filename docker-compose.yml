@@ -1,12 +1,22 @@
 services:
   web:
-    image: gverafei/accessibility-web
+    build:
+      context: ./web
     container_name: accessibility_web
+    # Compile catalogs hidden by the source bind mount before serving requests.
+    command:
+      - sh
+      - -c
+      - >-
+        pybabel compile -d /app/translations &&
+        exec gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 4
+        --timeout 60 main:app
     ports:
       - "80:5000"
     env_file:
       - .env
     volumes:
+      - ./web/app:/app
       - ./results:/results
       - ./data:/data
       - ./datasets:/datasets
@@ -19,13 +29,15 @@ services:
       - accessibility_net
 
   worker:
-    image: gverafei/accessibility-web
+    build:
+      context: ./web
     container_name: accessibility_worker
     command: ["python", "worker.py"]
     restart: unless-stopped
     env_file:
       - .env
     volumes:
+      - ./web/app:/app
       - ./results:/results
       - ./data:/data
       - ./datasets:/datasets
@@ -39,11 +51,14 @@ services:
 
   evaluator:
     init: true
-    image: gverafei/accessibility-evaluator
+    build:
+      context: ./evaluator
     container_name: accessibility_evaluator
     restart: unless-stopped
     env_file:
       - .env
+    ports:
+      - "3000:3000"
     volumes:
       - ./results:/results
       - ./data:/data
@@ -51,8 +66,8 @@ services:
       - accessibility_net
 
   dataset-server:
-    build: ./dataset_server
-    image: gverafei/accessibility-dataset-server
+    build:
+      context: ./dataset_server
     container_name: accessibility_dataset_server
     restart: unless-stopped
     volumes:

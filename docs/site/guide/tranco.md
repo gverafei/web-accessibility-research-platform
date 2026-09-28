@@ -1,5 +1,7 @@
 # Seeded Tranco sampling
 
+Tranco is a ranking of popular domains designed for web research. Visit the [official Tranco website](https://tranco-list.eu/) to learn about its methodology and download current or archived lists.
+
 Tranco supplies the ranking frame, while WARP supplies a deterministic selection and acquisition procedure. A domain's rank is a popularity-group indicator, not its accessibility score.
 
 ## UI workflow

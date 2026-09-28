@@ -12,20 +12,20 @@ python -m unittest discover -s web/tests -q
 git diff --check
 ```
 
-For the Docker development environment, mount the repository at `/workspace` so the suite sees current tests rather than a stale container copy:
+For the Docker environment, mount the repository at `/workspace` so the suite sees current tests rather than a stale container copy:
 
 ```bash
-docker compose -f docker-compose-dev.yml run --rm --no-deps \
+docker compose run --rm --no-deps \
   --volume "$PWD:/workspace:ro" --workdir /workspace \
   web sh -c 'pybabel compile -d /app/translations && python -m unittest discover -s web/tests -q'
 ```
 
-This creates a one-off **web test container**, not another remediation worker. It assumes the normal development services are available for any application setup needed by the tests. Review the tests before running them against important live research state.
+This creates a one-off **web test container**, not another remediation worker. Build the web image first if needed. Review the tests before running them against important live research state.
 
 ## Evaluator and extension
 
 ```bash
-docker compose -f docker-compose-dev.yml exec evaluator npm test
+docker compose exec evaluator npm test
 node --test browser_extension/tests/*.test.cjs
 node --test web/tests/*.cjs
 ```

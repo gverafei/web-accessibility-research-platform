@@ -1,6 +1,6 @@
 # Installation
 
-WARP runs as six cooperating Docker services. For development and reproducible work, build from the repository so the application, extension and documentation correspond to the same source revision.
+WARP runs as six cooperating Docker services. Its single `docker-compose.yml` builds the application services from the repository so the application, extension and documentation correspond to the same source revision.
 
 ## Requirements
 
@@ -26,23 +26,29 @@ For a first Axe/Lighthouse experiment, leave `OPENROUTER_API_KEY` and `WAVE_API_
 ## Build and start
 
 ```bash
-docker compose -f docker-compose-dev.yml up -d --build
-docker compose -f docker-compose-dev.yml ps
+docker compose up -d --build
+docker compose ps
 ```
 
 Open [http://localhost](http://localhost). MySQL may take longer than the other services to initialize on the first start. If the page is temporarily unavailable, inspect the logs rather than repeatedly rebuilding:
 
 ```bash
-docker compose -f docker-compose-dev.yml logs --tail=100 web db worker
+docker compose logs --tail=100 web db worker
 ```
 
-The development web service compiles the English/Spanish translation catalogues from the checked-out source before serving requests. Compiled catalogues are generated locally, not committed to Git.
+The web service compiles the English/Spanish translation catalogues from the checked-out source before serving requests. Compiled catalogues are generated locally, not committed to Git.
 
-The standard `docker-compose.yml` uses the configured prebuilt web/evaluator images. Its dataset-server service also has a build definition. Image tags can differ from a checked-out source revision; use the development build when validating current functionality.
+Web and worker build from `web/Dockerfile`, evaluator from `evaluator/Dockerfile`, and dataset-server from `dataset_server/Dockerfile`. No prebuilt WARP images are downloaded from Docker Hub. MySQL and Qdrant still use their official images; building the application also downloads base images and dependencies when they are not already cached.
+
+To build without starting or restarting any service:
+
+```bash
+docker compose build
+```
 
 ## Ports and services
 
-| Service | Internal address | Published development address |
+| Service | Internal address | Published host address |
 | --- | --- | --- |
 | Web application | `web:5000` | `http://localhost:80` |
 | Worker | No HTTP listener | None |
@@ -51,7 +57,7 @@ The standard `docker-compose.yml` uses the configured prebuilt web/evaluator ima
 | MySQL | `db:3306` | `localhost:3307` |
 | Qdrant | `qdrant:6333` | None |
 
-The ordinary Compose file does not publish the evaluator port. Service names resolve inside the Docker network; they are not fixed IP addresses. See [architecture](../technical/architecture.md) for mounts and network boundaries.
+Service names resolve inside the Docker network; they are not fixed IP addresses. See [architecture](../technical/architecture.md) for mounts and network boundaries.
 
 ## Confirm the installation
 
@@ -60,7 +66,7 @@ The ordinary Compose file does not publish the evaluator port. Service names res
 3. Confirm the evaluation progresses and opens a report with screenshots, Axe counts and Lighthouse scores.
 4. Confirm **Manage URLs** lists the completed acquisitions.
 
-A development-only evaluator health check is read-only:
+A read-only evaluator health check:
 
 ```bash
 curl --fail http://localhost:3000/health
@@ -69,8 +75,8 @@ curl --fail http://localhost:3000/health
 ## Stop and restart safely
 
 ```bash
-docker compose -f docker-compose-dev.yml stop
-docker compose -f docker-compose-dev.yml start
+docker compose stop
+docker compose start
 ```
 
 Pause a running evaluation through the UI before maintenance when practical. Do not run `down -v`: it deletes the named database/vector volumes. A database volume alone is not a complete backup; see [storage and backup](../technical/storage.md).

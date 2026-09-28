@@ -11,13 +11,13 @@ Lighthouse registers its independently detached Chromium process over private
 IPC. The supervisor closes only owned process groups/descendants on success,
 failure or timeout. It also cleans on worker exit rather than waiting forever
 for inherited pipes. `run_lighthouse_direct.js` awaits graceful Chrome cleanup.
-Both Compose configurations enable `init: true` to reap terminated orphans.
+The Compose configuration enables `init: true` to reap terminated orphans.
 
 Verification:
 
 ```sh
-docker compose -f docker-compose-dev.yml run --rm --no-deps evaluator npm test
-docker compose -f docker-compose-dev.yml run --rm --no-deps evaluator node tests/browser_cleanup_pilot.js
+docker compose run --rm --no-deps evaluator npm test
+docker compose run --rm --no-deps evaluator node tests/browser_cleanup_pilot.js
 ```
 
 The bounded pilot starts a local HTTP fixture, repeats three actual Axe and

@@ -53,7 +53,7 @@ Browser/tool execution is separated into helper processes to contain timeout/cra
 The evaluator package includes policy, score and process tests:
 
 ```bash
-docker compose -f docker-compose-dev.yml exec evaluator npm test
+docker compose exec evaluator npm test
 ```
 
 Use a bounded live-page pilot separately. Unit tests do not establish that every current website is reachable or that independent tools will observe the same dynamic state.

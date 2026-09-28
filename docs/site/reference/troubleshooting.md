@@ -7,8 +7,8 @@ Start with the affected record and service. Do not duplicate paid work, clear th
 Check that `worker` is running and inspect its recent logs. The current scheduler prioritizes remediation before evaluation, so another active run can delay acquisition. Confirm a single worker is attached to the correct database and that the evaluator is reachable.
 
 ```bash
-docker compose -f docker-compose-dev.yml ps
-docker compose -f docker-compose-dev.yml logs --tail=100 worker evaluator db
+docker compose ps
+docker compose logs --tail=100 worker evaluator db
 ```
 
 If the evaluator is restarting/unavailable, repair that service first. Do not replace a valid candidate because a service outage prevented measurement.
