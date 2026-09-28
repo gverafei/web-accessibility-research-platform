@@ -6,7 +6,7 @@ repo_name: gverafei/web-accessibility-research-platform
 edit_uri: edit/main/docs/site/
 docs_dir: docs/site
 site_dir: site
-copyright: Copyright © 2026 Guillermo Vera-Amaro · MIT license
+copyright: MIT license
 theme:
   name: material
   language: en
