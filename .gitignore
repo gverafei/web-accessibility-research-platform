@@ -1,0 +1,42 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Experiment outputs and local databases
+results/
+datasets/
+/research/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+.venv-docs/
+venv/
+
+# Generated documentation (published as a GitHub Pages artifact)
+/site/
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Compiled translations and generated catalogs
+*.mo
+web/messages.pot
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+._*
+.$*

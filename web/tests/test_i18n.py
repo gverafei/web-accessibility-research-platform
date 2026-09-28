@@ -1,0 +1,83 @@
+import importlib
+import sys
+import types
+import unittest
+from flask import render_template
+from pathlib import Path
+
+
+APP_DIR = Path(__file__).resolve().parents[1] / "app"
+sys.path.insert(0, str(APP_DIR))
+
+database_stub = types.ModuleType("database")
+database_stub.init_db = lambda: None
+database_stub.get_connection = lambda: None
+sys.modules["database"] = database_stub
+
+main = importlib.import_module("main")
+
+
+class InternationalizationTestCase(unittest.TestCase):
+    def setUp(self):
+        self.client = main.app.test_client()
+
+    def test_english_is_the_default_language(self):
+        response = self.client.get("/acquisition/new")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<html lang="en" data-theme="light" data-theme-choice="light">', response.data)
+        self.assertIn(b"New acquisition", response.data)
+
+    def test_language_can_be_changed_to_spanish(self):
+        response = self.client.get("/language/es?next=/acquisition/new", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<html lang="es" data-theme="light" data-theme-choice="light">', response.data)
+        self.assertIn("Nueva adquisición".encode(), response.data)
+
+    def test_language_redirect_does_not_accept_external_targets(self):
+        response = self.client.get(
+            "/language/es?next=https://example.com",
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], "/")
+
+    def test_dashboard_is_translated_to_spanish(self):
+        with main.app.test_request_context("/", headers={"Accept-Language": "es"}):
+            from flask import session
+            session["language"] = "es"
+            html = render_template(
+                "dashboard.html", evaluations={"total": 0},
+                pages={"pages": 0, "lighthouse": None},
+                remediations={"total": 0, "cost": 0},
+                costs={"evaluation": 0, "remediation": 0, "total": 0},
+                insights={"most_used_model": {}, "most_used_strategy": {},
+                          "value_model": {}, "accessibility_model": {}},
+                recent_evaluations=[], recent_remediations=[],
+            )
+            self.assertIn("La investigación en accesibilidad web de un vistazo", html)
+            self.assertIn("Evaluaciones recientes", html)
+            self.assertIn("Costo de remediación", html)
+            self.assertNotIn("Web accessibility research at a glance", html)
+
+    def test_theme_can_be_changed_for_the_browser_session(self):
+        response = self.client.get("/theme/dark?next=/acquisition/new", follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<html lang="en" data-theme="dark" data-theme-choice="dark">', response.data)
+        self.assertIn(b'class="nav-utility dropdown-toggle"', response.data)
+
+    def test_theme_redirect_does_not_accept_external_targets(self):
+        response = self.client.get(
+            "/theme/system?next=https://example.com",
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], "/")
+
+
+if __name__ == "__main__":
+    unittest.main()

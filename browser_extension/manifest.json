@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Web Accessibility Research Platform",
+  "version": "0.1.12",
+  "description": "WARP accessibility acquisition, remediation, and evaluation initiated from the current page URL.",
+  "permissions": ["activeTab", "tabs", "scripting", "storage", "sidePanel", "notifications", "alarms"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {"service_worker": "service-worker.js"},
+  "icons": {
+    "16": "icons/warp-icon-16.png",
+    "32": "icons/warp-icon-32.png",
+    "48": "icons/warp-icon-48.png",
+    "128": "icons/warp-icon-128.png"
+  },
+  "action": {
+    "default_title": "Open WARP accessibility controls",
+    "default_icon": {
+      "16": "icons/warp-icon-16.png",
+      "32": "icons/warp-icon-32.png"
+    }
+  },
+  "side_panel": {"default_path": "sidepanel.html"}
+}

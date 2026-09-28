@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("New acquisition") }}{% endblock %}
+
+{% block content %}
+<div class="evaluation-page acquisition-page">
+        <header class="app-page-heading"><h1>{{ _("New acquisition") }}</h1><p>{{ _("Acquire and freeze web content for reproducible automated evaluation and later remediation.") }}</p></header>
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="post" enctype="multipart/form-data" action="{{ url_for('experiments.run_experiment') }}" id="experimentForm" class="acquisition-form">
+                    <fieldset class="experiment-form-section acquisition-step">
+                    <legend><span>1</span>{{ _("Acquisition source") }}</legend>
+                    <div class="mb-3 source-type-selector" role="radiogroup" aria-label="{{ _('Evaluation source') }}">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="source_type" id="source_url" value="url" checked>
+                            <label class="form-check-label" for="source_url">{{ _("Web URLs") }}</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="source_type" id="source_local" value="local_html">
+                            <label class="form-check-label" for="source_local">{{ _("Local HTML dataset") }}</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="source_type" id="source_tranco" value="tranco">
+                            <label class="form-check-label" for="source_tranco">{{ _("Tranco sample") }}</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">{{ _("Acquisition name") }}</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="title" 
+                            name="title" 
+                            placeholder="{{ _("Example: Evaluation of institutional websites. If left empty, the current date and time will be used.") }}">
+                    </div>
+
+                    <div class="mb-3" id="urlSourceFields">
+                        <div class="field-label-row"><label for="urls" class="form-label mb-0">{{ _("URLs to evaluate") }}</label><output id="urlCount" for="urls" aria-live="polite">0 / {{ max_manual_urls }}</output></div>
+                        <textarea 
+                            class="form-control font-monospace"
+                            id="urls" 
+                            name="urls" 
+                            rows="7"
+                            placeholder="{{ _("Enter one URL per line. If left empty, the internal dataset will be used.") }}"></textarea>
+                        <div class="form-text">{{ _("Enter one URL per line. If left empty, the internal dataset will be used. Maximum: %(count)s manually entered URLs.", count=max_manual_urls) }}</div>
+                    </div>
+
+                    <div id="localSourceFields" hidden>
+                        <div class="alert alert-info py-2">
+                            {{ _("Select one or more HTML files, or a ZIP containing HTML files. No special folder structure or manifest is required. Local HTML is evaluated without WAVE because the remote WAVE API cannot access it.") }}
+                            {{ _("Maximum: 1,000 HTML observations per experiment.") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="html_files" class="form-label">{{ _("HTML files") }}</label>
+                            <input class="form-control" type="file" id="html_files" name="html_files" accept=".html,.htm,text/html" multiple>
+                            <div class="form-text">{{ _("Choose as many .html or .htm files as needed.") }}</div>
+                        </div>
+                        <div class="local-upload-divider" aria-hidden="true"><span>{{ _("or") }}</span></div>
+                        <div class="mb-3">
+                            <label for="dataset_archive" class="form-label">{{ _("ZIP containing HTML files") }}</label>
+                            <input class="form-control" type="file" id="dataset_archive" name="dataset_archive" accept=".zip,application/zip">
+                            <div class="form-text">{{ _("WARP finds .html and .htm files anywhere inside the ZIP.") }}</div>
+                        </div>
+                        <p class="form-text" id="localUploadChoiceHelp">{{ _("Choose HTML files or a ZIP, not both. Selecting one clears and disables the other.") }}</p>
+                        <div class="mb-3">
+                            <label for="resource_policy" class="form-label">{{ _("External resource policy") }}</label>
+                            <select class="form-select" id="resource_policy" name="resource_policy">
+                                <option value="isolated" selected>{{ _("Isolated — block external scripts, fonts, and network requests") }}</option>
+                                <option value="external">{{ _("Allow external resources — closer visual rendering, less reproducible") }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="trancoSourceFields" hidden>
+                        <div class="alert alert-info py-2">
+                            {{ _("WARP downloads and pins the latest standard Tranco ranking, then selects a reproducible sample from the popularity groups you choose.") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="tranco_seed" class="form-label">{{ _("Sampling seed") }}</label>
+                            <input class="form-control font-monospace" id="tranco_seed" name="tranco_seed" value="warp-tranco-pilot-v1">
+                            <div class="form-text">{{ _("The seed controls which domains are selected. The same pinned list, seed, and group quantities always reproduce the same primary and reserve sites; changing the seed produces a different sample.") }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <span class="form-label d-block">{{ _("Sites to evaluate by popularity group") }}</span>
+                            <div class="definition-grid">
+                                <article class="definition-card"><label for="tranco_count_rank_1_500"><strong>{{ _("Global top 500") }}</strong><small class="d-block text-muted">{{ _("Ranks 1–500 · maximum 100") }}</small></label><input class="form-control mt-2" type="number" min="0" max="100" id="tranco_count_rank_1_500" name="tranco_count_rank_1_500" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_501_5000"><strong>{{ _("Very high popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 501–5,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_501_5000" name="tranco_count_rank_501_5000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_5001_50000"><strong>{{ _("High popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 5,001–50,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_5001_50000" name="tranco_count_rank_5001_50000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_50001_250000"><strong>{{ _("Medium popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 50,001–250,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_50001_250000" name="tranco_count_rank_50001_250000" value="10"></article>
+                                <article class="definition-card"><label for="tranco_count_rank_250001_1000000"><strong>{{ _("Popularity tail") }}</strong><small class="d-block text-muted">{{ _("Ranks 250,001–1,000,000") }}</small></label><input class="form-control mt-2" type="number" min="0" max="200" id="tranco_count_rank_250001_1000000" name="tranco_count_rank_250001_1000000" value="10"></article>
+                            </div>
+                            <div class="form-text">{{ _("Enter 0 to exclude a group. The Global top 500 accepts up to 100 sites; other groups accept up to 200. WARP creates and uses reserves automatically.") }}</div>
+                        </div>
+                    </div>
+                    </fieldset>
+
+                    <fieldset class="experiment-form-section acquisition-step">
+                    <legend><span>2</span>{{ _("Optional evaluators") }}</legend>
+                    {% if wave_available %}<div class="form-check form-switch mb-4">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            role="switch"
+                            id="include_wave"
+                            name="include_wave">
+                        <label class="form-check-label" for="include_wave">
+                            {{ _("Include WAVE API evaluation") }}
+                        </label>
+                        <div class="form-text">
+                            {{ _("WAVE is evaluated independently and consumes API credits for each URL.") }}
+                        </div>
+                    </div>{% endif %}
+                    {% if not wave_available %}<p class="text-muted mb-0">{{ _("No optional API-based evaluators are currently configured.") }}</p>{% endif %}
+                    </fieldset>
+
+                    <fieldset class="experiment-form-section acquisition-step">
+                    <legend><span>3</span>{{ _("Stored-result reuse") }}</legend>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch"
+                               id="reuse_cached_results" name="reuse_cached_results" checked>
+                        <label class="form-check-label" for="reuse_cached_results">
+                            {{ _("Reuse compatible frozen results") }}
+                        </label>
+                        <div class="form-text">
+                            {{ _("If the same URL was previously evaluated with the same tools and settings, copy that immutable result instead of loading the live page again. The report retains the original evaluation date and provenance.") }}
+                        </div>
+                    </div>
+                    </fieldset>
+
+                    <div class="acquisition-form-actions"><button type="submit" class="btn btn-primary" id="submitButton">
+                        {{ _("Generate report") }}
+                    </button></div>
+                </form>
+            </div>
+        </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const form = document.getElementById("experimentForm");
+const submitButton = document.getElementById("submitButton");
+const urlSourceFields = document.getElementById("urlSourceFields");
+const localSourceFields = document.getElementById("localSourceFields");
+const trancoSourceFields = document.getElementById("trancoSourceFields");
+const waveCheckbox = document.getElementById("include_wave");
+const htmlFilesInput = document.getElementById("html_files");
+const htmlZipInput = document.getElementById("dataset_archive");
+const urlsInput = document.getElementById("urls");
+const urlCount = document.getElementById("urlCount");
+const maxManualUrls = {{ max_manual_urls }};
+
+function updateUrlCount() {
+    const count = urlsInput.value.split(/\r?\n/).filter(line => line.trim()).length;
+    urlCount.textContent = `${count} / ${maxManualUrls}`;
+    const exceeded = count > maxManualUrls;
+    urlCount.classList.toggle("limit-exceeded", exceeded);
+    urlsInput.setCustomValidity(exceeded ? {{ _("Manual acquisition accepts at most %(count)s URLs.", count=max_manual_urls)|tojson }} : "");
+}
+
+function updateLocalUploadChoice(changedInput) {
+    const filesSelected = Boolean(htmlFilesInput?.files?.length);
+    const zipSelected = Boolean(htmlZipInput?.files?.length);
+    if (changedInput === htmlFilesInput && filesSelected && htmlZipInput) {
+        htmlZipInput.value = "";
+    } else if (changedInput === htmlZipInput && zipSelected && htmlFilesInput) {
+        htmlFilesInput.value = "";
+    }
+    if (htmlFilesInput && htmlZipInput) {
+        htmlFilesInput.disabled = Boolean(htmlZipInput.files.length);
+        htmlZipInput.disabled = Boolean(htmlFilesInput.files.length);
+    }
+}
+
+function updateSourceType() {
+    const sourceType = document.querySelector('input[name="source_type"]:checked').value;
+    const local = sourceType === "local_html";
+    const tranco = sourceType === "tranco";
+    urlSourceFields.hidden = local || tranco;
+    localSourceFields.hidden = !local;
+    trancoSourceFields.hidden = !tranco;
+    if (waveCheckbox) {
+        waveCheckbox.disabled = local;
+        if (local) waveCheckbox.checked = false;
+    }
+}
+
+document.querySelectorAll('input[name="source_type"]').forEach((input) => {
+    input.addEventListener("change", updateSourceType);
+});
+htmlFilesInput?.addEventListener("change", () => updateLocalUploadChoice(htmlFilesInput));
+htmlZipInput?.addEventListener("change", () => updateLocalUploadChoice(htmlZipInput));
+urlsInput.addEventListener("input", updateUrlCount);
+updateSourceType();
+updateUrlCount();
+form.addEventListener("submit", function (event) {
+    updateUrlCount();
+    if (!form.checkValidity()) {
+        event.preventDefault();
+        form.reportValidity();
+        return;
+    }
+    submitButton.disabled = true;
+});
+</script>
+{% endblock %}

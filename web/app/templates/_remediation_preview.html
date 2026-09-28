@@ -1,0 +1,14 @@
+{% macro capture_preview(label, capture_url, page_url, capture_alt, open_label, key='') %}
+<article class="iteration-preview-card">
+  <div><strong>{{ label }}</strong><small>{% if key %}{{ key }} · {% endif %}{{ _('Hover to preview the capture') }}</small></div>
+  {% if capture_url %}
+  <a class="page-preview" href="{{ capture_url }}" target="_blank" rel="noopener" aria-label="{{ _('Open the full captured page image in a new tab') }}">
+    <img src="{{ capture_url }}" alt="{{ capture_alt }}" loading="lazy">
+    <span class="page-preview-popover"><img src="{{ capture_url }}" alt="" loading="lazy"></span>
+  </a>
+  {% else %}<span></span>{% endif %}
+  <a class="preview-open-icon" href="{{ page_url }}" target="_blank" rel="noopener" title="{{ open_label }}" aria-label="{{ open_label }}">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7M21 3l-9 9"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+  </a>
+</article>
+{% endmacro %}

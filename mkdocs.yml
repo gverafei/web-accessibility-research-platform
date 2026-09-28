@@ -1,0 +1,121 @@
+site_name: WARP Documentation
+site_description: User and developer documentation for the Web Accessibility Research Platform
+site_url: https://gverafei.github.io/web-accessibility-research-platform/
+repo_url: https://github.com/gverafei/web-accessibility-research-platform
+repo_name: gverafei/web-accessibility-research-platform
+edit_uri: edit/main/docs/site/
+docs_dir: docs/site
+site_dir: site
+copyright: Copyright © 2026 Guillermo Vera-Amaro · MIT license
+theme:
+  name: material
+  language: en
+  logo: assets/warp.svg
+  favicon: assets/warp.svg
+  font: false
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+    - toc.follow
+plugins:
+  - search:
+      lang: en
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+extra_css:
+  - assets/stylesheets/warp.css
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gverafei/web-accessibility-research-platform
+validation:
+  nav:
+    omitted_files: warn
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn
+nav:
+  - Overview: index.md
+  - Get started:
+      - Installation: getting-started/installation.md
+      - First experiment: getting-started/quickstart.md
+      - Concepts and terminology: getting-started/concepts.md
+  - Researcher guide:
+      - Configuration: guide/configuration.md
+      - URL acquisition: guide/acquisition.md
+      - Tranco sampling: guide/tranco.md
+      - Local HTML datasets: guide/local-html.md
+      - Dynamic pages: guide/dynamic-pages.md
+      - Evaluation reports: guide/reports.md
+      - Statistics and visualizations: guide/statistics.md
+      - Manage URLs and categories: guide/manage-urls.md
+      - Remediation: guide/remediation.md
+      - Models and reasoning: guide/models.md
+      - Adaptive ACT retrieval: guide/rag.md
+      - Iteration trace and activity log: guide/evidence.md
+      - Paired comparisons: guide/comparisons.md
+      - Import, export and composition: guide/exchange.md
+      - Browser extension: guide/extension.md
+      - Building research datasets: guide/datasets.md
+  - Technical documentation:
+      - Software architecture: technical/architecture.md
+      - Jobs and recovery: technical/jobs.md
+      - Database and artifacts: technical/storage.md
+      - Evaluation pipeline: technical/evaluation.md
+      - Agentic remediation runtime: technical/agent-runtime.md
+      - Preservation measurements: technical/preservation.md
+      - HTTP interfaces: technical/api.md
+      - Settings reference: technical/settings.md
+      - Security and deployment: technical/security.md
+  - Development:
+      - Development environment: development/index.md
+      - Tests and verification: development/testing.md
+      - Extending WARP: development/extending.md
+      - Maintaining this documentation: development/documentation.md
+  - Reference:
+      - Troubleshooting: reference/troubleshooting.md
+      - Source map: reference/source-map.md
+      - FAQ: reference/faq.md
+      - License and citation: reference/citation.md

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Remediation") }}{% endblock %}
+{% block content %}
+{% from '_remediation_identity.html' import tier_names, tier_colors, preservation_names, preservation_colors, model_identity with context %}
+<header class="app-page-heading"><h1>{{ _("New remediation") }}</h1><p>{{ _("Transform one acquired page, generate candidates, and refine them until the acceptance rule is met or the iteration limit is reached.") }}</p></header>
+<section class="card shadow-sm mb-4"><div class="card-body">
+<form method="post" action="{{ url_for('remediation.new_run') }}" class="remediation-form">
+<fieldset class="remediation-step"><legend><span>1</span>{{ _("Page to remediate") }}</legend>
+<div class="remediation-source-toolbar"><label class="form-label" for="sourceSearch">{{ _("Find an acquired page") }}<span class="source-search-control"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input class="form-control" id="sourceSearch" type="search" placeholder="{{ _('Search by URL or evaluation') }}" autocomplete="off"></span></label><label class="form-label">{{ _("Run name") }}<input class="form-control" name="title" placeholder="{{ _('Automatic from page name') }}"></label></div>
+<div class="source-result-heading"><strong>{{ _("Available acquired pages") }}</strong><span id="sourceResultCount"></span></div>
+{% set source_state = namespace(selected=false) %}<div class="remediation-source-list" id="sourceList" role="listbox" aria-label="{{ _('Available acquired pages') }}">{% for page in sources %}{% set initially_selected = page.snapshot_available and not source_state.selected %}{% if initially_selected %}{% set source_state.selected = true %}{% endif %}<label class="remediation-source-option{% if initially_selected %} selected{% endif %}" role="option" aria-selected="{{ 'true' if initially_selected else 'false' }}" data-search="{{ (page.display_name ~ ' ' ~ page.title ~ ' ' ~ page.acquired_url)|lower|e }}"{% if not page.snapshot_available %} aria-disabled="true"{% endif %}><input class="source-option-radio" type="radio" name="source_result_id" value="{{ page.id }}"{% if initially_selected %} checked{% endif %}{% if not page.snapshot_available %} disabled{% endif %} required><span class="source-option-check" aria-hidden="true"></span><span><strong>{{ page.display_name }}</strong><small>Axe {{ page.axe_violations if page.axe_violations is not none else '—' }} · Lighthouse {{ page.lighthouse_score if page.lighthouse_score is not none else '—' }} · {{ page.title }} · {{ page.evaluated_at }}</small>{% if not page.snapshot_available %}<em>{{ _("No stored source snapshot") }}</em>{% endif %}</span></label>{% endfor %}</div>
+<p class="remediation-source-empty" id="sourceEmpty" hidden>{{ _("No acquired pages match this search.") }}</p>
+</fieldset>
+
+<div id="automaticRecipeSteps">
+<fieldset class="remediation-step automatic-recipe-step">
+  <legend><span>2</span>{{ _("Model strategy") }}</legend>
+  <input type="hidden" name="selected_model" id="selectedModel" value="openai/gpt-6-luna">
+  <div class="model-tier-card" id="modelTierCard">
+    <div class="model-tier-heading"><div><small>{{ _("Choose the model · experimental tiers") }}</small><strong id="modelTierName"></strong></div><output id="modelTierPosition"></output></div>
+    <div class="model-picker-identities">{% for choice in model_choices %}<span data-model-identity="{{ choice.id }}" hidden>{{ model_identity(choice.model, choice.label|default(choice.name)) }}{% if choice.reasoning_effort %}<span class="model-effort-tag" title="{{ _('Reasoning effort') }}">{{ _('Light') if choice.reasoning_effort == 'low' else choice.reasoning_effort|title }}</span>{% endif %}</span>{% endfor %}</div>
+    <div class="model-tier-slider"><input aria-label="{{ _('Choose the model') }}" class="model-tier-range" id="modelTierRange" name="model_cost_tier" type="range" min="0" max="{{ model_choices|length - 1 }}" step="1" value="{{ 2 if model_choices[0].tier == 'local' else 1 }}"><div class="model-tier-stops">{% for choice in model_choices %}<button type="button" data-tier-index="{{ loop.index0 }}" title="{{ choice.name }}" aria-label="{{ choice.name }}"><span></span></button>{% endfor %}</div></div>
+    <p id="modelTierDetail"></p>
+    <a class="small" href="{{ url_for('experiments.configuration') }}#modelCatalogEditor">{{ _("Manage model catalogue") }}</a>
+  </div>
+</fieldset>
+<p class="form-text">{{ _("Model order reflects experimental tiers, not a strict price ranking.") }}</p>
+<fieldset class="remediation-step" id="executionStep"><legend><span>3</span>{{ _("Execution approach") }}</legend><div class="form-label" id="processStrategyLabel">{{ _("Process strategy") }}</div><div class="process-strategy-selector" id="processStrategySelector" role="radiogroup" aria-labelledby="processStrategyLabel"><label class="process-strategy-choice"><input type="radio" name="execution_mode" value="iterative" checked><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 2M18 17a7 7 0 0 1-12 1l-2-2"/></svg>{{ _("Iterative ATPGE — agents and refinement") }}</span></label><label class="process-strategy-choice"><input type="radio" name="execution_mode" value="single_shot"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 3-8 11h6l-1 7 9-11h-6l1-7Z"/></svg>{{ _("Zero-shot — single call") }}</span></label></div><p class="form-text" id="executionModeDescription" aria-live="polite"></p></fieldset>
+<fieldset class="remediation-step" id="preservationStep"><legend><span>4</span>{{ _("Accessibility and preservation") }}</legend><div class="model-tier-card preservation-card automatic-recipe-step" id="preservationCard"><div class="model-tier-heading"><div><small>{{ _("Original-page preservation") }}</small><strong id="preservationName">{{ _("Minimal patches") }}</strong><span id="preservationSubtitle"></span></div><output id="preservationPosition">1 / 5</output></div><div class="model-tier-slider"><input class="model-tier-range" id="preservationRange" name="preservation_level" type="range" min="0" max="4" step="1" value="0"><div class="model-tier-stops preservation-stops">{% for label in ['Faithful','Conservative','Balanced','Adaptive','Screen reader'] %}<button type="button" data-preservation-index="{{ loop.index0 }}" title="{{ label }}"><span></span></button>{% endfor %}</div></div><p id="preservationDetail"></p><div class="automatic-recipe" id="automaticRecipe"></div><input type="hidden" name="accessibility_priority" value="15"></div><div class="mt-2" id="regenerationReference" hidden><label class="form-label" for="regenerationFramework">{{ _("Required design base") }}</label><select class="form-select" id="regenerationFramework" name="regeneration_framework"><option value="bootstrap">Bootstrap 5.3.8</option><option value="pico">Pico CSS 2.1.1</option><option value="bulma">Bulma 1.0.4</option></select></div></fieldset>
+<fieldset class="remediation-step" id="ragStep"><legend><span>5</span>{{ _("Adaptive W3C ACT grounding") }}</legend><div class="rag-option-card{% if not rag.available %} unavailable{% endif %}"><div class="rag-option-copy"><span class="rag-icon">R</span><div><p>{{ _("ACT grounding is enabled by default and retrieves relevant examples only when refinement is needed. Disable it for controlled comparisons; the first generation is unchanged.") }}</p><small>{% if rag.available %}{{ rag.count }} {{ _("code examples in the local vector database") }}{% else %}{{ rag.message }}{% endif %}</small></div></div><input type="hidden" name="act_grounding_configured" value="1"><label class="act-grounding-switch"><input type="checkbox" role="switch" name="act_grounding" id="actGrounding" value="on" checked aria-label="{{ _('ACT grounding') }}"><span class="act-switch-track" aria-hidden="true"></span><span class="act-switch-state" aria-hidden="true"><span class="act-state-on">On</span><span class="act-state-off">Off</span></span></label></div></fieldset>
+</div>
+<input type="hidden" name="reconstruction_mode" value="whole_page">
+<input type="hidden" name="markdown_provider" value="local">
+<input type="hidden" name="transformation_format" value="html">
+<input type="hidden" name="temperature" value=".05">
+<input type="hidden" name="max_iterations" value="3">
+<input type="hidden" name="min_lighthouse" value="{{ common_conditions.lighthouse }}">
+<input type="hidden" name="max_axe" value="{{ common_conditions.axe }}">
+<input type="hidden" name="max_cost_usd" value=".15">
+<input type="hidden" name="max_execution_seconds" value="240">
+<input type="hidden" name="rag_top_k" value="4">
+<div class="remediation-form-actions"><button class="btn btn-primary" id="startRemediationButton" type="submit"{% if not llms and model_choices[0].tier != 'local' %} disabled{% endif %}>{{ _("Start remediation") }}</button></div></form></div></section>
+<script>
+(()=>{const search=document.getElementById('sourceSearch'),list=document.getElementById('sourceList'),options=[...list.querySelectorAll('.remediation-source-option')],count=document.getElementById('sourceResultCount'),empty=document.getElementById('sourceEmpty');const choose=option=>{options.forEach(item=>{const active=item===option;item.classList.toggle('selected',active);item.setAttribute('aria-selected',String(active))})};options.forEach(option=>option.querySelector('input').addEventListener('change',()=>choose(option)));const filter=()=>{const words=search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);let visible=0;options.forEach(option=>{const show=words.every(word=>option.dataset.search.includes(word));option.hidden=!show;if(show)visible++});count.textContent=`${visible} / ${options.length}`;empty.hidden=visible>0};search.addEventListener('input',filter);filter()})();
+</script>
+<script>
+// Keep execution mode orthogonal to preservation and model capability.
+document.addEventListener('DOMContentLoaded',()=>{
+const form=document.querySelector('.remediation-form'),execution=form.elements.execution_mode;
+let savedIterativeValues=null;
+const sync=()=>{
+const baseline=execution.value==='single_shot';
+const regeneration=execution.value.startsWith('regenerate_')||(execution.value==='iterative'&&+form.elements.preservation_level.value>=3);
+if(regeneration)form.elements.temperature.value='0.50';
+document.getElementById('regenerationReference').hidden=!regeneration;
+form.elements.regeneration_framework.disabled=!regeneration;
+if(baseline&&savedIterativeValues===null){savedIterativeValues={iterations:form.elements.max_iterations.value,temperature:form.elements.temperature.value};form.elements.max_iterations.value='1';form.elements.temperature.value='0.20'}
+if(!baseline&&savedIterativeValues!==null){form.elements.max_iterations.value=savedIterativeValues.iterations;form.elements.temperature.value=savedIterativeValues.temperature;savedIterativeValues=null}
+document.getElementById('preservationStep').hidden=baseline;
+document.getElementById('ragStep').hidden=baseline;
+form.elements.preservation_level.disabled=baseline;
+document.getElementById('executionModeDescription').textContent=baseline?{{ _("Zero-shot prompting: the model receives the frozen HTML and instructions, without solved examples. One call produces a corrected page; no planner, RAG, screenshot or refinement loop. Axe and Lighthouse evaluate the response afterwards, without feedback to the model.")|tojson }}:{{ _("Iterative: agents propose a candidate, measure it with Axe and Lighthouse, and refine it within the configured limits. The best evaluated candidate is retained.")|tojson }};
+};document.getElementById('processStrategySelector').addEventListener('change',sync);form.elements.preservation_level.addEventListener('input',sync);sync();
+});
+</script>
+<script>
+(()=>{const f=document.querySelector('.remediation-form'),mr=document.getElementById('modelTierRange'),mc=document.getElementById('modelTierCard'),pr=document.getElementById('preservationRange'),pc=document.getElementById('preservationCard');const choices={{ model_choices|tojson }},costNames={{ tier_names|tojson }};
+const conditions={{ common_conditions|tojson }};
+// Keep defaults stable when the optional local stop is inserted.
+const preferredIndex=choices.findIndex(choice=>choice.is_default);
+const bundledIndex=choices.findIndex(choice=>choice.id==='openai/gpt-6-luna');
+mr.value=preferredIndex>=0?preferredIndex:bundledIndex>=0?bundledIndex:0;
+pr.value=0;
+const recipeLabels={temperature:{{ _("Temperature")|tojson }},iterations:{{ _("iterations")|tojson }},act:{{ _("ACT examples after failure")|tojson }},native:{{ _("Native / scoped components")|tojson }}};
+const levels=[['Faithful',{{ _("Maximum visual preservation")|tojson }},{{ _("Smallest repairs; preserves native layout and behavior.")|tojson }},'#2f9e66',15,'html','0.05','0.15','240'],['Conservative',{{ _("Preservation first")|tojson }},{{ _("Limited semantic and contrast correction.")|tojson }},'#2686c9',35,'html','0.20','0.20','300'],['Balanced',{{ _("Accessibility with controlled change")|tojson }},{{ _("Recognizable design with targeted repair.")|tojson }},'#6558c8',55,'html','0.50','0.25','360'],['Adaptive',{{ _("Accessibility first")|tojson }},{{ _("Substantial change with mandatory content retention.")|tojson }},'#9b4fc2',75,'html','0.50','0.40','600'],['Screen reader',{{ _("Screen-reader first")|tojson }},{{ _("Visual resemblance optional; content and tasks mandatory.")|tojson }},'#c3486b',90,'markdown','0.50','0.50','600']].map(x=>[...x.slice(0,7),conditions.iterations,conditions.lighthouse,conditions.axe,conditions.aim,conditions.review,x[7],x[8],conditions.rag_top_k]);
+const approachNames={{ preservation_names.values()|list|tojson }};
+const preservationColors={{ preservation_colors.values()|list|tojson }};
+
+levels.forEach((level,index)=>{level[0]=approachNames[index];level[3]=preservationColors[index];if(index===3)level[2]={{ _("Regenerate from complete HTML, then refine with localized patches.")|tojson }};if(index===4)level[2]={{ _("Regenerate from Markdown with greater design freedom, then refine with localized patches.")|tojson }};document.querySelector(`[data-preservation-index="${index}"]`).title=level[0]});
+const paintModel=()=>{const i=+mr.value,x=choices[i];document.getElementById('selectedModel').value=x.id;document.getElementById('modelTierName').textContent=costNames[x.tier];document.querySelectorAll('[data-model-identity]').forEach(n=>n.hidden=n.dataset.modelIdentity!==x.id);document.getElementById('modelTierDetail').textContent={{ _("The selected model is used for generation and refinement; no automatic substitution.")|tojson }};document.getElementById('modelTierPosition').value=(i+1)+" / "+choices.length;mr.setAttribute('aria-valuetext',x.name+" · "+costNames[x.tier]);mc.style.setProperty('--tier-color',x.color);mr.style.setProperty('--tier-progress',(choices.length>1?100*i/(choices.length-1):0)+"%");document.querySelectorAll('[data-tier-index]').forEach((b,j)=>b.classList.toggle('active',i===j))};
+const paintRecipeDetail=()=>{const i=+pr.value,x=levels[i],framework=i>=3?f.elements.regeneration_framework.selectedOptions[0].textContent:recipeLabels.native,armed=f.elements.execution_mode.value!=='single_shot'&&f.elements.act_grounding.checked;const act=armed?` · ${x[14]}–12 ${recipeLabels.act}`:'';document.getElementById('automaticRecipe').textContent=`${x[0]} · ${framework} · ${recipeLabels.temperature} ${x[6]} · ${x[7]} ${recipeLabels.iterations} · Lighthouse ≥${x[8]} · Axe ≤${x[9]}${act}.`};
+const paintPreservation=()=>{const i=+pr.value,x=levels[i],fields={accessibility_priority:x[4],transformation_format:x[5],temperature:x[6],max_iterations:x[7],min_lighthouse:x[8],max_axe:x[9],max_cost_usd:x[12],max_execution_seconds:x[13],rag_top_k:x[14]};document.getElementById('preservationName').textContent=x[0];document.getElementById('preservationSubtitle').textContent=x[1];document.getElementById('preservationDetail').textContent=x[2];document.getElementById('preservationPosition').value=`${i+1} / 5`;pc.style.setProperty('--tier-color',x[3]);pr.style.setProperty('--tier-progress',`${i*25}%`);document.querySelectorAll('[data-preservation-index]').forEach((b,j)=>b.classList.toggle('active',i===j));Object.entries(fields).forEach(([k,v])=>f.elements[k].value=v);paintRecipeDetail()};
+f.elements.act_grounding.addEventListener('change',paintRecipeDetail);document.getElementById('processStrategySelector').addEventListener('change',paintRecipeDetail);f.elements.regeneration_framework.addEventListener('change',paintRecipeDetail);
+mr.addEventListener('input',paintModel);pr.addEventListener('input',paintPreservation);document.querySelectorAll('[data-tier-index]').forEach(b=>b.onclick=()=>{if(!mr.disabled){mr.value=b.dataset.tierIndex;paintModel()}});document.querySelectorAll('[data-preservation-index]').forEach(b=>b.onclick=()=>{if(!pr.disabled){pr.value=b.dataset.preservationIndex;pr.dispatchEvent(new Event('input'))}});paintModel();paintPreservation()})();
+</script>
+{% endblock %}

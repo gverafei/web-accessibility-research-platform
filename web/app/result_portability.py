@@ -1,0 +1,182 @@
+import base64
+import hashlib
+import json
+import os
+import shutil
+from datetime import date, datetime
+from decimal import Decimal
+from urllib.parse import urlsplit, urlunsplit
+
+
+ARTIFACT_COLUMNS = (
+    "source_snapshot_path", "response_source_path",
+    "screenshot_path", "axe_raw_path", "lighthouse_raw_path",
+    "wave_raw_path", "semantic_raw_path",
+)
+PROVENANCE_COLUMNS = {
+    "id", "experiment_id", "source_result_id", "source_experiment_id",
+    "provenance", "normalized_url", "evaluated_at", "cost_incurred_usd",
+}
+
+
+def ensure_http_scheme(value):
+    value = (value or "").strip()
+    if value.startswith("//"):
+        return f"https:{value}"
+    if "://" not in value:
+        return f"https://{value}"
+    return value
+
+
+def normalize_url(value):
+    value = ensure_http_scheme(value)
+    parsed = urlsplit(value)
+    scheme = parsed.scheme.lower()
+    hostname = (parsed.hostname or "").lower()
+    port = parsed.port
+    if port and not ((scheme == "http" and port == 80) or (scheme == "https" and port == 443)):
+        hostname = f"{hostname}:{port}"
+    path = parsed.path or "/"
+    if path != "/":
+        path = path.rstrip("/") or "/"
+    return urlunsplit((scheme, hostname, path, parsed.query, ""))
+
+
+def evaluation_signature(settings, include_wave, include_semantic, provider, model, axe_standard):
+    payload = {
+        "axe_standard": axe_standard,
+        "include_wave": bool(include_wave),
+        "include_semantic": bool(include_semantic),
+        "semantic_provider": provider if include_semantic else None,
+        "semantic_model": model if include_semantic else None,
+        "wave_report_type": settings.get("wave_report_type") if include_wave else None,
+        "runtime": {
+            key: settings.get(key) for key in (
+                "page_load_timeout_ms", "network_idle_timeout_ms", "page_settle_delay_ms",
+                "dom_stability_window_ms", "dom_stability_timeout_ms", "enable_lazy_load_scroll",
+                "scroll_step_px", "scroll_delay_ms", "max_scroll_steps",
+            )
+        },
+    }
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def json_value(value):
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, Decimal):
+        return float(value)
+    return value
+
+
+def copy_artifacts(result, destination_experiment_id):
+    copied = dict(result)
+    destination = os.path.realpath(f"/results/raw/experiment_{destination_experiment_id}")
+    allowed_root = os.path.realpath("/results/raw")
+    os.makedirs(destination, exist_ok=True)
+    for column in ARTIFACT_COLUMNS:
+        source = result.get(column)
+        resolved = os.path.realpath(source) if source else ""
+        if not resolved.startswith(f"{allowed_root}{os.sep}") or not os.path.isfile(resolved):
+            copied[column] = None
+            continue
+        stem, extension = os.path.splitext(os.path.basename(resolved))
+        target = os.path.join(destination, f"source_{result.get('id', 'import')}_{stem}{extension}")
+        counter = 2
+        while os.path.exists(target):
+            target = os.path.join(destination, f"source_{result.get('id', 'import')}_{stem}_{counter}{extension}")
+            counter += 1
+        shutil.copy2(resolved, target)
+        copied[column] = target
+    return copied
+
+
+def clone_result(cursor, source, destination_experiment_id, provenance, copy_files=True):
+    copied = copy_artifacts(source, destination_experiment_id) if copy_files else dict(source)
+    cursor.execute("SHOW COLUMNS FROM experiment_results")
+    allowed = {row[0] if not isinstance(row, dict) else row["Field"] for row in cursor.fetchall()}
+    columns = [key for key in copied if key in allowed and key not in PROVENANCE_COLUMNS]
+    columns += ["source_result_id", "source_experiment_id", "provenance", "normalized_url", "evaluated_at", "cost_incurred_usd"]
+    values = [copied.get(key) for key in columns[:-6]] + [
+        source.get("source_result_id") or source.get("id"),
+        source.get("source_experiment_id") or source.get("experiment_id"),
+        provenance,
+        normalize_url(source.get("url")),
+        source.get("evaluated_at") or source.get("created_at"),
+        0,
+    ]
+    quoted = ", ".join(f"`{column}`" for column in columns)
+    placeholders = ", ".join(["%s"] * len(columns))
+    cursor.execute(
+        f"INSERT INTO experiment_results (`experiment_id`, {quoted}) VALUES (%s, {placeholders})",
+        [destination_experiment_id, *values],
+    )
+    return cursor.lastrowid
+
+
+def encode_artifacts(result):
+    artifacts = {}
+    allowed_root = os.path.realpath("/results/raw")
+    for column in ARTIFACT_COLUMNS:
+        path = result.get(column)
+        resolved = os.path.realpath(path) if path else ""
+        if resolved.startswith(f"{allowed_root}{os.sep}") and os.path.isfile(resolved):
+            with open(resolved, "rb") as file:
+                artifacts[column] = {
+                    "filename": os.path.basename(resolved),
+                    "base64": base64.b64encode(file.read()).decode("ascii"),
+                }
+    return artifacts
+
+
+def validate_portable_payload(payload):
+    if not isinstance(payload, dict) or payload.get("format") != "warp-experiment" or payload.get("version") != 3:
+        raise ValueError("unsupported format")
+    if not isinstance(payload.get("experiment"), dict):
+        raise ValueError("invalid experiment metadata")
+    environments = payload.get("environment", [])
+    results = payload.get("results")
+    if not isinstance(environments, list) or any(not isinstance(row, dict) for row in environments):
+        raise ValueError("invalid environment metadata")
+    if not isinstance(results, list) or not results:
+        raise ValueError("empty or invalid results")
+    seen = set()
+    for entry in results:
+        if not isinstance(entry, dict) or not isinstance(entry.get("data"), dict):
+            raise ValueError("invalid result")
+        data = entry["data"]
+        parsed = urlsplit(str(data.get("url") or ""))
+        normalized = normalize_url(data.get("url"))
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname or not normalized or normalized in seen:
+            raise ValueError("invalid or duplicate URL")
+        seen.add(normalized)
+        artifacts = entry.get("artifacts", {})
+        if not isinstance(artifacts, dict) or any(key not in ARTIFACT_COLUMNS for key in artifacts):
+            raise ValueError("invalid artifacts")
+        for artifact in artifacts.values():
+            if not isinstance(artifact, dict) or not isinstance(artifact.get("filename"), str) or not isinstance(artifact.get("base64"), str):
+                raise ValueError("invalid artifact")
+            base64.b64decode(artifact["base64"], validate=True)
+    return results
+
+
+def decode_artifacts(result, artifacts, destination_experiment_id):
+    destination = os.path.realpath(f"/results/raw/experiment_{destination_experiment_id}")
+    os.makedirs(destination, exist_ok=True)
+    for column in ARTIFACT_COLUMNS:
+        result[column] = None
+        artifact = (artifacts or {}).get(column)
+        if not artifact:
+            continue
+        filename = os.path.basename(artifact.get("filename") or f"{column}.bin")
+        target = os.path.join(destination, f"import_{filename}")
+        stem, extension = os.path.splitext(target)
+        counter = 2
+        while os.path.exists(target):
+            target = f"{stem}_{counter}{extension}"
+            counter += 1
+        with open(target, "wb") as file:
+            file.write(base64.b64decode(artifact["base64"], validate=True))
+        result[column] = target
+    return result

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Import experiment") }}{% endblock %}
+{% block content %}
+<header class="app-page-heading"><h1>{{ _("Import experiment") }}</h1><p>{{ _("Restore a portable platform export as a new, independent experiment. Use Combine evaluations when you intentionally want to combine stored results.") }}</p></header>
+
+<section class="card shadow-sm">
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data" class="row g-4">
+            <div class="col-12">
+                <label class="form-label" for="experiment_file">{{ _("Portable experiment file") }}</label>
+                <input class="form-control" type="file" id="experiment_file" name="experiment_file" accept=".warp,application/octet-stream" required>
+                <div class="form-text">{{ _("Select a .warp file exported by this platform. The complete file is validated before any data is imported.") }}</div>
+            </div>
+            <div class="col-12">
+                <label class="form-label" for="import_title">{{ _("Imported experiment name") }}</label>
+                <input class="form-control" id="import_title" name="import_title" placeholder="{{ _('Optional') }}">
+                <div class="form-text">{{ _("If left empty, WARP uses the exported experiment name and marks it as imported.") }}</div>
+            </div>
+            <div class="col-12"><button class="btn btn-primary import-submit" type="submit"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9m0 0 4 4m-4-4-4 4M5 4h14"/></svg><span>{{ _("Import experiment") }}</span></button><div class="import-progress mt-3" hidden aria-live="polite"><div class="progress" role="progressbar" aria-label="{{ _('Import in progress') }}"><div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div></div><small>{{ _("Uploading, validating, and restoring the complete experiment. Large files may take several minutes.") }}</small></div></div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>
+const importForm=document.querySelector("form"),importSubmit=document.querySelector(".import-submit"),importProgress=document.querySelector(".import-progress");importForm.addEventListener("submit",event=>{event.preventDefault();importSubmit.disabled=true;importSubmit.setAttribute("aria-busy","true");importSubmit.querySelector("span").textContent={{ _("Importing…")|tojson }};importProgress.hidden=false;requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>HTMLFormElement.prototype.submit.call(importForm),80)))});
+</script>{% endblock %}

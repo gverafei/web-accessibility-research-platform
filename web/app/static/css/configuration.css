@@ -1,0 +1,42 @@
+.configuration-tabs {
+  gap: .45rem;
+  border-bottom: 1px solid var(--line);
+  padding: 0;
+}
+.configuration-tabs .nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: .55rem 1rem;
+  margin-bottom: -1px;
+  border: 1px solid var(--line);
+  border-top: 3px solid transparent;
+  border-radius: 9px 9px 0 0;
+  background: color-mix(in srgb, var(--uv-blue) 7%, var(--surface));
+  color: var(--muted);
+  font-size: .95rem;
+  font-weight: 600;
+}
+.configuration-tabs .nav-link.active {
+  border-color: var(--line);
+  border-top-color: var(--uv-blue);
+  border-bottom-color: var(--surface);
+  background: var(--surface);
+  color: var(--uv-blue);
+}
+.configuration-tabs .nav-link:hover,
+.configuration-tabs .nav-link:focus-visible { color: var(--uv-blue); }
+.configuration-tabs .button-icon { width: 1rem; height: 1rem; margin-right: .45rem; }
+.configuration-tab-content {
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  background: var(--surface);
+}
+@media (max-width: 600px) {
+  .configuration-tabs { padding: 0; gap: .25rem; flex-wrap: nowrap; }
+  .configuration-tabs .nav-link { flex: 1; padding: .55rem .65rem; font-size: .9rem; }
+  .configuration-tab-content { padding: 1rem .75rem; }
+}

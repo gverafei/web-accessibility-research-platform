@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("Evaluations") }}{% endblock %}
+
+{% block content %}
+<header class="app-page-heading"><h1>{{ _("Evaluations") }}</h1><p>{{ _("Review completed studies, manage their pages, and open reproducible reports.") }}</p></header>
+
+{% if experiments %}<section class="mb-4"><div class="metric-grid experiment-summary-grid evaluation-summary-grid"><article class="research-metric"><span>{{ _("Total experiments") }}</span><strong>{{ summary.total_experiments }}</strong><small>{{ summary.completed_experiments }} {{ _("completed") }}</small></article><article class="research-metric"><span>{{ _("WAVE API cost") }}</span><strong>${{ "%.6f"|format(summary.total_cost) }}</strong><small>{{ _("Approximate USD across evaluations") }}</small></article><article class="research-metric"><span>{{ _("WAVE experiments") }}</span><strong>{{ summary.wave_experiments }}</strong><small>{{ "{:,}".format(summary.wave_credits) }} {{ _("API credits") }}</small></article><article class="research-metric"><span>{{ _("Evaluated URLs") }}</span><strong>{{ summary.processed_urls }}</strong><small>{{ _("stored URL results") }}</small></article></div></section>{% endif %}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        {% if experiments %}
+            <div class="list-filter-bar"><label class="visually-hidden" for="evaluationListFilter">{{ _("Filter evaluations") }}</label><div class="list-filter-control"><input class="form-control form-control-sm" id="evaluationListFilter" type="search" placeholder="{{ _('Filter evaluations') }}" autocomplete="off"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg></div><small id="evaluationFilterCount"></small></div>
+            <div class="table-responsive evaluation-history-scroll">
+                <table class="table table-hover align-middle evaluation-history-table">
+                    <thead><tr><th>{{ _("Evaluation") }}</th><th>{{ _("Progress") }}</th><th>{{ _("Acquisition") }}</th><th>{{ _("Tools") }}</th><th>{{ _("Cost and time") }}</th><th><span class="visually-hidden">{{ _("Actions") }}</span></th></tr></thead>
+                    <tbody>
+                        {% for experiment in experiments %}
+                            <tr data-filter-row data-row-open="{{ url_for('experiments.experiment_report_loading', experiment_id=experiment.id) }}" title="{{ _('Double-click to view report') }}">
+                                <td class="evaluation-identity"><span class="evaluation-title">{{ experiment.title }}</span><small>#{{ experiment.id }} · {{ experiment.created_at }}</small><small>{% if experiment.experiment_origin == 'imported' %}{{ _("Imported evaluation") }}{% elif experiment.experiment_origin == 'composed' %}{{ _("Combined evaluation") }}{% elif experiment.source_type == 'tranco' %}{{ _("Tranco stratified sample") }}{% elif experiment.source_type == 'local_html' %}{{ _("Local HTML evaluation") }}{% else %}{{ _("Web evaluation") }}{% endif %}</small></td>
+                                <td class="evaluation-progress">
+                                    {% set total_urls=experiment.urls.splitlines()|length %}{% set progress_count=experiment.completed_urls %}{% set progress=(100 * progress_count / total_urls)|round if total_urls else 0 %}
+                                    {% if experiment.status == "completed" %}
+                                        <span class="badge bg-success">{{ _("Completed") }}</span>{% set progress=100 %}
+                                    {% elif experiment.status == "failed" %}
+                                        <span class="badge bg-danger">{{ _("Failed") }}</span>
+                                    {% elif experiment.status in ("queued", "running") %}
+                                        <span class="badge bg-warning text-dark">{{ _("Running") if experiment.status == "running" else _("Queued") }}</span>
+                                    {% elif experiment.status == "paused" %}
+                                        <span class="badge experiment-status-paused">{{ _("Paused") }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ experiment.status|replace('_',' ') }}</span>
+                                    {% endif %}
+                                    <div class="evaluation-progress-line"><div class="experiment-progress" aria-label="{{ _("Experiment progress") }}"><div style="width:{{ progress }}%"></div></div><span class="evaluation-progress-percent">{{ progress }}%</span></div>
+                                    <small>{{ experiment.completed_urls }}/{{ total_urls }} {{ _("URLs completed") }}</small><small>{{ experiment.processed_urls }} {{ _("reviewed") }} · {{ experiment.failed_urls }} {{ _("failed") }}</small>{% if experiment.tranco_recovery %}<small>{{ _("Controlled recovery and replacement") }}</small>{% endif %}
+                                </td>
+                                <td><span class="evaluation-source-chip"><i aria-hidden="true">{% if experiment.source_type == 'tranco' %}◎{% elif experiment.source_type == 'local_html' %}▤{% else %}↗{% endif %}</i><span><small>{{ _("Source") }}</small><span class="evaluation-chip-label">{% if experiment.source_type == 'tranco' %}Tranco{% elif experiment.source_type == 'local_html' %}{{ _("Local HTML") }}{% else %}{{ _("Web URLs") }}{% endif %}</span></span></span>{% if experiment.reused_urls %}<small class="evaluation-frozen">{{ experiment.reused_urls }} {{ _("frozen observations") }}</small>{% endif %}</td>
+                                <td><div class="evaluation-tools"><span class="evaluation-tool-chip tool-axe"><small>{{ _("Automated") }}</small><span class="evaluation-chip-label">Axe + Lighthouse</span></span>{% if experiment.include_wave %}<span class="evaluation-tool-chip tool-wave"><small>{{ _("Optional") }}</small><span class="evaluation-chip-label">WAVE</span></span>{% endif %}</div></td>
+                                <td class="evaluation-cost"><span>${{ "%.6f"|format(experiment.total_cost|float) }} · {{ "%.1f"|format(experiment.execution_seconds|float) }} s</span>{% if experiment.wave_credits %}<small>{{ experiment.wave_credits }} {{ _("WAVE credits") }}</small>{% endif %}</td>
+                                <td>
+                                    <div class="experiment-actions">
+                                        <a href="{{ url_for('experiments.experiment_report_loading', experiment_id=experiment.id) }}" class="btn btn-sm experiment-action experiment-action-view icon-only-action" title="{{ _('View report') }}" aria-label="{{ _('View report') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></a>
+                                        <a href="{{ url_for('experiments.compose_experiment', target=experiment.id) }}" class="btn btn-sm experiment-action experiment-action-manage icon-only-action" title="{{ _('Combine evaluations') }}" aria-label="{{ _('Combine evaluations') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="3"/><path d="m16.8 18 1 1 1.7-2"/></svg></a>
+                                        <a href="{{ url_for('experiments.download_experiment_json', experiment_id=experiment.id) }}" class="btn btn-sm experiment-action experiment-action-export warp-export icon-only-action" title="{{ _('Export data') }}" aria-label="{{ _('Export data') }}" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg></a>
+                                        {% if experiment.tranco_gap and experiment.status not in ("queued", "running") %}<form method="post" action="{{ url_for('experiments.fill_missing_tranco_sites', experiment_id=experiment.id) }}" data-confirm="{{ _('Fill %(count)s missing URL(s) with the next deterministic reserves from the same popularity groups?', count=experiment.tranco_gap) }}"><button type="submit" class="btn btn-sm experiment-action experiment-action-refill icon-only-action" title="{{ _('Fill missing URLs (%(count)s)', count=experiment.tranco_gap) }}" aria-label="{{ _('Fill missing URLs (%(count)s)', count=experiment.tranco_gap) }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6"/><path d="M12 8v8M8 12h8"/></svg></button></form>{% endif %}
+                                        {% if experiment.status in ("failed", "paused") %}<form method="post" action="{{ url_for('experiments.resume_experiment', experiment_id=experiment.id) }}" data-confirm="{{ _("Resume this experiment? Stored results will be preserved and only pending URLs will be evaluated.") }}"><input type="hidden" name="return_to" value="list"><button type="submit" class="btn btn-sm experiment-action experiment-action-resume icon-only-action" title="{{ _('Resume experiment') }}" aria-label="{{ _('Resume experiment') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6"/></svg></button></form>{% endif %}
+                                        {% if experiment.status in ("queued", "running") %}<form method="post" action="{{ url_for('experiments.pause_experiment', experiment_id=experiment.id) }}" data-confirm="{{ _("Pause this experiment? The URL currently being evaluated may finish, and all stored progress will be preserved.") }}"><input type="hidden" name="return_to" value="list"><button type="submit" class="btn btn-sm experiment-action experiment-action-pause icon-only-action" title="{{ _('Pause experiment') }}" aria-label="{{ _('Pause experiment') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button></form>{% endif %}
+                                        <form class="evaluation-delete-form" method="post" action="{{ url_for('experiments.delete_experiment', experiment_id=experiment.id) }}" data-confirm="{{ _("Delete this evaluation experiment and all its stored results and generated files? This action cannot be undone.") }}" data-list-delete data-delete-error="{{ _('Deletion could not be confirmed. Refresh the list before trying again.') }}" data-confirm-danger="true" data-confirm-label="{{ _("Delete") }}">
+                                            <button type="submit" class="btn btn-sm experiment-action experiment-action-delete icon-only-action" aria-label="{{ _('Delete') }}" title="{{ _("A running evaluation experiment cannot be deleted.") if experiment.status in ("queued", "running") else _("Delete") }}" {% if experiment.status in ("queued", "running") %}disabled{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5"/></svg></button>
+                                        </form>
+                                    </div>
+                                    {% if experiment.resume_count %}<small class="d-block text-muted mt-1">{{ _("Resumed %(count)s time(s) · last %(date)s", count=experiment.resume_count, date=experiment.last_resumed_at) }}</small>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">
+                {% if query %}{{ _("No experiments match your search.") }}{% else %}{{ _("No evaluation experiments have been registered yet.") }}{% endif %}
+            </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}{% if experiments %}<script>const evaluationFilter=document.getElementById('evaluationListFilter'),evaluationRows=[...document.querySelectorAll('.evaluation-history-table tbody tr[data-filter-row]')],evaluationCount=document.getElementById('evaluationFilterCount');const filterEvaluations=()=>{const term=evaluationFilter.value.trim().toLocaleLowerCase();let visible=0;evaluationRows.forEach(row=>{const show=!term||row.textContent.toLocaleLowerCase().includes(term);row.hidden=!show;if(show)visible++});evaluationCount.textContent=term?`${visible} / ${evaluationRows.length}`:''};evaluationFilter.addEventListener('input',filterEvaluations);{% if experiments|selectattr("status", "in", ["queued", "running"])|list %}warpAutoReload(5000,{when:()=>!evaluationFilter.value});{% endif %}</script>{% endif %}{% endblock %}

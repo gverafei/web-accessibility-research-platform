@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Loading evaluation report") }}{% endblock %}
+{% block content %}
+<header class="report-hero loading-hero mb-4">
+    <div>
+        <div class="eyebrow">{{ _("Evaluation report") }}</div>
+        <h1>{{ experiment.title }}</h1>
+        <p class="mb-0">{{ _("Preparing the stored results and charts.") }}</p>
+    </div>
+</header>
+<section class="loading-report" aria-live="polite" aria-busy="true">
+    <div class="loading-status-card">
+        <div class="loading-orbit" aria-hidden="true"><span></span></div>
+        <div class="loading-status-copy">
+            <span class="loading-kicker">{{ _("Evaluation") }} #{{ experiment.id }}</span>
+            <h2>{{ _("Loading report…") }}</h2>
+            <p>{{ _("The report will appear here when its stored results are ready.") }}</p>
+            <div class="loading-progress-track" aria-hidden="true"><div style="width:100%"></div></div>
+        </div>
+    </div>
+    <div class="loading-metric-grid">
+        {% for _item in range(4) %}<article class="loading-tile"><span class="skeleton skeleton-label"></span><span class="skeleton skeleton-value"></span><span class="skeleton skeleton-caption"></span></article>{% endfor %}
+    </div>
+    <div class="loading-card-grid mt-4">
+        {% for _item in range(2) %}<article class="loading-chart-card"><span class="skeleton skeleton-heading"></span><span class="skeleton skeleton-line"></span><span class="skeleton skeleton-chart"></span></article>{% endfor %}
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.location.replace({{ url_for('experiments.experiment_report', experiment_id=experiment.id)|tojson }}),50)));</script>{% endblock %}

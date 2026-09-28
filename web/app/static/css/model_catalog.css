@@ -1,0 +1,7 @@
+.model-catalog-table th{white-space:nowrap;font-size:.78rem;color:#365466}
+.model-catalog-table td:nth-child(2){min-width:250px}
+.model-catalog-table td:nth-child(3),.model-catalog-table td:nth-child(4){min-width:140px}
+.model-provider-results{max-height:360px;overflow:auto;display:grid;gap:.5rem;margin-top:.75rem}
+.model-provider-option{display:grid;gap:.15rem;text-align:left;padding:.75rem 1rem;border:1px solid #b8c9da;border-radius:.6rem;background:var(--bs-body-bg);color:var(--bs-body-color)}
+.model-provider-option:hover,.model-provider-option:focus-visible{border-color:#2161ad;background:color-mix(in srgb,#2161ad 8%,var(--bs-body-bg))}
+.model-provider-option small{color:var(--bs-secondary-color)}

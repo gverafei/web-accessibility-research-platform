@@ -1,0 +1,91 @@
+services:
+  web:
+    image: gverafei/accessibility-web
+    container_name: accessibility_web
+    ports:
+      - "80:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./results:/results
+      - ./data:/data
+      - ./datasets:/datasets
+    depends_on:
+      - db
+      - evaluator
+      - dataset-server
+      - qdrant
+    networks:
+      - accessibility_net
+
+  worker:
+    image: gverafei/accessibility-web
+    container_name: accessibility_worker
+    command: ["python", "worker.py"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./results:/results
+      - ./data:/data
+      - ./datasets:/datasets
+    depends_on:
+      - db
+      - evaluator
+      - dataset-server
+      - qdrant
+    networks:
+      - accessibility_net
+
+  evaluator:
+    init: true
+    image: gverafei/accessibility-evaluator
+    container_name: accessibility_evaluator
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./results:/results
+      - ./data:/data
+    networks:
+      - accessibility_net
+
+  dataset-server:
+    build: ./dataset_server
+    image: gverafei/accessibility-dataset-server
+    container_name: accessibility_dataset_server
+    restart: unless-stopped
+    volumes:
+      - ./datasets:/datasets:ro
+    networks:
+      - accessibility_net
+
+  db:
+    image: mysql:8.0
+    container_name: accessibility_db
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - accessibility_net
+
+  qdrant:
+    image: qdrant/qdrant:v1.15.4
+    container_name: accessibility_qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - accessibility_net
+
+volumes:
+  mysql_data:
+  qdrant_data:
+
+networks:
+  accessibility_net:
+    driver: bridge

@@ -1,0 +1,4982 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Accessibility Docker Platform 1.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-09-10 06:55+0000\n"
+"PO-Revision-Date: 2026-08-24 00:00-0600\n"
+"Last-Translator: Project maintainers\n"
+"Language: es\n"
+"Language-Team: Spanish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app/routes/experiments.py:212
+msgid "Configuration saved. New experiments will use these values."
+msgstr "Configuración guardada. Los nuevos experimentos utilizarán estos valores."
+
+#: app/routes/experiments.py:234
+msgid "The confirmation text did not match. No experiments were deleted."
+msgstr "El texto de confirmación no coincide. No se eliminó ningún experimento."
+
+#: app/routes/experiments.py:244
+msgid "Experiments cannot be cleared while an evaluation is queued or running."
+msgstr ""
+"No se pueden eliminar los experimentos mientras haya una evaluación en "
+"cola o en ejecución."
+
+#: app/routes/experiments.py:264
+msgid "The experiments could not be cleared from the database."
+msgstr "No se pudieron eliminar los experimentos de la base de datos."
+
+#: app/routes/experiments.py:284
+#, python-format
+msgid ""
+"All %(count)s evaluation experiments and their generated files were "
+"deleted."
+msgstr ""
+"Se eliminaron los %(count)s experimentos de evaluación y sus archivos "
+"generados."
+
+#: app/routes/experiments.py:286
+msgid ""
+"All database experiments were deleted, but some generated files could not"
+" be removed."
+msgstr ""
+"Los registros de la base de datos fueron eliminados, pero algunos "
+"archivos generados no pudieron borrarse."
+
+#: app/routes/experiments.py:460 app/routes/experiments.py:461
+msgid "Select at least one stored URL result."
+msgstr "Selecciona al menos un resultado por URL almacenado."
+
+#: app/routes/experiments.py:480 app/routes/experiments.py:481
+msgid "The selected stored results no longer exist."
+msgstr "Los resultados almacenados seleccionados ya no existen."
+
+#: app/routes/experiments.py:489
+#, python-format
+msgid "Combined evaluation %(timestamp)s"
+msgstr "Evaluación combinada %(timestamp)s"
+
+#: app/routes/experiments.py:589 app/routes/experiments.py:590
+#: app/templates/compose.html:46
+msgid "The selected results could not be combined."
+msgstr "No fue posible combinar los resultados seleccionados."
+
+#: app/routes/experiments.py:607
+#, python-format
+msgid ""
+"%(count)s stored URL result(s) were added; %(replaced)s existing "
+"result(s) were replaced."
+msgstr ""
+"Se agregaron %(count)s resultado(s) de URL y se reemplazaron %(replaced)s"
+" resultado(s) existentes."
+
+#: app/routes/experiments.py:609
+#, python-format
+msgid "%(count)s stored URL result(s) were added."
+msgstr "Se agregaron %(count)s resultado(s) por URL almacenados."
+
+#: app/routes/experiments.py:611
+msgid ""
+"No results were added because every selected URL already exists in the "
+"destination experiment."
+msgstr ""
+"No se agregó ningún resultado porque todas las URLs seleccionadas ya "
+"existen en el experimento de destino."
+
+#: app/routes/experiments.py:624 app/routes/experiments.py:792
+#: app/routes/experiments.py:867 app/routes/experiments.py:1468
+msgid "The requested evaluation experiment does not exist."
+msgstr "El experimento de evaluación solicitado no existe."
+
+#: app/routes/experiments.py:666
+msgid "Select an exported .warp experiment file."
+msgstr "Selecciona un archivo de experimento .warp exportado."
+
+#: app/routes/experiments.py:674
+msgid "The selected file is not a supported experiment export."
+msgstr "El archivo seleccionado no es una exportación de experimento compatible."
+
+#: app/routes/experiments.py:771
+msgid "The experiment could not be imported."
+msgstr "No fue posible importar el experimento."
+
+#: app/routes/experiments.py:775
+#, python-format
+msgid "%(count)s imported URL result(s) were added."
+msgstr "Se agregaron %(count)s resultado(s) por URL importados."
+
+#: app/routes/experiments.py:798 app/templates/experiments.html:77
+msgid "A running evaluation experiment cannot be deleted."
+msgstr "No se puede eliminar un experimento de evaluación en ejecución."
+
+#: app/routes/experiments.py:814
+msgid "The evaluation experiment could not be deleted from the database."
+msgstr "No se pudo eliminar el experimento de evaluación de la base de datos."
+
+#: app/routes/experiments.py:832
+msgid "Evaluation experiment and all associated data were deleted."
+msgstr ""
+"El experimento de evaluación y todos sus datos asociados fueron "
+"eliminados."
+
+#: app/routes/experiments.py:835
+msgid ""
+"The database records were deleted, but some generated files could not be "
+"removed."
+msgstr ""
+"Los registros de la base de datos fueron eliminados, pero algunos "
+"archivos generados no pudieron borrarse."
+
+#: app/routes/experiments.py:853
+msgid "Select at least one URL result."
+msgstr "Selecciona al menos un resultado de URL."
+
+#: app/routes/experiments.py:870
+msgid "URL results cannot be removed while an experiment is running."
+msgstr ""
+"No se pueden eliminar resultados de URL mientras se ejecuta un "
+"experimento."
+
+#: app/routes/experiments.py:887
+msgid "The selected URL results are no longer available."
+msgstr "Los resultados de URL seleccionados ya no están disponibles."
+
+#: app/routes/experiments.py:923
+msgid "The selected URL results could not be removed."
+msgstr "No se pudieron eliminar los resultados de URL seleccionados."
+
+#: app/routes/experiments.py:938
+msgid "The experiment was deleted because all of its URL results were removed."
+msgstr "El experimento se eliminó porque se quitaron todos sus resultados de URL."
+
+#: app/routes/experiments.py:940
+msgid "The experiment was deleted, but some generated files could not be removed."
+msgstr ""
+"El experimento se eliminó, pero no se pudieron borrar algunos archivos "
+"generados."
+
+#: app/routes/experiments.py:953
+#, python-format
+msgid "%(count)s URL result(s) were removed from the experiment."
+msgstr "Se eliminaron %(count)s resultado(s) de URL del experimento."
+
+#: app/routes/experiments.py:955
+msgid ""
+"The URL results were removed, but some generated files could not be "
+"deleted."
+msgstr ""
+"Los resultados de URL se eliminaron, pero no se pudieron borrar algunos "
+"archivos generados."
+
+#: app/routes/experiments.py:1050
+msgid "Correlation cannot be calculated"
+msgstr "Correlación no calculable"
+
+#: app/routes/experiments.py:1055
+msgid "strong"
+msgstr "fuerte"
+
+#: app/routes/experiments.py:1057
+msgid "moderate"
+msgstr "moderada"
+
+#: app/routes/experiments.py:1059
+msgid "weak"
+msgstr "débil"
+
+#: app/routes/experiments.py:1061
+msgid "very weak"
+msgstr "muy débil"
+
+#: app/routes/experiments.py:1063
+msgid "positive"
+msgstr "positiva"
+
+#: app/routes/experiments.py:1063
+msgid "negative"
+msgstr "negativa"
+
+#: app/routes/experiments.py:1064
+#, python-format
+msgid "%(direction)s %(strength)s correlation"
+msgstr "Correlación %(direction)s %(strength)s"
+
+#: app/routes/experiments.py:1634 app/routes/experiments.py:1756
+msgid "The selected LLM provider is not configured in the environment."
+msgstr "El proveedor LLM seleccionado no está configurado en el entorno."
+
+#: app/routes/experiments.py:1637 app/routes/experiments.py:1759
+msgid "WAVE API is not configured in the environment."
+msgstr "La API de WAVE no está configurada en el entorno."
+
+#: app/routes/experiments.py:1642 app/routes/experiments.py:1765
+#, python-format
+msgid "Evaluation %(timestamp)s"
+msgstr "Evaluación %(timestamp)s"
+
+#: app/routes/experiments.py:1664 app/routes/experiments.py:1771
+msgid "No URLs were provided and no valid internal dataset was found."
+msgstr "No se proporcionaron URLs y no se encontró un dataset interno válido."
+
+#: app/routes/experiments.py:1733
+msgid "The evaluation experiment was queued and will continue in the background."
+msgstr ""
+"El experimento de evaluación fue puesto en cola y continuará en segundo "
+"plano."
+
+#: app/routes/experiments.py:2032
+msgid "Accessibility evaluation experiment completed successfully."
+msgstr "El experimento de evaluación de accesibilidad finalizó correctamente."
+
+#: app/routes/experiments.py:2042
+#, python-format
+msgid "The accessibility evaluation experiment could not be completed: %(error)s"
+msgstr ""
+"No se pudo completar el experimento de evaluación de accesibilidad: "
+"%(error)s"
+
+#: app/routes/experiments.py:2262
+msgid "Invalid tool requested for download."
+msgstr "Herramienta no válida para descarga."
+
+#: app/routes/experiments.py:2281
+msgid "The requested result was not found."
+msgstr "No se encontró el resultado solicitado."
+
+#: app/routes/experiments.py:2287
+msgid "The requested file does not exist or was not generated."
+msgstr "El archivo solicitado no existe o no fue generado."
+
+#: app/templates/about.html:2
+msgid "About"
+msgstr "Acerca de"
+
+#: app/templates/about.html:3
+msgid "Version"
+msgstr "Versión"
+
+#: app/templates/about.html:3
+msgid "Version date"
+msgstr "Fecha de la versión"
+
+#: app/templates/about.html:3
+msgid "Authors"
+msgstr "Autores"
+
+#: app/templates/about.html:3
+msgid "Contacts"
+msgstr "Contactos"
+
+#: app/templates/about.html:3
+msgid "Affiliation"
+msgstr "Afiliación"
+
+#: app/templates/about.html:3
+msgid "Faculty of Statistics and Informatics"
+msgstr "Facultad de Estadística e Informática"
+
+#: app/templates/about.html:3
+msgid "Universidad Veracruzana"
+msgstr ""
+
+#: app/templates/about.html:3
+msgid "Repository"
+msgstr "Repositorio"
+
+#: app/templates/base.html:5
+msgid "Reproducible Web Accessibility"
+msgstr "Accesibilidad web reproducible"
+
+#: app/templates/base.html:22
+msgid "New evaluation"
+msgstr "Nueva evaluación"
+
+#: app/templates/base.html:23 app/templates/experiments.html:3
+msgid "Evaluation experiments"
+msgstr "Experimentos de evaluación"
+
+#: app/templates/base.html:24 app/templates/compose.html:2
+#: app/templates/experiments.html:74 app/templates/report.html:19
+msgid "Manage URLs"
+msgstr "Administrar URL"
+
+#: app/templates/base.html:25
+msgid "Import"
+msgstr "Importar"
+
+#: app/templates/base.html:26 app/templates/configuration.html:2
+msgid "Configuration"
+msgstr "Configuración"
+
+#: app/templates/base.html:32 app/templates/base.html:59
+msgid "Search experiments and URLs"
+msgstr "Buscar experimentos y URL"
+
+#: app/templates/base.html:35
+msgid "Language"
+msgstr "Idioma"
+
+#: app/templates/base.html:45 app/templates/base.html:49
+#: app/templates/configuration.html:8
+msgid "Color theme"
+msgstr "Tema de color"
+
+#: app/templates/base.html:52 app/templates/configuration.html:8
+msgid "Light"
+msgstr "Claro"
+
+#: app/templates/base.html:53 app/templates/configuration.html:8
+msgid "Dark"
+msgstr "Oscuro"
+
+#: app/templates/base.html:54 app/templates/configuration.html:8
+msgid "Follow operating system"
+msgstr "Seguir el sistema operativo"
+
+#: app/templates/base.html:59
+msgid "Close"
+msgstr "Cerrar"
+
+#: app/templates/base.html:59
+msgid "Start typing to search experiment names, URLs, or status."
+msgstr "Empieza a escribir para buscar nombres, URL o estados."
+
+#: app/templates/base.html:76
+msgid "About this research software"
+msgstr "Acerca de este software de investigación"
+
+#: app/templates/base.html:87 app/templates/experiments.html:88
+msgid "No experiments match your search."
+msgstr "Ningún experimento coincide con la búsqueda."
+
+#: app/templates/base.html:87
+msgid "Search suggestions are temporarily unavailable."
+msgstr "Las sugerencias de búsqueda no están disponibles temporalmente."
+
+#: app/templates/compose.html:4
+msgid "Manage experiment URLs"
+msgstr "Administrar URL del experimento"
+
+#: app/templates/compose.html:4
+msgid ""
+"Create, extend, replace, or curate URL datasets while preserving the "
+"original evaluation date and provenance."
+msgstr ""
+"Crea, amplía, reemplaza o depura conjuntos de URL conservando la fecha de"
+" evaluación y la procedencia originales."
+
+#: app/templates/compose.html:9
+msgid "Experiments"
+msgstr "Experimentos"
+
+#: app/templates/compose.html:10
+msgid "New dataset"
+msgstr "Nuevo conjunto"
+
+#: app/templates/compose.html:10
+msgid "Create from selected results"
+msgstr "Crear con los resultados seleccionados"
+
+#: app/templates/compose.html:11
+msgid "Open experiment"
+msgstr "Abrir experimento"
+
+#: app/templates/compose.html:16
+msgid "URLs in selected experiment"
+msgstr "URL del experimento seleccionado"
+
+#: app/templates/compose.html:16 app/templates/experiments.html:73
+msgid "View report"
+msgstr "Ver reporte"
+
+#: app/templates/compose.html:18
+msgid "Select all"
+msgstr "Seleccionar todo"
+
+#: app/templates/compose.html:18
+msgid "Filter current URLs"
+msgstr "Filtrar URL actuales"
+
+#: app/templates/compose.html:18
+msgid "selected"
+msgstr "seleccionados"
+
+#: app/templates/compose.html:18
+msgid "Remove"
+msgstr "Eliminar"
+
+#: app/templates/compose.html:19 app/templates/experiments.html:22
+msgid "Status"
+msgstr "Estado"
+
+#: app/templates/compose.html:19 app/templates/compose.html:33
+msgid "Evaluated"
+msgstr "Evaluado"
+
+#: app/templates/compose.html:19
+msgid "Source"
+msgstr "Origen"
+
+#: app/templates/compose.html:25
+msgid "Add URLs from another experiment"
+msgstr "Agregar URL desde otro experimento"
+
+#: app/templates/compose.html:25
+msgid "Create a new dataset"
+msgstr "Crear un conjunto nuevo"
+
+#: app/templates/compose.html:28 app/templates/compose.html:33
+#: app/templates/report.html:87 app/templates/report.html:103
+msgid "Source experiment"
+msgstr "Experimento de origen"
+
+#: app/templates/compose.html:28
+msgid "Choose a source folder"
+msgstr "Elige una carpeta de origen"
+
+#: app/templates/compose.html:28
+msgid "New experiment name"
+msgstr "Nombre del nuevo experimento"
+
+#: app/templates/compose.html:28
+msgid ""
+"Optional — If left empty, Combined evaluation + the current date and time"
+" will be used"
+msgstr ""
+"Opcional — Si se deja vacío, se usará Evaluación combinada + la fecha y "
+"hora actual"
+
+#: app/templates/compose.html:29
+msgid "Add selected"
+msgstr "Agregar seleccionados"
+
+#: app/templates/compose.html:31
+msgid "Replace matching URLs"
+msgstr "Reemplazar URL coincidentes"
+
+#: app/templates/compose.html:31
+msgid ""
+"Use the selected observation when this experiment already contains the "
+"same URL."
+msgstr ""
+"Usa la observación seleccionada cuando este experimento ya contiene la "
+"misma URL."
+
+#: app/templates/compose.html:32
+msgid "Select all visible"
+msgstr "Seleccionar todo lo visible"
+
+#: app/templates/compose.html:32
+msgid "Search URLs in source"
+msgstr "Buscar URL en el origen"
+
+#: app/templates/compose.html:32
+msgid "Select rows or drag them into the URL list above."
+msgstr "Selecciona filas o arrástralas a la lista de URL superior."
+
+#: app/templates/compose.html:33
+msgid "Already present"
+msgstr "Ya está presente"
+
+#: app/templates/compose.html:46
+#, python-format
+msgid "URLs updated successfully: %(added)s added, %(replaced)s replaced."
+msgstr ""
+"URL actualizadas correctamente: %(added)s agregadas y %(replaced)s "
+"reemplazadas."
+
+#: app/templates/compose.html:46
+#, python-format
+msgid "%(count)s URL result(s) added successfully."
+msgstr "Se agregaron correctamente %(count)s resultado(s) de URL."
+
+#: app/templates/compose.html:46
+msgid "The URLs could not be added. Please try again."
+msgstr "No se pudieron agregar las URL. Inténtalo de nuevo."
+
+#: app/templates/compose.html:47
+msgid ""
+"Every URL is selected. Remove them and delete the entire experiment and "
+"its generated files? This action cannot be undone."
+msgstr ""
+"Todas las URL están seleccionadas. ¿Deseas eliminarlas junto con el "
+"experimento completo y sus archivos generados? Esta acción no se puede "
+"deshacer."
+
+#: app/templates/compose.html:47
+msgid ""
+"Remove the selected URL results and their generated files? This action "
+"cannot be undone."
+msgstr ""
+"¿Eliminar los resultados de URL seleccionados y sus archivos generados? "
+"Esta acción no se puede deshacer."
+
+#: app/templates/configuration.html:5
+msgid "Research configuration"
+msgstr "Configuración de investigación"
+
+#: app/templates/configuration.html:5
+msgid ""
+"These defaults apply to new experiments and are recorded for "
+"reproducibility."
+msgstr ""
+"Estos valores predeterminados se aplican a los nuevos experimentos y se "
+"registran para su reproducibilidad."
+
+#: app/templates/configuration.html:7
+msgid "Internal dataset"
+msgstr "Dataset interno"
+
+#: app/templates/configuration.html:7
+msgid ""
+"These URLs are evaluated when the URL field of a new experiment is left "
+"empty."
+msgstr ""
+"Estas URLs se evalúan cuando el campo de URLs de un experimento nuevo se "
+"deja vacío."
+
+#: app/templates/configuration.html:7
+msgid "Default URLs"
+msgstr "URLs predeterminadas"
+
+#: app/templates/configuration.html:7
+msgid ""
+"Enter one URL per line. HTTPS is added automatically when the protocol is"
+" omitted."
+msgstr ""
+"Escriba una URL por línea. HTTPS se agrega automáticamente cuando se "
+"omite el protocolo."
+
+#: app/templates/configuration.html:8
+msgid "Interface appearance"
+msgstr "Apariencia de la interfaz"
+
+#: app/templates/configuration.html:8
+msgid ""
+"Choose a compact light or dark interface without changing experiment data"
+" or exported reports."
+msgstr ""
+"Elija una interfaz compacta clara u oscura sin modificar los datos de los"
+" experimentos ni los reportes exportados."
+
+#: app/templates/configuration.html:8
+msgid "The selected theme applies to every page on this installation."
+msgstr "El tema seleccionado se aplica a todas las páginas de esta instalación."
+
+#: app/templates/configuration.html:9
+msgid "Installed axe-core version"
+msgstr "Versión instalada de axe-core"
+
+#: app/templates/configuration.html:9
+msgid ""
+"The executable version belongs to the evaluator image. Upgrade the image "
+"to change it; each report records the exact version used."
+msgstr ""
+"La versión ejecutable pertenece a la imagen del evaluador. Actualice la "
+"imagen para cambiarla; cada reporte registra la versión exacta utilizada."
+
+#: app/templates/configuration.html:10
+msgid "Default WCAG profile"
+msgstr "Perfil WCAG predeterminado"
+
+#: app/templates/configuration.html:11
+msgid "Show Axe Best Practices in reports"
+msgstr "Mostrar buenas prácticas de Axe en los reportes"
+
+#: app/templates/configuration.html:11
+msgid ""
+"Display only. Adds Best Practices to Axe totals and shows their separate "
+"column in every compatible experiment."
+msgstr ""
+"Sólo controla la visualización. Suma las buenas prácticas a los totales "
+"de Axe y muestra su columna separada en todos los experimentos "
+"compatibles."
+
+#: app/templates/configuration.html:12
+msgid "Show Failed rules in URL measurement matrix"
+msgstr "Mostrar Reglas fallidas en la matriz por URL"
+
+#: app/templates/configuration.html:12
+msgid "Display only; does not change the Axe scan."
+msgstr "Sólo controla la visualización; no modifica el análisis de Axe."
+
+#: app/templates/configuration.html:13
+msgid "Show Needs review in URL measurement matrix"
+msgstr "Mostrar Requiere revisión en la matriz por URL"
+
+#: app/templates/configuration.html:13
+msgid ""
+"Displays incomplete checks that require expert review; it does not change"
+" the scan."
+msgstr ""
+"Muestra comprobaciones incompletas que requieren revisión experta; no "
+"modifica el análisis."
+
+#: app/templates/configuration.html:14
+msgid "Show Axe densities in overview and URL matrix"
+msgstr "Mostrar densidades Axe en el resumen y la matriz por URL"
+
+#: app/templates/configuration.html:14
+msgid "Display only; adds the two optional page-size-normalized metrics."
+msgstr ""
+"Sólo controla la visualización; agrega las dos métricas opcionales "
+"normalizadas por tamaño de página."
+
+#: app/templates/configuration.html:16
+msgid "External services"
+msgstr "Servicios externos"
+
+#: app/templates/configuration.html:16
+msgid ""
+"Leave a secret empty to keep its current value. Values are stored only in"
+" this local installation."
+msgstr ""
+"Deje un secreto vacío para conservar su valor actual. Los valores se "
+"almacenan únicamente en esta instalación local."
+
+#: app/templates/configuration.html:17 app/templates/configuration.html:20
+msgid "configured"
+msgstr "configurada"
+
+#: app/templates/configuration.html:17 app/templates/configuration.html:20
+msgid "Not configured"
+msgstr "No configurada"
+
+#: app/templates/configuration.html:21 app/templates/report.html:42
+msgid "statistics and item-type breakdown"
+msgstr "estadísticas y desglose por tipo de hallazgo"
+
+#: app/templates/configuration.html:21
+msgid ""
+"Fixed because the research report requires the category breakdown. Types "
+"3 and 4 cost more credits without adding measurements used by the current"
+" report."
+msgstr ""
+
+#: app/templates/configuration.html:21
+msgid "Cost per WAVE credit (USD)"
+msgstr "Costo por crédito WAVE (USD)"
+
+#: app/templates/configuration.html:21
+msgid ""
+"Default estimate based on the published WAVE API credit price; update it "
+"if your subscription rate differs."
+msgstr ""
+"Estimación predeterminada basada en el precio publicado de los créditos "
+"de la API de WAVE; actualícela si la tarifa de su suscripción es "
+"diferente."
+
+#: app/templates/configuration.html:23
+msgid "Dynamic-page evaluation protocol"
+msgstr "Protocolo de evaluación de páginas dinámicas"
+
+#: app/templates/configuration.html:23
+msgid ""
+"Stabilizes client-rendered and interaction-dependent pages, including "
+"sites built with React, Angular, Vue, and similar frameworks, before "
+"capturing evidence and running Axe."
+msgstr ""
+"Estabiliza páginas renderizadas en el cliente y dependientes de "
+"interacción, incluidos sitios construidos con React, Angular, Vue y "
+"frameworks similares, antes de capturar evidencia y ejecutar Axe."
+
+#: app/templates/configuration.html:23
+msgid "Activate lazy content with pointer movement and scrolling"
+msgstr ""
+"Activar contenido diferido mediante movimiento del puntero y "
+"desplazamiento"
+
+#: app/templates/configuration.html:24
+msgid "Regional settings"
+msgstr "Configuración regional"
+
+#: app/templates/configuration.html:24
+msgid "Experiment timezone"
+msgstr "Zona horaria de los experimentos"
+
+#: app/templates/configuration.html:24
+msgid ""
+"Select the local timezone used for experiment timestamps and history. "
+"Daylight-saving changes are handled automatically."
+msgstr ""
+"Seleccione la zona horaria local utilizada para las marcas de tiempo y el"
+" historial de los experimentos. Los cambios de horario estacional se "
+"gestionan automáticamente."
+
+#: app/templates/configuration.html:25
+msgid "Save configuration"
+msgstr "Guardar configuración"
+
+#: app/templates/configuration.html:26
+msgid ""
+"Deployment-only infrastructure settings remain in the environment: "
+"database connectivity, internal service addresses, session protection, "
+"and container image configuration. They must be defined before the "
+"interface starts."
+msgstr ""
+"La configuración de infraestructura exclusiva del despliegue permanece en"
+" el entorno: conexión con la base de datos, direcciones de servicios "
+"internos, protección de sesión y configuración de imágenes de contenedor."
+" Debe definirse antes de iniciar la interfaz."
+
+#: app/templates/configuration.html:27
+msgid "Danger zone"
+msgstr "Zona de peligro"
+
+#: app/templates/configuration.html:27
+msgid ""
+"Permanently delete every evaluation experiment, database result, "
+"screenshot, and generated raw file. Research configuration and API keys "
+"are preserved. This is disabled while an experiment is queued or running."
+msgstr ""
+"Elimina permanentemente todos los experimentos de evaluación, resultados "
+"de la base de datos, capturas de pantalla y archivos sin procesar "
+"generados. La configuración de investigación y las claves API se "
+"conservan. Esta opción se deshabilita mientras haya un experimento en "
+"cola o en ejecución."
+
+#: app/templates/configuration.html:27
+#, python-format
+msgid "Type %(phrase)s to confirm"
+msgstr "Escribe %(phrase)s para confirmar"
+
+#: app/templates/configuration.html:27
+msgid "Delete all experiments"
+msgstr "Eliminar todos los experimentos"
+
+#: app/templates/configuration.html:30
+msgid ""
+"This will permanently delete all experiments and generated evidence. "
+"Continue?"
+msgstr ""
+"Esto eliminará permanentemente todos los experimentos y la evidencia "
+"generada. ¿Deseas continuar?"
+
+#: app/templates/error.html:2
+msgid "Something went wrong"
+msgstr "Algo salió mal"
+
+#: app/templates/error.html:7
+msgid "We could not display this page"
+msgstr "No pudimos mostrar esta página"
+
+#: app/templates/error.html:8
+msgid ""
+"An unexpected local error occurred. Your saved experiments and "
+"configuration have not been intentionally changed. Technical details were"
+" recorded in the application logs."
+msgstr ""
+"Ocurrió un error local inesperado. Sus experimentos guardados y su "
+"configuración no se modificaron intencionalmente. Los detalles técnicos "
+"se registraron en los logs de la aplicación."
+
+#: app/templates/error.html:10
+msgid "Return to new evaluation"
+msgstr "Volver a nueva evaluación"
+
+#: app/templates/error.html:11 app/templates/report.html:9
+msgid "View experiments"
+msgstr "Ver experimentos"
+
+#: app/templates/experiments.html:6
+msgid "Registered evaluation experiments"
+msgstr "Experimentos de evaluación registrados"
+
+#: app/templates/experiments.html:8
+msgid "Total experiments"
+msgstr "Total de experimentos"
+
+#: app/templates/experiments.html:8
+msgid "completed"
+msgstr "completado"
+
+#: app/templates/experiments.html:8 app/templates/report.html:40
+msgid "WAVE API cost"
+msgstr "Costo de API WAVE"
+
+#: app/templates/experiments.html:8 app/templates/report.html:40
+msgid "Approximate USD across evaluations"
+msgstr "USD aproximados en las evaluaciones"
+
+#: app/templates/experiments.html:8 app/templates/experiments.html:70
+#: app/templates/report.html:29
+msgid "tokens"
+msgstr "tokens"
+
+#: app/templates/experiments.html:8
+msgid "WAVE experiments"
+msgstr "Experimentos con WAVE"
+
+#: app/templates/experiments.html:8 app/templates/report.html:28
+msgid "API credits"
+msgstr "créditos de API"
+
+#: app/templates/experiments.html:8
+msgid "Evaluated URLs"
+msgstr "URLs evaluadas"
+
+#: app/templates/experiments.html:8
+msgid "stored URL results"
+msgstr "resultados por URL almacenados"
+
+#: app/templates/experiments.html:18 app/templates/report.html:19
+msgid "Evaluation experiment"
+msgstr "Experimento de evaluación"
+
+#: app/templates/experiments.html:23
+msgid "Date"
+msgstr "Fecha"
+
+#: app/templates/experiments.html:24
+msgid "Cost"
+msgstr "Costo"
+
+#: app/templates/experiments.html:25
+msgid "Actions"
+msgstr "Acciones"
+
+#: app/templates/experiments.html:32
+msgid "frozen"
+msgstr "congelados"
+
+#: app/templates/experiments.html:35
+msgid "failed"
+msgstr "fallidas"
+
+#: app/templates/experiments.html:41 app/templates/experiments.html:51
+msgid "No"
+msgstr "No"
+
+#: app/templates/experiments.html:48
+msgid "Legacy experiment"
+msgstr "Experimento anterior"
+
+#: app/templates/experiments.html:61 app/templates/report.html:11
+msgid "Experiment progress"
+msgstr "Progreso del experimento"
+
+#: app/templates/experiments.html:70 app/templates/report.html:99
+msgid "WAVE credits"
+msgstr "Créditos WAVE"
+
+#: app/templates/experiments.html:75 app/templates/report.html:19
+msgid "Export data"
+msgstr "Exportar datos"
+
+#: app/templates/experiments.html:76
+msgid ""
+"Delete this evaluation experiment and all its stored results and "
+"generated files? This action cannot be undone."
+msgstr ""
+"¿Eliminar este experimento de evaluación junto con todos sus resultados "
+"almacenados y archivos generados? Esta acción no se puede deshacer."
+
+#: app/templates/experiments.html:77
+msgid "Delete"
+msgstr "Eliminar"
+
+#: app/templates/experiments.html:88
+msgid "No evaluation experiments have been registered yet."
+msgstr "Todavía no se han registrado experimentos de evaluación."
+
+#: app/templates/import.html:2 app/templates/import.html:6
+#: app/templates/import.html:32
+msgid "Import experiment"
+msgstr "Importar experimento"
+
+#: app/templates/import.html:7
+msgid ""
+"Restore a portable platform export as a new experiment or add its "
+"previously unseen URLs to an existing completed experiment."
+msgstr ""
+"Restaure una exportación portable de la plataforma como un experimento "
+"nuevo o agregue sus URLs aún no incluidas a un experimento completado."
+
+#: app/templates/import.html:9
+msgid "Back to experiments"
+msgstr "Volver a experimentos"
+
+#: app/templates/import.html:16
+msgid "Portable experiment file"
+msgstr "Archivo portable del experimento"
+
+#: app/templates/import.html:18
+msgid ""
+"Select a .warp file exported by this platform. The complete file is "
+"validated before any data is imported."
+msgstr ""
+"Selecciona un archivo .warp exportado por esta plataforma. El archivo "
+"completo se valida antes de importar cualquier dato."
+
+#: app/templates/import.html:21
+msgid "Destination"
+msgstr "Destino"
+
+#: app/templates/import.html:23
+msgid "Create a new experiment"
+msgstr "Crear un nuevo experimento"
+
+#: app/templates/import.html:28
+msgid "Imported experiment name"
+msgstr "Nombre del experimento importado"
+
+#: app/templates/import.html:29
+msgid "Optional"
+msgstr "Opcional"
+
+#: app/templates/import.html:30
+msgid "Used only when creating a new experiment."
+msgstr "Se usa únicamente al crear un experimento nuevo."
+
+#: app/templates/index.html:3
+msgid "New accessibility evaluation experiment"
+msgstr "Nuevo experimento de evaluación de accesibilidad"
+
+#: app/templates/index.html:9
+msgid "New web accessibility evaluation experiment"
+msgstr "Nuevo experimento de evaluación de accesibilidad web"
+
+#: app/templates/index.html:12
+msgid ""
+"This workflow runs a reproducible web accessibility evaluation experiment"
+" using automated tools and optional LLM-assisted semantic review."
+msgstr ""
+"Este flujo ejecuta un experimento reproducible de evaluación de "
+"accesibilidad web mediante herramientas automatizadas y revisión "
+"semántica opcional asistida por LLM."
+
+#: app/templates/index.html:17
+msgid "Evaluation dataset"
+msgstr "Dataset de evaluación"
+
+#: app/templates/index.html:18
+msgid "Evaluation source"
+msgstr "Fuente de evaluación"
+
+#: app/templates/index.html:21
+msgid "Web URLs"
+msgstr "URL web"
+
+#: app/templates/index.html:25
+msgid "Local HTML dataset"
+msgstr "Conjunto de HTML locales"
+
+#: app/templates/index.html:30
+msgid "Evaluation experiment name"
+msgstr "Nombre del experimento de evaluación"
+
+#: app/templates/index.html:36
+msgid ""
+"Example: Evaluation of institutional websites. If left empty, the current"
+" date and time will be used."
+msgstr ""
+"Ejemplo: Evaluación de sitios institucionales. Si se deja vacío, se usará"
+" la fecha y hora actual."
+
+#: app/templates/index.html:40
+msgid "URLs to evaluate"
+msgstr "URLs a evaluar"
+
+#: app/templates/index.html:46 app/templates/index.html:47
+msgid "Enter one URL per line. If left empty, the internal dataset will be used."
+msgstr "Escriba una URL por línea. Si se deja vacío, se usará el dataset interno."
+
+#: app/templates/index.html:52
+msgid ""
+"Upload a ZIP that preserves the site's folders, or select individual HTML"
+" files. Local datasets are evaluated without WAVE because the remote WAVE"
+" API cannot access them."
+msgstr ""
+"Sube un ZIP que conserve las carpetas del sitio o selecciona archivos "
+"HTML individuales. Los conjuntos locales se evalúan sin WAVE porque su "
+"API remota no puede acceder a ellos."
+
+#: app/templates/index.html:55
+msgid "HTML dataset ZIP"
+msgstr "ZIP del conjunto HTML"
+
+#: app/templates/index.html:59
+msgid "Or individual HTML files"
+msgstr "O archivos HTML individuales"
+
+#: app/templates/index.html:63
+msgid "Optional research manifest (CSV)"
+msgstr "Manifiesto de investigación opcional (CSV)"
+
+#: app/templates/index.html:65
+msgid ""
+"Columns: path, observation_id, pair_id, condition, stratum, "
+"expected_label. Only path is required."
+msgstr ""
+"Columnas: path, observation_id, pair_id, condition, stratum y "
+"expected_label. Solo path es obligatoria."
+
+#: app/templates/index.html:68
+msgid "External resource policy"
+msgstr "Política de recursos externos"
+
+#: app/templates/index.html:70
+msgid "Isolated — block external scripts, fonts, and network requests"
+msgstr "Aislado — bloquea scripts, fuentes y solicitudes de red externas"
+
+#: app/templates/index.html:71
+msgid "Allow external resources — closer visual rendering, less reproducible"
+msgstr ""
+"Permitir recursos externos — mayor fidelidad visual, menor "
+"reproducibilidad"
+
+msgid "Select one or more HTML files, or a ZIP containing HTML files. No special folder structure or manifest is required. Local HTML is evaluated without WAVE because the remote WAVE API cannot access it."
+msgstr "Selecciona uno o más archivos HTML, o un ZIP que contenga archivos HTML. No se requiere una estructura de carpetas ni un manifiesto especial. El HTML local se evalúa sin WAVE porque la API remota de WAVE no puede acceder a él."
+
+msgid "HTML files"
+msgstr "Archivos HTML"
+
+msgid "Choose as many .html or .htm files as needed."
+msgstr "Selecciona tantos archivos .html o .htm como necesites."
+
+msgid "or"
+msgstr "o"
+
+msgid "ZIP containing HTML files"
+msgstr "ZIP con archivos HTML"
+
+msgid "WARP finds .html and .htm files anywhere inside the ZIP."
+msgstr "WARP encuentra los archivos .html y .htm en cualquier carpeta del ZIP."
+
+msgid "Choose HTML files or a ZIP, not both. Selecting one clears and disables the other."
+msgstr "Selecciona archivos HTML o un ZIP, no ambos. Al elegir una opción se limpia y desactiva la otra."
+
+#: app/templates/index.html:78
+msgid "Optional evaluators"
+msgstr "Evaluadores opcionales"
+
+#: app/templates/index.html:87
+msgid "Include semantic validation with an LLM"
+msgstr "Incluir validación semántica con un LLM"
+
+#: app/templates/index.html:90
+msgid "This option may increase execution time and consume API tokens."
+msgstr ""
+"Esta opción puede incrementar el tiempo de ejecución y consumir tokens de"
+" la API."
+
+#: app/templates/index.html:95
+msgid "LLM provider"
+msgstr "Proveedor LLM"
+
+#: app/templates/index.html:104
+msgid ""
+"The model is configured through environment variables and is recorded "
+"with the experiment."
+msgstr ""
+"El modelo se configura mediante variables de entorno y se registra con el"
+" experimento."
+
+#: app/templates/index.html:116
+msgid "Include WAVE API evaluation"
+msgstr "Incluir evaluación mediante WAVE API"
+
+#: app/templates/index.html:119
+msgid "WAVE is evaluated independently and consumes API credits for each URL."
+msgstr ""
+"WAVE se evalúa de forma independiente y consume créditos de la API por "
+"cada URL."
+
+#: app/templates/index.html:122
+msgid "No optional API-based evaluators are currently configured."
+msgstr "Actualmente no hay evaluadores opcionales mediante API configurados."
+
+#: app/templates/index.html:126
+msgid "Stored-result reuse"
+msgstr "Reutilización de resultados almacenados"
+
+#: app/templates/index.html:131
+msgid "Reuse compatible frozen results"
+msgstr "Reutilizar resultados congelados compatibles"
+
+#: app/templates/index.html:134
+msgid ""
+"If the same URL was previously evaluated with the same tools and "
+"settings, copy that immutable result instead of loading the live page "
+"again. The report retains the original evaluation date and provenance."
+msgstr ""
+"Si la misma URL fue evaluada con las mismas herramientas y configuración,"
+" copia ese resultado inmutable en lugar de cargar nuevamente la página. "
+"El reporte conserva la fecha y procedencia originales."
+
+#: app/templates/index.html:140
+msgid "Generate report"
+msgstr "Generar reporte"
+
+#: app/templates/report.html:3
+msgid "Evaluation experiment report"
+msgstr "Reporte del experimento de evaluación"
+
+#: app/templates/report.html:9
+msgid "Generating evaluation report"
+msgstr "Generando reporte de evaluación"
+
+#: app/templates/report.html:9
+msgid ""
+"The experiment continues in the background. You can safely close this "
+"window or visit another section."
+msgstr ""
+"El experimento continúa en segundo plano. Puede cerrar esta ventana o "
+"visitar otra sección con seguridad."
+
+#: app/templates/report.html:11 app/templates/report.html:22
+msgid "Evaluation in progress"
+msgstr "Evaluación en progreso"
+
+#: app/templates/report.html:11
+msgid "Building the report"
+msgstr "Construyendo el reporte"
+
+#: app/templates/report.html:11
+msgid ""
+"Axe, Lighthouse, WAVE, and the selected semantic model are collecting "
+"evidence. Results appear only after the report is complete."
+msgstr ""
+"Axe, Lighthouse, WAVE y el modelo semántico seleccionado están "
+"recopilando evidencia. Los resultados aparecerán cuando el reporte esté "
+"completo."
+
+#: app/templates/report.html:11 app/templates/report.html:22
+msgid "processed"
+msgstr "procesadas"
+
+#: app/templates/report.html:11
+msgid "This page refreshes automatically"
+msgstr "Esta página se actualiza automáticamente"
+
+#: app/templates/report.html:19
+msgid "Reproducible web accessibility evaluation"
+msgstr "Evaluación reproducible de accesibilidad web"
+
+#: app/templates/report.html:19
+msgid "Navigate"
+msgstr "Navegar"
+
+#: app/templates/report.html:19
+msgid "Methods"
+msgstr "Métodos"
+
+#: app/templates/report.html:19
+msgid "URL-level data"
+msgstr "Datos por URL"
+
+#: app/templates/report.html:19
+msgid "Export"
+msgstr "Exportar"
+
+#: app/templates/report.html:19
+msgid "Download CSV"
+msgstr "Descargar CSV"
+
+#: app/templates/report.html:20
+msgid "Frozen-result provenance"
+msgstr "Procedencia de resultados congelados"
+
+#: app/templates/report.html:20
+#, python-format
+msgid ""
+"%(count)s URL result(s) were reused from cache, combined from another "
+"experiment, or imported. Their original evaluation dates are retained; "
+"they were not fetched again for this report."
+msgstr ""
+"%(count)s resultado(s) por URL fueron reutilizados desde caché, "
+"combinados desde otro experimento o importados. Se conservan sus fechas "
+"originales; no se descargaron nuevamente para este reporte."
+
+#: app/templates/report.html:21
+msgid "Incomplete dataset"
+msgstr "Dataset incompleto"
+
+#: app/templates/report.html:21
+#, python-format
+msgid ""
+"%(count)s URL(s) failed and are excluded from descriptive statistics and "
+"correlations."
+msgstr ""
+"%(count)s URL(s) fallaron y se excluyen de las estadísticas descriptivas "
+"y correlaciones."
+
+#: app/templates/report.html:22
+msgid ""
+"You may close this window or browse other pages; the background worker "
+"will continue the experiment."
+msgstr ""
+"Puede cerrar esta ventana o navegar por otras páginas; el proceso en "
+"segundo plano continuará el experimento."
+
+#: app/templates/report.html:24 app/templates/report.html:102
+msgid "Study overview"
+msgstr "Resumen del estudio"
+
+#: app/templates/report.html:24
+msgid ""
+"Counts summarize tool output; they are not equivalent to confirmed WCAG "
+"failures."
+msgstr ""
+"Los conteos resumen la salida de las herramientas; no equivalen a "
+"incumplimientos WCAG confirmados."
+
+#: app/templates/report.html:25
+msgid "Completed URLs"
+msgstr "URLs completadas"
+
+#: app/templates/report.html:25
+msgid "submitted"
+msgstr "enviadas"
+
+#: app/templates/report.html:26 app/templates/report.html:107
+#: app/templates/report.html:110 app/templates/report.html:112
+msgid "Axe issue instances"
+msgstr "Instancias de incidencias Axe"
+
+#: app/templates/report.html:26
+msgid "DOM nodes reported under failed Axe rules"
+msgstr "Nodos DOM reportados bajo reglas Axe fallidas"
+
+#: app/templates/report.html:27
+msgid "Mean Lighthouse score"
+msgstr "Puntuación Lighthouse media"
+
+#: app/templates/report.html:27
+msgid "Median"
+msgstr "Mediana"
+
+#: app/templates/report.html:28
+msgid "WAVE errors"
+msgstr "Errores WAVE"
+
+#: app/templates/report.html:28
+msgid "Mean WAVE AIM Score"
+msgstr "Puntuación WAVE AIM media"
+
+#: app/templates/report.html:28
+msgid "1–10 comparative scale"
+msgstr "escala comparativa de 1–10"
+
+#: app/templates/report.html:29 app/templates/report.html:93
+msgid "LLM findings"
+msgstr "Hallazgos LLM"
+
+#: app/templates/report.html:31
+msgid "Mean Axe issue density"
+msgstr "Densidad media de incidencias Axe"
+
+#: app/templates/report.html:31
+msgid "issue instances per 1,000 DOM nodes"
+msgstr "instancias de incidencias por cada 1,000 nodos DOM"
+
+#: app/templates/report.html:31
+msgid "Mean Axe weighted impact density"
+msgstr "Densidad media de impacto ponderada Axe"
+
+#: app/templates/report.html:31
+msgid "experimental review-priority index"
+msgstr "índice experimental de prioridad de revisión"
+
+#: app/templates/report.html:31
+msgid "Mean runtime per URL"
+msgstr "Tiempo medio por URL"
+
+#: app/templates/report.html:31
+msgid "Total experiment"
+msgstr "Experimento completo"
+
+#: app/templates/report.html:31
+msgid "Standard deviation across URLs"
+msgstr "Desviación estándar entre URLs"
+
+#: app/templates/report.html:33 app/templates/report.html:64
+#: app/templates/report.html:93
+msgid "Axe issues"
+msgstr "Incidencias Axe"
+
+#: app/templates/report.html:33
+msgid ""
+"Count of issue instances detected automatically by Axe. One instance is "
+"one DOM node reported under one failed rule; a node can contribute to "
+"more than one rule. Lower counts are favorable, but they do not establish"
+" WCAG conformance."
+msgstr ""
+"Conteo de instancias de incidencias detectadas automáticamente por Axe. "
+"Una instancia es un nodo DOM reportado bajo una regla fallida; un nodo "
+"puede contribuir a más de una regla. Los conteos menores son favorables, "
+"pero no establecen conformidad con WCAG."
+
+#: app/templates/report.html:34 app/templates/report.html:71
+#: app/templates/report.html:93
+msgid "Axe issue density"
+msgstr "Densidad de incidencias Axe"
+
+#: app/templates/report.html:34
+msgid "Optional diagnostic that normalizes Axe issue instances by page size."
+msgstr ""
+"Diagnóstico opcional que normaliza las incidencias Axe según el tamaño de"
+" la página."
+
+#: app/templates/report.html:35 app/templates/report.html:71
+msgid "Axe weighted impact density"
+msgstr "Densidad de impacto ponderada Axe"
+
+#: app/templates/report.html:35
+msgid ""
+"Optional experimental index that weights impact levels before normalizing"
+" by DOM size; it is not an official Axe metric."
+msgstr ""
+"Índice experimental opcional que pondera los niveles de impacto antes de "
+"normalizar por el tamaño del DOM; no es una métrica oficial de Axe."
+
+#: app/templates/report.html:36
+msgid ""
+"Google Lighthouse accessibility score from 0 to 100. Higher is better. It"
+" is a weighted audit score, not a violation count or a conformance "
+"result."
+msgstr ""
+"Puntaje de accesibilidad de Google Lighthouse de 0 a 100. Un valor mayor "
+"es favorable. Es un puntaje ponderado de auditorías, no un conteo de "
+"violaciones ni un resultado de conformidad."
+
+#: app/templates/report.html:37
+msgid "WAVE AIM Score"
+msgstr "Puntaje WAVE AIM"
+
+#: app/templates/report.html:37
+msgid ""
+"WAVE comparative score from 1 to 10 based on detectable errors, error "
+"density, and alerts relative to the WebAIM Million sample. Higher is "
+"better; it does not establish conformance."
+msgstr ""
+"Puntaje comparativo WAVE de 1 a 10 basado en errores detectables, "
+"densidad de errores y alertas respecto a la muestra WebAIM Million. Un "
+"valor mayor es favorable; no establece conformidad."
+
+#: app/templates/report.html:38
+msgid "Axe and WAVE taxonomies are not interchangeable"
+msgstr "Las taxonomías Axe y WAVE no son intercambiables"
+
+#: app/templates/report.html:38
+msgid ""
+"Axe Critical and WAVE Error can be inspected side by side as high-"
+"priority evidence, as can Axe Moderate and WAVE Alert, but these are not "
+"official severity mappings. WAVE Alert means that human review is needed;"
+" WAVE Feature, Structure, and ARIA are informational categories rather "
+"than failures."
+msgstr ""
+"Axe Critical y WAVE Error pueden inspeccionarse en paralelo como "
+"evidencia prioritaria, al igual que Axe Moderate y WAVE Alert, pero no "
+"son correspondencias oficiales de severidad. WAVE Alert indica que se "
+"necesita revisión humana; WAVE Feature, Structure y ARIA son categorías "
+"informativas, no fallos."
+
+#: app/templates/report.html:40
+msgid "Methods and reproducibility"
+msgstr "Métodos y reproducibilidad"
+
+#: app/templates/report.html:40
+msgid "Recorded execution metadata supports comparison and later replication."
+msgstr ""
+"Los metadatos de ejecución registrados facilitan la comparación y la "
+"replicación posterior."
+
+#: app/templates/report.html:40
+msgid "Axe coverage"
+msgstr "Cobertura Axe"
+
+#: app/templates/report.html:40
+msgid "Lighthouse coverage"
+msgstr "Cobertura Lighthouse"
+
+#: app/templates/report.html:40
+msgid "WAVE coverage"
+msgstr "Cobertura WAVE"
+
+#: app/templates/report.html:40
+msgid "Semantic coverage"
+msgstr "Cobertura semántica"
+
+#: app/templates/report.html:41
+msgid "Heterogeneous provenance"
+msgstr "Procedencia heterogénea"
+
+#: app/templates/report.html:41
+msgid ""
+"This dataset combines results from multiple evaluation contexts. "
+"Interpret per-URL provenance and original dates before making temporal or"
+" method-sensitive comparisons."
+msgstr ""
+"Este conjunto combina resultados de múltiples contextos de evaluación. "
+"Interpreta la procedencia y fecha original de cada URL antes de realizar "
+"comparaciones temporales o sensibles al método."
+
+#: app/templates/report.html:42
+msgid "Axe profile"
+msgstr "Perfil Axe"
+
+#: app/templates/report.html:42
+msgid "included"
+msgstr "incluidas"
+
+#: app/templates/report.html:42
+msgid "excluded"
+msgstr "excluidas"
+
+#: app/templates/report.html:42
+msgid "Axe counting"
+msgstr "Conteo Axe"
+
+#: app/templates/report.html:42
+msgid "Issue instances (nodes per failed rule)"
+msgstr "Instancias de incidencias (nodos por regla fallida)"
+
+#: app/templates/report.html:42
+msgid "Not included"
+msgstr "No incluida"
+
+#: app/templates/report.html:42
+msgid "WAVE report type"
+msgstr "Tipo de reporte WAVE"
+
+#: app/templates/report.html:42
+msgid "statistics only"
+msgstr "solo estadísticas"
+
+#: app/templates/report.html:42
+msgid "item locations as XPath and contrast data"
+msgstr "ubicaciones mediante XPath y datos de contraste"
+
+#: app/templates/report.html:42
+msgid "item locations as CSS selectors and contrast data"
+msgstr "ubicaciones mediante selectores CSS y datos de contraste"
+
+#: app/templates/report.html:42
+msgid "WAVE render delay"
+msgstr "Espera de renderizado WAVE"
+
+#: app/templates/report.html:42
+msgid "after the final page request before evaluation"
+msgstr "después de la última solicitud de la página y antes de evaluarla"
+
+#: app/templates/report.html:42
+msgid "Page stabilization"
+msgstr "Estabilización de página"
+
+#: app/templates/report.html:42
+#, python-format
+msgid "DOM stable for %(window)s ms + %(delay)s ms settle"
+msgstr "DOM estable durante %(window)s ms + %(delay)s ms de espera final"
+
+#: app/templates/report.html:42
+msgid "Lazy-load scroll"
+msgstr "Scroll para carga diferida"
+
+#: app/templates/report.html:42
+msgid "Enabled"
+msgstr "Activado"
+
+#: app/templates/report.html:42
+msgid "Disabled"
+msgstr "Desactivado"
+
+#: app/templates/report.html:42
+msgid "px per vertical step"
+msgstr "px por paso vertical"
+
+#: app/templates/report.html:42
+msgid "ms between steps"
+msgstr "ms entre pasos"
+
+#: app/templates/report.html:42
+msgid "Evaluator concurrency"
+msgstr "Concurrencia de evaluadores"
+
+#: app/templates/report.html:42
+msgid "Legacy sequential execution"
+msgstr "Ejecución secuencial anterior"
+
+#: app/templates/report.html:42
+msgid "Web image"
+msgstr "Imagen web"
+
+#: app/templates/report.html:42
+msgid "Evaluator image"
+msgstr "Imagen del evaluador"
+
+#: app/templates/report.html:44
+msgid "Cross-tool convergence"
+msgstr "Convergencia entre herramientas"
+
+#: app/templates/report.html:44
+msgid ""
+"Exploratory associations show whether independent evaluators rank pages "
+"similarly; correlation does not imply agreement or causation."
+msgstr ""
+"Las asociaciones exploratorias muestran si evaluadores independientes "
+"ordenan las páginas de forma similar; la correlación no implica acuerdo "
+"ni causalidad."
+
+#: app/templates/report.html:45
+msgid "Primary coefficient: Spearman rho"
+msgstr "Coeficiente principal: rho de Spearman"
+
+#: app/templates/report.html:45
+msgid ""
+"Spearman is emphasized because accessibility measurements are counts, "
+"bounded scores, and often non-normal or affected by outliers. Pearson r "
+"is retained as a secondary sensitivity analysis for linear association. "
+"Agreement between both coefficients strengthens the descriptive pattern; "
+"disagreement suggests non-linearity, influential observations, or tied "
+"ranks. Neither coefficient is an inferential conclusion by itself."
+msgstr ""
+"Se enfatiza Spearman porque las mediciones de accesibilidad son conteos, "
+"puntajes acotados y suelen ser no normales o estar afectadas por valores "
+"atípicos. Pearson r se conserva como análisis secundario de sensibilidad "
+"para asociación lineal. La coincidencia entre ambos coeficientes refuerza"
+" el patrón descriptivo; su desacuerdo sugiere no linealidad, "
+"observaciones influyentes o rangos empatados. Ningún coeficiente "
+"constituye por sí mismo una conclusión inferencial."
+
+#: app/templates/report.html:46
+msgid "Small-sample warning"
+msgstr "Advertencia de muestra pequeña"
+
+#: app/templates/report.html:46
+msgid ""
+"All correlations are exploratory because fewer than 10 complete pages are"
+" available. At least three paired observations and variability in both "
+"measures are required for calculation."
+msgstr ""
+"Todas las correlaciones son exploratorias porque hay menos de 10 páginas "
+"completas. Se requieren al menos tres observaciones pareadas y "
+"variabilidad en ambas medidas para calcularlas."
+
+#: app/templates/report.html:47
+msgid "Research question"
+msgstr "Pregunta de investigación"
+
+#: app/templates/report.html:47
+msgid "primary"
+msgstr "principal"
+
+#: app/templates/report.html:47
+msgid "secondary"
+msgstr "secundario"
+
+#: app/templates/report.html:47
+msgid "Descriptive interpretation"
+msgstr "Interpretación descriptiva"
+
+#: app/templates/report.html:48
+msgid "Do Axe issues vary inversely with Lighthouse score?"
+msgstr "¿Las incidencias Axe varían inversamente con el puntaje Lighthouse?"
+
+#: app/templates/report.html:49
+msgid "Do critical Axe issues vary inversely with Lighthouse score?"
+msgstr ""
+"¿Las incidencias Axe críticas varían inversamente con el puntaje "
+"Lighthouse?"
+
+#: app/templates/report.html:50
+msgid "Does WAVE AIM converge with Lighthouse score?"
+msgstr "¿Converge WAVE AIM con el puntaje Lighthouse?"
+
+#: app/templates/report.html:50
+msgid "Does WAVE AIM vary inversely with Axe issues?"
+msgstr "¿WAVE AIM varía inversamente con las incidencias Axe?"
+
+#: app/templates/report.html:51
+msgid "exploratory"
+msgstr "exploratoria"
+
+#: app/templates/report.html:53
+msgid "Evidence patterns"
+msgstr "Patrones de evidencia"
+
+#: app/templates/report.html:53
+msgid ""
+"Figures are grouped by analytical purpose and retain URL-level provenance"
+" in their tooltips."
+msgstr ""
+"Las figuras se agrupan por propósito analítico y conservan la procedencia"
+" por URL en sus descripciones emergentes."
+
+#: app/templates/report.html:54
+msgid "Cross-tool comparisons"
+msgstr "Comparaciones entre herramientas"
+
+#: app/templates/report.html:54
+msgid "Figure 1"
+msgstr "Figura 1"
+
+#: app/templates/report.html:54
+msgid "Axe issues vs Lighthouse"
+msgstr "Incidencias Axe vs Lighthouse"
+
+#: app/templates/report.html:54
+msgid ""
+"Raw Axe issue instances are compared with the Lighthouse accessibility "
+"score."
+msgstr ""
+"Las instancias de incidencias Axe se comparan con el puntaje de "
+"accesibilidad Lighthouse."
+
+#: app/templates/report.html:54
+msgid "Figure 2"
+msgstr "Figura 2"
+
+#: app/templates/report.html:54
+msgid "Critical Axe issues vs Lighthouse"
+msgstr "Incidencias Axe críticas vs Lighthouse"
+
+#: app/templates/report.html:54
+msgid ""
+"Critical Axe issue instances are isolated to test whether the highest-"
+"impact findings follow the same cross-tool pattern as the total count."
+msgstr ""
+"Las incidencias Axe críticas se aíslan para comprobar si los hallazgos de"
+" mayor impacto siguen el mismo patrón entre herramientas que el conteo "
+"total."
+
+#: app/templates/report.html:54
+msgid "Figure 3"
+msgstr "Figura 3"
+
+#: app/templates/report.html:54
+msgid "Axe–Lighthouse disagreement by URL"
+msgstr "Desacuerdo Axe–Lighthouse por URL"
+
+#: app/templates/report.html:54
+msgid ""
+"The gap between within-study Axe and Lighthouse percentile placements "
+"highlights pages where the tools diverge."
+msgstr ""
+"La diferencia entre las posiciones percentiles de Axe y Lighthouse dentro"
+" del estudio destaca las páginas donde las herramientas divergen."
+
+#: app/templates/report.html:54 app/templates/report.html:55
+msgid "Figure 4"
+msgstr "Figura 4"
+
+#: app/templates/report.html:54
+msgid "WAVE AIM vs Lighthouse"
+msgstr "WAVE AIM vs Lighthouse"
+
+#: app/templates/report.html:54
+msgid ""
+"Both measures increase in the favorable direction, but use different "
+"scoring models."
+msgstr ""
+"Ambas medidas aumentan en la dirección favorable, pero utilizan modelos "
+"de puntuación diferentes."
+
+#: app/templates/report.html:54 app/templates/report.html:55
+msgid "Figure 5"
+msgstr "Figura 5"
+
+#: app/templates/report.html:54
+msgid "WAVE AIM vs Axe issues"
+msgstr "WAVE AIM vs incidencias Axe"
+
+#: app/templates/report.html:54
+msgid ""
+"Higher AIM is favorable and higher Axe issue counts are unfavorable; an "
+"inverse pattern is expected."
+msgstr ""
+"Un AIM mayor es favorable y un conteo de incidencias Axe mayor es "
+"desfavorable; se espera un patrón inverso."
+
+#: app/templates/report.html:55
+msgid "URL-level profiles"
+msgstr "Perfiles por URL"
+
+#: app/templates/report.html:55 app/templates/report.html:57
+msgid "Figure 6"
+msgstr "Figura 6"
+
+#: app/templates/report.html:55
+msgid "Axe impact profile by URL"
+msgstr "Perfil de impacto Axe por URL"
+
+#: app/templates/report.html:55
+msgid "Stacked counts preserve differences between impact levels."
+msgstr "Los conteos apilados conservan las diferencias entre niveles de impacto."
+
+#: app/templates/report.html:55 app/templates/report.html:57
+msgid "Figure 7"
+msgstr "Figura 7"
+
+#: app/templates/report.html:55
+msgid "Lighthouse accessibility profile by URL"
+msgstr "Perfil de accesibilidad Lighthouse por URL"
+
+#: app/templates/report.html:55
+msgid ""
+"URL-level scores retain the bounded 0–100 Lighthouse scale; higher values"
+" are favorable."
+msgstr ""
+"Los puntajes por URL conservan la escala acotada de Lighthouse de 0 a "
+"100; los valores mayores son favorables."
+
+#: app/templates/report.html:55
+msgid "Figure 8"
+msgstr "Figura 8"
+
+#: app/templates/report.html:55
+msgid "WAVE profile by URL"
+msgstr "Perfil WAVE por URL"
+
+#: app/templates/report.html:55
+msgid ""
+"Errors, alerts, and informational page features remain separate "
+"categories."
+msgstr ""
+"Los errores, alertas y características informativas de la página "
+"permanecen como categorías separadas."
+
+#: app/templates/report.html:56
+msgid "LLM-assisted semantic evidence"
+msgstr "Evidencia semántica asistida por LLM"
+
+#: app/templates/report.html:56
+msgid "LLM Figure 1"
+msgstr "Figura LLM 1"
+
+#: app/templates/report.html:56
+msgid "LLM findings by category"
+msgstr "Hallazgos LLM por categoría"
+
+#: app/templates/report.html:56
+msgid ""
+"Model-generated findings are hypotheses for expert review, not ground "
+"truth."
+msgstr ""
+"Los hallazgos generados por el modelo son hipótesis para revisión "
+"experta, no verdad de referencia."
+
+#: app/templates/report.html:56
+msgid "LLM Figure 2"
+msgstr "Figura LLM 2"
+
+#: app/templates/report.html:56
+msgid "LLM findings by severity and URL"
+msgstr "Hallazgos LLM por severidad y URL"
+
+#: app/templates/report.html:56
+msgid ""
+"Stacked URL-level counts show whether semantic review produced high-, "
+"medium-, or low-severity hypotheses."
+msgstr ""
+"Los conteos apilados por URL muestran si la revisión semántica produjo "
+"hipótesis de severidad alta, media o baja."
+
+#: app/templates/report.html:57
+msgid "Page complexity and performance"
+msgstr "Complejidad y rendimiento de la página"
+
+#: app/templates/report.html:57
+msgid "Figure 9"
+msgstr "Figura 9"
+
+#: app/templates/report.html:57
+msgid "DOM size vs execution time"
+msgstr "Tamaño del DOM vs tiempo de ejecución"
+
+#: app/templates/report.html:57
+msgid ""
+"This relationship characterizes computational scaling and supports "
+"capacity planning for reproducible studies."
+msgstr ""
+"Esta relación caracteriza el escalamiento computacional y ayuda a "
+"planificar la capacidad de estudios reproducibles."
+
+#: app/templates/report.html:57
+msgid "Figure 10"
+msgstr "Figura 10"
+
+#: app/templates/report.html:57
+msgid "DOM size vs Axe issues"
+msgstr "Tamaño del DOM vs incidencias Axe"
+
+#: app/templates/report.html:57
+msgid ""
+"This explores whether structurally larger pages also produce more "
+"detected Axe issue instances."
+msgstr ""
+"Esto explora si las páginas estructuralmente más grandes también producen"
+" más instancias de incidencias Axe detectadas."
+
+#: app/templates/report.html:59
+msgid "Cross-tool ranking"
+msgstr "Clasificación entre herramientas"
+
+#: app/templates/report.html:59
+msgid ""
+"Pages are ordered by their combined relative performance across Axe "
+"issues, Lighthouse, and WAVE AIM."
+msgstr ""
+"Las páginas se ordenan por su desempeño relativo combinado en incidencias"
+" Axe, Lighthouse y WAVE AIM."
+
+#: app/templates/report.html:59
+msgid ""
+"Pages are ordered by their combined relative performance across Axe "
+"issues and Lighthouse; WAVE was not required."
+msgstr ""
+"Las páginas se ordenan por su desempeño relativo combinado en incidencias"
+" Axe y Lighthouse; WAVE no fue necesario."
+
+#: app/templates/report.html:59
+msgid ""
+"The cross-tool ranking is not shown because fewer than three pages have "
+"complete Axe and Lighthouse measurements."
+msgstr ""
+"La clasificación entre herramientas no se muestra porque menos de tres "
+"páginas tienen mediciones completas de Axe y Lighthouse."
+
+#: app/templates/report.html:61
+msgid ""
+"At least three pages with complete Axe issue and Lighthouse measurements "
+"are required. WAVE AIM is added when it is available for every comparable"
+" page, but WAVE is not required. With n < 3 the percentile scale is not "
+"informative; specifically, at n = 2 ranks collapse to the endpoints 0 and"
+" 100. Therefore the table, composite score, tool disagreement, and "
+"calculation panel are intentionally omitted. For research studies, larger"
+" samples remain preferable and this ranking should be interpreted as "
+"descriptive and sample-relative."
+msgstr ""
+"Se requieren al menos tres páginas con mediciones completas de "
+"incidencias Axe y Lighthouse. WAVE AIM se agrega cuando está disponible "
+"para todas las páginas comparables, pero WAVE no es obligatorio. Con n < "
+"3 la escala percentil no es informativa; específicamente, con n = 2 los "
+"rangos se reducen a los extremos 0 y 100. Por ello se omiten "
+"intencionalmente la tabla, el puntaje compuesto, el desacuerdo entre "
+"herramientas y el panel de cálculo. Para estudios de investigación siguen"
+" siendo preferibles muestras mayores y este ranking debe interpretarse "
+"como descriptivo y relativo a la muestra."
+
+#: app/templates/report.html:63
+msgid "How to interpret it"
+msgstr "Cómo interpretarlo"
+
+#: app/templates/report.html:63
+msgid ""
+"The Cross-tool Composite Score is the equal-weighted mean of three "
+"within-study percentile ranks: fewer Axe issues, higher Lighthouse, and "
+"higher WAVE AIM are favorable. Tool disagreement is the range between "
+"those three component percentiles; lower values indicate greater "
+"convergence."
+msgstr ""
+"El Puntaje Compuesto entre Herramientas es la media con igual ponderación"
+" de tres rangos percentiles dentro del estudio: menos incidencias Axe, un"
+" Lighthouse mayor y un WAVE AIM mayor son favorables. El desacuerdo entre"
+" herramientas es el rango entre esos tres percentiles componentes; "
+"valores menores indican mayor convergencia."
+
+#: app/templates/report.html:63
+msgid ""
+"The Cross-tool Composite Score is the equal-weighted mean of two within-"
+"study percentile ranks: fewer Axe issues and higher Lighthouse are "
+"favorable. WAVE is not required. Tool disagreement is the distance "
+"between those two component percentiles; lower values indicate greater "
+"convergence."
+msgstr ""
+"El Puntaje Compuesto entre Herramientas es la media con igual ponderación"
+" de dos rangos percentiles dentro del estudio: menos incidencias Axe y un"
+" Lighthouse mayor son favorables. WAVE no es obligatorio. El desacuerdo "
+"entre herramientas es la distancia entre esos dos percentiles "
+"componentes; valores menores indican mayor convergencia."
+
+#: app/templates/report.html:64
+msgid "Rank"
+msgstr "Posición"
+
+#: app/templates/report.html:64
+msgid "Composite score"
+msgstr "Puntaje compuesto"
+
+#: app/templates/report.html:64 app/templates/report.html:65
+msgid "Tool disagreement"
+msgstr "Desacuerdo entre herramientas"
+
+#: app/templates/report.html:64 app/templates/report.html:71
+msgid "WAVE AIM"
+msgstr "WAVE AIM"
+
+#: app/templates/report.html:64 app/templates/report.html:71
+#: app/templates/report.html:93
+msgid "Open the full captured page image in a new tab"
+msgstr "Abrir la imagen completa capturada en una pestaña nueva"
+
+msgid "Open original page in a new tab"
+msgstr "Abrir la página original en una pestaña nueva"
+
+#: app/templates/report.html:64 app/templates/report.html:71
+#: app/templates/report.html:93
+msgid "Full-page capture of the evaluated URL"
+msgstr "Captura de página completa de la URL evaluada"
+
+#: app/templates/report.html:65
+msgid "How are the Cross-tool Composite Score and Tool disagreement calculated?"
+msgstr "¿Cómo se calculan el puntaje compuesto y el desacuerdo entre herramientas?"
+
+#: app/templates/report.html:65
+msgid "Show methodology and formulas"
+msgstr "Mostrar metodología y fórmulas"
+
+#: app/templates/report.html:65
+msgid "Cross-tool Composite Score"
+msgstr "Puntaje compuesto entre herramientas"
+
+#: app/templates/report.html:65
+msgid ""
+"A relative 0–100 ranking for this experiment only. It does not establish "
+"WCAG conformance and must not be compared directly between experiments "
+"containing different page samples."
+msgstr ""
+"Una clasificación relativa de 0 a 100 exclusiva de este experimento. No "
+"establece conformidad WCAG y no debe compararse directamente entre "
+"experimentos con muestras de páginas diferentes."
+
+#: app/templates/report.html:65
+msgid ""
+"Difference between the highest and lowest component percentile. Zero "
+"indicates identical relative placement across all three tools; larger "
+"values identify pages that deserve closer interpretation."
+msgstr ""
+"Diferencia entre el percentil componente mayor y el menor. Cero indica "
+"una posición relativa idéntica en las tres herramientas; valores mayores "
+"identifican páginas que merecen una interpretación más detallada."
+
+#: app/templates/report.html:65
+msgid ""
+"Absolute difference between the Axe and Lighthouse component percentiles."
+" Zero indicates identical relative placement; larger values identify "
+"pages that the two tools position differently."
+msgstr ""
+"Diferencia absoluta entre los percentiles componentes de Axe y "
+"Lighthouse. Cero indica una posición relativa idéntica; valores mayores "
+"identifican páginas que las dos herramientas posicionan de forma "
+"distinta."
+
+#: app/templates/report.html:66
+msgid "Calculation details"
+msgstr "Detalles del cálculo"
+
+#: app/templates/report.html:66
+msgid ""
+"Only pages with complete Axe issue and Lighthouse measurements are "
+"included. Let n be the number of complete pages; at least n = 3 is "
+"required so that the percentile scale has an intermediate position rather"
+" than only the endpoints 0 and 100. WAVE AIM becomes a third component "
+"only when it is available for every included page."
+msgstr ""
+"Sólo se incluyen páginas con mediciones completas de incidencias Axe y "
+"Lighthouse. Sea n el número de páginas completas; se requiere al menos n "
+"= 3 para que la escala percentil tenga una posición intermedia en lugar "
+"de únicamente los extremos 0 y 100. WAVE AIM se convierte en un tercer "
+"componente sólo cuando está disponible para todas las páginas incluidas."
+
+#: app/templates/report.html:66
+msgid ""
+"For each included tool, pages receive an average rank R from 1 to n. Rank"
+" 1 is the most favorable result and rank n is the least favorable. Axe "
+"issues are ranked from lowest to highest; Lighthouse and, when included, "
+"WAVE AIM are ranked from highest to lowest. Equal measurements receive "
+"the average of their tied rank positions."
+msgstr ""
+"Para cada herramienta incluida, las páginas reciben un rango promedio R "
+"de 1 a n. El rango 1 es el resultado más favorable y el rango n el menos "
+"favorable. Las incidencias Axe se ordenan de menor a mayor; Lighthouse y,"
+" cuando se incluye, WAVE AIM, de mayor a menor. Las mediciones iguales "
+"reciben el promedio de las posiciones empatadas."
+
+#: app/templates/report.html:66
+msgid ""
+"Each rank is converted to a percentile component P using the formula "
+"below. The most favorable rank receives 100, the least favorable receives"
+" 0, and tied or intermediate ranks receive values between them."
+msgstr ""
+"Cada rango se convierte en un componente percentil P mediante la fórmula "
+"siguiente. El rango más favorable recibe 100, el menos favorable recibe 0"
+" y los rangos empatados o intermedios reciben valores entre ambos "
+"extremos."
+
+#: app/templates/report.html:66
+msgid ""
+"CTCS is the arithmetic mean of three percentile components with equal "
+"one-third weights."
+msgstr ""
+"CTCS es la media aritmética de tres componentes percentiles con pesos "
+"iguales de un tercio."
+
+#: app/templates/report.html:66
+msgid ""
+"CTCS is the arithmetic mean of two percentile components with equal one-"
+"half weights."
+msgstr ""
+"CTCS es la media aritmética de dos componentes percentiles con pesos "
+"iguales de un medio."
+
+#: app/templates/report.html:66
+msgid ""
+"A CTCS of 75 describes average relative placement within this sample; it "
+"does not mean that the page is 75 percent accessible."
+msgstr ""
+"Un CTCS de 75 describe la posición relativa promedio dentro de esta "
+"muestra; no significa que la página sea 75 por ciento accesible."
+
+#: app/templates/report.html:66
+msgid ""
+"Tool disagreement is the range of the included percentile components. D ="
+" 0 means that the tools place the page at the same relative level. Values"
+" approaching 100 indicate opposing placements that require closer expert "
+"interpretation."
+msgstr ""
+"El desacuerdo entre herramientas es el rango de los componentes "
+"percentiles incluidos. D = 0 significa que las herramientas sitúan la "
+"página en el mismo nivel relativo. Los valores cercanos a 100 significan "
+"que al menos existen posiciones opuestas que requieren una interpretación"
+" experta más detallada."
+
+#: app/templates/report.html:66
+msgid "Important"
+msgstr "Importante"
+
+#: app/templates/report.html:66
+msgid ""
+"The displayed Rank column is the final table position after sorting. The "
+"R used in the percentile formula is calculated separately for each "
+"included tool before the components are combined."
+msgstr ""
+"La columna Posición mostrada es la posición final de la tabla después de "
+"ordenarla. La R utilizada en la fórmula percentil se calcula por separado"
+" para cada herramienta incluida antes de combinar los componentes."
+
+#: app/templates/report.html:71
+msgid "Review priorities"
+msgstr "Prioridades de revisión"
+
+#: app/templates/report.html:71
+msgid ""
+"The default order uses descending Axe weighted impact density. Select "
+"another metric header to explore alternative orderings; the priority "
+"numbers update to reflect the visible order."
+msgstr ""
+"El orden predeterminado utiliza la densidad de impacto ponderada Axe de "
+"mayor a menor. Seleccione el encabezado de otra métrica para explorar "
+"órdenes alternativos; los números de prioridad se actualizan según el "
+"orden visible."
+
+#: app/templates/report.html:71
+msgid "Which measure should I use?"
+msgstr "¿Qué medida debo utilizar?"
+
+#: app/templates/report.html:71
+msgid ""
+"Use Axe weighted impact density only to prioritize expert inspection. Use"
+" Axe issue density for cross-tool comparison because it is unweighted. "
+"Lower Lighthouse and lower WAVE AIM are generally unfavorable, whereas "
+"higher Axe measures are unfavorable."
+msgstr ""
+"Use la densidad de impacto ponderada Axe únicamente para priorizar la "
+"inspección experta. Use la densidad de incidencias Axe para la "
+"comparación entre herramientas porque no está ponderada. Valores menores "
+"de Lighthouse y WAVE AIM suelen ser desfavorables, mientras que valores "
+"Axe mayores son desfavorables."
+
+#: app/templates/report.html:71
+msgid "Priority"
+msgstr "Prioridad"
+
+#: app/templates/report.html:76
+msgid "Paired HTML comparison"
+msgstr "Comparación de HTML emparejados"
+
+#: app/templates/report.html:76
+msgid ""
+"Manifest-defined original and corrected observations are compared within "
+"each pair."
+msgstr ""
+"Las observaciones originales y corregidas definidas en el manifiesto se "
+"comparan dentro de cada pareja."
+
+#: app/templates/report.html:78
+msgid "Complete pairs"
+msgstr "Parejas completas"
+
+#: app/templates/report.html:78
+msgid "manifest pair identifiers"
+msgstr "identificadores de pareja en el manifiesto"
+
+#: app/templates/report.html:79
+msgid "Mean Axe issue reduction"
+msgstr "Reducción media de incidencias Axe"
+
+#: app/templates/report.html:79 app/templates/report.html:80
+msgid "improved"
+msgstr "mejoraron"
+
+#: app/templates/report.html:79 app/templates/report.html:80
+msgid "unchanged"
+msgstr "sin cambio"
+
+#: app/templates/report.html:79 app/templates/report.html:80
+msgid "worsened"
+msgstr "empeoraron"
+
+#: app/templates/report.html:80
+msgid "Mean Lighthouse gain"
+msgstr "Ganancia media de Lighthouse"
+
+#: app/templates/report.html:82
+msgid "Pair"
+msgstr "Pareja"
+
+#: app/templates/report.html:82
+msgid "Stratum"
+msgstr "Estrato"
+
+#: app/templates/report.html:82
+msgid "Original"
+msgstr "Original"
+
+#: app/templates/report.html:82
+msgid "Corrected"
+msgstr "Corregido"
+
+#: app/templates/report.html:82
+msgid "Axe original"
+msgstr "Axe original"
+
+#: app/templates/report.html:82
+msgid "Axe corrected"
+msgstr "Axe corregido"
+
+#: app/templates/report.html:82
+msgid "Issue reduction"
+msgstr "Reducción de incidencias"
+
+#: app/templates/report.html:82
+msgid "Lighthouse original"
+msgstr "Lighthouse original"
+
+#: app/templates/report.html:82
+msgid "Lighthouse corrected"
+msgstr "Lighthouse corregido"
+
+#: app/templates/report.html:82
+msgid "Score gain"
+msgstr "Ganancia de puntuación"
+
+#: app/templates/report.html:83
+msgid ""
+"Positive issue reduction and positive Lighthouse gain indicate "
+"improvement. These descriptive summaries do not establish statistical "
+"significance or WCAG conformance."
+msgstr ""
+"Una reducción positiva de incidencias y una ganancia positiva de Lighthouse "
+"indican mejora. Estos resúmenes descriptivos no establecen significancia "
+"estadística ni conformidad con WCAG."
+
+#: app/templates/report.html:86
+msgid "URL-level evidence"
+msgstr "Evidencia por URL"
+
+#: app/templates/report.html:86
+msgid "Raw outputs remain downloadable for independent inspection."
+msgstr ""
+"Las salidas crudas permanecen disponibles para una inspección "
+"independiente."
+
+#: app/templates/report.html:87 app/templates/report.html:103
+msgid "Originally evaluated"
+msgstr "Evaluado originalmente"
+
+#: app/templates/report.html:87 app/templates/report.html:103
+msgid "Provenance"
+msgstr "Procedencia"
+
+#: app/templates/report.html:87
+msgid "Axe measurements"
+msgstr "Mediciones Axe"
+
+#: app/templates/report.html:87
+msgid "Issue instances"
+msgstr "Instancias de incidencias"
+
+#: app/templates/report.html:88
+msgid "WAVE measurements"
+msgstr "Mediciones WAVE"
+
+#: app/templates/report.html:88 app/templates/report.html:93
+msgid "Elements"
+msgstr "Elementos"
+
+#: app/templates/report.html:89
+msgid "Page and execution measurements"
+msgstr "Mediciones de página y ejecución"
+
+#: app/templates/report.html:89 app/templates/report.html:103
+msgid "Images"
+msgstr "Imágenes"
+
+#: app/templates/report.html:89 app/templates/report.html:103
+msgid "Links"
+msgstr "Enlaces"
+
+#: app/templates/report.html:89 app/templates/report.html:103
+msgid "Headings"
+msgstr "Encabezados"
+
+#: app/templates/report.html:89
+msgid "Runtime"
+msgstr "Tiempo de ejecución"
+
+#: app/templates/report.html:89
+msgid "yes"
+msgstr "sí"
+
+#: app/templates/report.html:89
+msgid "no"
+msgstr "no"
+
+#: app/templates/report.html:89
+msgid "Scroll steps"
+msgstr "Pasos de scroll"
+
+#: app/templates/report.html:89
+msgid "DOM stabilized"
+msgstr "DOM estabilizado"
+
+#: app/templates/report.html:90
+msgid "LLM review"
+msgstr "Revisión LLM"
+
+#: app/templates/report.html:90
+msgid "No semantic summary was produced."
+msgstr "No se produjo un resumen semántico."
+
+#: app/templates/report.html:90
+msgid "Recommendation"
+msgstr "Recomendación"
+
+#: app/templates/report.html:93
+msgid "URL measurement matrix"
+msgstr "Matriz de mediciones por URL"
+
+#: app/templates/report.html:93
+msgid ""
+"Sortable URL-level measurements for expert inspection and direct reuse in"
+" research tables."
+msgstr ""
+"Mediciones por URL ordenables para inspección experta y reutilización "
+"directa en tablas de investigación."
+
+#: app/templates/report.html:93
+msgid "Failed rules"
+msgstr "Reglas fallidas"
+
+#: app/templates/report.html:93
+msgid "Needs review"
+msgstr "Requieren revisión"
+
+#: app/templates/report.html:93
+msgid "Axe weighted density"
+msgstr "Densidad ponderada Axe"
+
+#: app/templates/report.html:93 app/templates/report.html:113
+msgid "High"
+msgstr "Alta"
+
+#: app/templates/report.html:93 app/templates/report.html:113
+msgid "Medium"
+msgstr "Media"
+
+#: app/templates/report.html:93 app/templates/report.html:113
+msgid "Low"
+msgstr "Baja"
+
+#: app/templates/report.html:93
+msgid "LLM risk"
+msgstr "Riesgo LLM"
+
+#: app/templates/report.html:99
+msgid "WAVE cost (USD)"
+msgstr "Costo WAVE (USD)"
+
+#: app/templates/report.html:99
+msgid "LLM tokens"
+msgstr "Tokens LLM"
+
+#: app/templates/report.html:99
+msgid "LLM cost (USD)"
+msgstr "Costo LLM (USD)"
+
+#: app/templates/report.html:99
+msgid "Total cost (USD)"
+msgstr "Costo total (USD)"
+
+#: app/templates/report.html:100
+msgid "Best-practice issues"
+msgstr "Incidencias de buenas prácticas"
+
+#: app/templates/report.html:103
+msgid "Runtime (seconds)"
+msgstr "Tiempo de ejecución (segundos)"
+
+#: app/templates/report.html:107 app/templates/report.html:110
+#: app/templates/report.html:111
+msgid "Evaluated URL"
+msgstr "URL evaluada"
+
+#: app/templates/report.html:109
+msgid "URL runtime"
+msgstr "Tiempo de ejecución por URL"
+
+#: app/templates/report.html:109 app/templates/report.html:110
+msgid "DOM nodes"
+msgstr "Nodos DOM"
+
+#: app/templates/report.html:109
+msgid "Seconds"
+msgstr "Segundos"
+
+#: app/templates/report.html:111
+msgid "Critical Axe issues"
+msgstr "Incidencias Axe críticas"
+
+#: app/templates/report.html:111
+msgid "Percentile-point gap"
+msgstr "Diferencia en puntos percentiles"
+
+#: app/templates/report.html:111
+msgid "Disagreement (0–100 percentile points)"
+msgstr "Desacuerdo (0–100 puntos percentiles)"
+
+#: app/templates/report.html:113
+msgid "Unknown"
+msgstr "Desconocida"
+
+#~ msgid "per 1,000 DOM nodes"
+#~ msgstr "por cada 1,000 nodos DOM"
+
+#~ msgid ""
+#~ "Experimental review-priority index derived "
+#~ "from Axe. It weights impact levels "
+#~ "before normalizing by DOM size. Use "
+#~ "it to order pages for expert "
+#~ "inspection, not for cross-tool "
+#~ "correlation because the weights are "
+#~ "platform-defined rather than an official"
+#~ " Axe scale."
+#~ msgstr ""
+#~ "Índice experimental de prioridad de "
+#~ "revisión derivado de Axe. Pondera los"
+#~ " niveles de impacto antes de "
+#~ "normalizar por tamaño del DOM. Utilícelo"
+#~ " para ordenar páginas para inspección "
+#~ "experta, no para correlación entre "
+#~ "herramientas, porque los pesos los "
+#~ "define la plataforma y no son una"
+#~ " escala oficial de Axe."
+
+#~ msgid ""
+#~ "Axe issue instances are normalized per"
+#~ " 1,000 DOM nodes to reduce page-"
+#~ "size confounding."
+#~ msgstr ""
+#~ "Las instancias de incidencias Axe se "
+#~ "normalizan por cada 1,000 nodos DOM "
+#~ "para reducir la confusión debida al "
+#~ "tamaño de la página."
+
+#~ msgid "Back"
+#~ msgstr "Volver"
+
+#~ msgid "Semantic validation"
+#~ msgstr "Validación semántica"
+
+#~ msgid "Included"
+#~ msgstr "Incluida"
+
+#~ msgid "WAVE errors vs Axe"
+#~ msgstr "Errores WAVE vs Axe"
+
+#~ msgid "WAVE contrast errors"
+#~ msgstr "Errores de contraste WAVE"
+
+#~ msgid "WAVE alerts"
+#~ msgstr "Alertas WAVE"
+
+#~ msgid "WAVE status"
+#~ msgstr "Estado WAVE"
+
+#~ msgid "Relationship between WAVE errors and Axe violations."
+#~ msgstr "Relación entre errores WAVE y violaciones Axe."
+
+#~ msgid "WAVE findings by category"
+#~ msgstr "Hallazgos WAVE por categoría"
+
+#~ msgid "WAVE categories are shown separately from Axe violations."
+#~ msgstr "Las categorías WAVE se muestran separadas de las violaciones Axe."
+
+#~ msgid "Start date"
+#~ msgstr "Fecha de inicio"
+
+#~ msgid "URLs evaluated"
+#~ msgstr "URLs evaluadas"
+
+#~ msgid "Experimental environment"
+#~ msgstr "Entorno experimental"
+
+#~ msgid "Total execution time"
+#~ msgstr "Tiempo total de ejecución"
+
+#~ msgid "seconds"
+#~ msgstr "segundos"
+
+#~ msgid "Automated experiment analysis"
+#~ msgstr "Análisis automático del experimento"
+
+#~ msgid "Lighthouse average"
+#~ msgstr "Promedio Lighthouse"
+
+#~ msgid "Average time"
+#~ msgstr "Tiempo promedio"
+
+#~ msgid "Main correlations"
+#~ msgstr "Correlaciones principales"
+
+#~ msgid "Relationship analyzed"
+#~ msgstr "Relación analizada"
+
+#~ msgid "Spearman (non-normality)"
+#~ msgstr "Spearman (no normalidad)"
+
+#~ msgid "Interpretation"
+#~ msgstr "Interpretación"
+
+#~ msgid ""
+#~ "Inverse relationship: more violations tend "
+#~ "to be associated with a lower "
+#~ "score."
+#~ msgstr ""
+#~ "Relación inversa: más violaciones tienden "
+#~ "a asociarse con un menor puntaje."
+
+#~ msgid "Direct or unexpected relationship between both metrics."
+#~ msgstr "Relación directa o no esperada entre ambas métricas."
+
+#~ msgid "Cannot be calculated."
+#~ msgstr "No calculable."
+
+#~ msgid "DOM complexity vs Axe"
+#~ msgstr "Complejidad DOM vs Axe"
+
+#~ msgid "Relationship between page structural size and number of violations."
+#~ msgstr ""
+#~ "Relación entre el tamaño estructural de"
+#~ " la página y el número de "
+#~ "violaciones."
+
+#~ msgid "Images vs Axe"
+#~ msgstr "Imágenes vs Axe"
+
+#~ msgid "Relationship between the number of images and detected violations."
+#~ msgstr "Relación entre la cantidad de imágenes y las violaciones detectadas."
+
+#~ msgid "LLM findings vs Axe"
+#~ msgstr "Hallazgos LLM vs Axe"
+
+#~ msgid "Relationship between semantic findings and automated violations."
+#~ msgstr "Relación entre hallazgos semánticos y violaciones automáticas."
+
+#~ msgid "Execution time vs DOM"
+#~ msgstr "Tiempo de ejecución vs DOM"
+
+#~ msgid "Relationship between structural complexity and processing time."
+#~ msgstr "Relación entre complejidad estructural y tiempo de procesamiento."
+
+#~ msgid "Most frequent semantic categories"
+#~ msgstr "Categorías semánticas más frecuentes"
+
+#~ msgid "finding(s)"
+#~ msgstr "hallazgo(s)"
+
+#~ msgid "Relationship between Axe and Lighthouse"
+#~ msgstr "Relación entre Axe y Lighthouse"
+
+#~ msgid ""
+#~ "Each point represents a URL. A "
+#~ "greater number of Axe violations is "
+#~ "expected to be associated with a "
+#~ "lower Lighthouse score."
+#~ msgstr ""
+#~ "Cada punto representa una URL. Se "
+#~ "espera que un mayor número de "
+#~ "violaciones Axe se relacione con un "
+#~ "menor puntaje Lighthouse."
+
+#~ msgid "Axe violation severity"
+#~ msgstr "Severidad de violaciones Axe"
+
+#~ msgid "Overall distribution of violations by impact level."
+#~ msgstr "Distribución global de violaciones por nivel de impacto."
+
+#~ msgid "Semantic findings by category"
+#~ msgstr "Hallazgos semánticos por categoría"
+
+#~ msgid "Categories reported by the LLM module."
+#~ msgstr "Categorías reportadas por el módulo LLM."
+
+#~ msgid "DOM complexity vs Axe violations"
+#~ msgstr "Complejidad DOM vs violaciones Axe"
+
+#~ msgid "Relationship between document structural size and detected violations."
+#~ msgstr ""
+#~ "Relación entre el tamaño estructural del"
+#~ " documento y las violaciones detectadas."
+
+#~ msgid "Images vs Axe violations"
+#~ msgstr "Imágenes vs violaciones Axe"
+
+#~ msgid "Execution time per URL"
+#~ msgstr "Tiempo de ejecución por URL"
+
+#~ msgid "Time required to process each evaluated page."
+#~ msgstr "Tiempo requerido para procesar cada página evaluada."
+
+#~ msgid "Results by URL"
+#~ msgstr "Resultados por URL"
+
+#~ msgid "Time"
+#~ msgstr "Tiempo"
+
+#~ msgid "Evidence"
+#~ msgstr "Evidencias"
+
+#~ msgid "Semantic risk"
+#~ msgstr "Riesgo semántico"
+
+#~ msgid "LLM summary"
+#~ msgstr "Resumen LLM"
+
+#~ msgid "LLM JSON"
+#~ msgstr "JSON del LLM"
+
+#~ msgid "LLM provider and model"
+#~ msgstr "Proveedor y modelo LLM"
+
+#~ msgid "Not recorded"
+#~ msgstr "No registrado"
+
+#~ msgid "Element or selector"
+#~ msgstr "Elemento o selector"
+
+#~ msgid "HTML evidence"
+#~ msgstr "Evidencia HTML"
+
+#~ msgid "Why it matters"
+#~ msgstr "Relevancia"
+
+#~ msgid "This experiment does not have any registered results yet."
+#~ msgstr "Este experimento aún no tiene resultados registrados."
+
+#~ msgid "Lighthouse accessibility score"
+#~ msgstr "Puntaje de accesibilidad Lighthouse"
+
+#~ msgid "images"
+#~ msgstr "imágenes"
+
+#~ msgid "Number of images"
+#~ msgstr "Número de imágenes"
+
+#~ msgid ""
+#~ "%(total_urls)s URL(s) were evaluated. Axe "
+#~ "detected %(total_axe)s violation(s) in total,"
+#~ " while Lighthouse obtained an average "
+#~ "score of %(lighthouse_mean)s out of 100."
+#~ " Semantic analysis recorded %(semantic_findings)s"
+#~ " finding(s). The Spearman relationship "
+#~ "between Axe violations and the "
+#~ "Lighthouse score shows a %(axe_lighthouse)s."
+#~ " The Spearman relationship between DOM "
+#~ "complexity and Axe violations shows a"
+#~ " %(dom_axe)s. The Spearman relationship "
+#~ "between the number of images and "
+#~ "Axe violations shows a %(images_axe)s. "
+#~ "The Spearman relationship between execution"
+#~ " time and DOM complexity shows a "
+#~ "%(time_dom)s."
+#~ msgstr ""
+#~ "Se evaluaron %(total_urls)s URL(s). Axe "
+#~ "detectó %(total_axe)s violación(es) en total,"
+#~ " mientras que Lighthouse obtuvo un "
+#~ "puntaje promedio de %(lighthouse_mean)s sobre"
+#~ " 100. El análisis semántico registró "
+#~ "%(semantic_findings)s hallazgo(s). La relación "
+#~ "Spearman entre violaciones Axe y puntaje"
+#~ " Lighthouse presenta una %(axe_lighthouse)s. "
+#~ "La relación Spearman entre complejidad "
+#~ "DOM y violaciones Axe presenta una "
+#~ "%(dom_axe)s. La relación Spearman entre "
+#~ "cantidad de imágenes y violaciones Axe"
+#~ " presenta una %(images_axe)s. La relación"
+#~ " Spearman entre tiempo de ejecución y"
+#~ " complejidad DOM presenta una %(time_dom)s."
+
+#~ msgid "WAVE evidence taxonomy"
+#~ msgstr "Taxonomía de evidencia WAVE"
+
+#~ msgid ""
+#~ "WAVE categories remain separate because "
+#~ "features and structure are not errors."
+#~ msgstr ""
+#~ "Las categorías WAVE se mantienen "
+#~ "separadas porque las características y "
+#~ "la estructura no son errores."
+
+#~ msgid ""
+#~ "A transparent descriptive index weights "
+#~ "Axe impacts (critical=4, serious=3, "
+#~ "moderate=2, minor=1) and normalizes by "
+#~ "DOM size. It is not a validated"
+#~ " accessibility score."
+#~ msgstr ""
+#~ "Un índice descriptivo transparente pondera "
+#~ "los impactos Axe (crítico=4, serio=3, "
+#~ "moderado=2, menor=1) y normaliza por "
+#~ "tamaño del DOM. No es un puntaje"
+#~ " de accesibilidad validado."
+
+#~ msgid "Report type"
+#~ msgstr "Tipo de reporte"
+
+#~ msgid ""
+#~ "Number of Axe violations relative to "
+#~ "page size. This helps distinguish a "
+#~ "large page with many opportunities for"
+#~ " findings from a smaller page."
+#~ msgstr ""
+#~ "Número de violaciones Axe en relación"
+#~ " con el tamaño de la página. "
+#~ "Ayuda a distinguir una página grande "
+#~ "con más oportunidades de hallazgo de "
+#~ "una página pequeña."
+
+#~ msgid ""
+#~ "Experimental prioritization index that gives"
+#~ " more weight to higher Axe impact "
+#~ "levels. It is not an Axe metric"
+#~ " and is not a validated accessibility"
+#~ " score."
+#~ msgstr ""
+#~ "Índice experimental de priorización que "
+#~ "asigna mayor peso a los niveles de"
+#~ " impacto Axe más altos. No es "
+#~ "una métrica de Axe ni un puntaje"
+#~ " de accesibilidad validado."
+
+#~ msgid "Does page-size normalization change the Axe–Lighthouse relationship?"
+#~ msgstr ""
+#~ "¿La normalización por tamaño de página"
+#~ " cambia la relación Axe–Lighthouse?"
+
+#~ msgid "Does DOM size relate to Axe counts?"
+#~ msgstr "¿El tamaño del DOM se relaciona con los conteos Axe?"
+
+#~ msgid "Does runtime scale with DOM size?"
+#~ msgstr "¿El tiempo de ejecución escala con el tamaño del DOM?"
+
+#~ msgid "Do WAVE and Axe rank pages similarly?"
+#~ msgstr "¿WAVE y Axe ordenan las páginas de forma similar?"
+
+#~ msgid "Do WAVE errors converge with Lighthouse scores?"
+#~ msgstr "¿Convergen los errores WAVE con los puntajes Lighthouse?"
+
+#~ msgid "Do LLM findings track Axe counts?"
+#~ msgstr "¿Los hallazgos LLM siguen los conteos Axe?"
+
+#~ msgid ""
+#~ "Pages are ordered from highest to "
+#~ "lowest weighted impact density so "
+#~ "researchers can inspect the pages with"
+#~ " the greatest severity-weighted Axe "
+#~ "burden relative to DOM size first. "
+#~ "This is a review queue, not an "
+#~ "accessibility ranking or conformance result."
+#~ msgstr ""
+#~ "Las páginas se ordenan de mayor a"
+#~ " menor densidad de impacto ponderada "
+#~ "para que los investigadores inspeccionen "
+#~ "primero las páginas con mayor carga "
+#~ "Axe ponderada por severidad respecto al"
+#~ " tamaño del DOM. Es una cola de"
+#~ " revisión, no una clasificación de "
+#~ "accesibilidad ni un resultado de "
+#~ "conformidad."
+
+#~ msgid "How to use this table"
+#~ msgstr "Cómo utilizar esta tabla"
+
+#~ msgid ""
+#~ "Start with priority 1 and use "
+#~ "Lighthouse and WAVE AIM as complementary"
+#~ " context. Lower Lighthouse and lower "
+#~ "WAVE AIM are generally unfavorable, but"
+#~ " neither changes the ordering, which "
+#~ "is based only on weighted impact "
+#~ "density."
+#~ msgstr ""
+#~ "Comience con la prioridad 1 y "
+#~ "utilice Lighthouse y WAVE AIM como "
+#~ "contexto complementario. Valores menores de"
+#~ " Lighthouse y WAVE AIM generalmente "
+#~ "son desfavorables, pero ninguno modifica "
+#~ "el orden, que se basa únicamente "
+#~ "en la densidad de impacto ponderada."
+
+#~ msgid "The requested experiment does not exist."
+#~ msgstr "El experimento solicitado no existe."
+
+#~ msgid "Experiment %(timestamp)s"
+#~ msgstr "Experimento %(timestamp)s"
+
+#~ msgid "Experiment completed successfully."
+#~ msgstr "Experimento ejecutado correctamente."
+
+#~ msgid "The experiment could not be completed: %(error)s"
+#~ msgstr "No fue posible ejecutar el experimento: %(error)s"
+
+#~ msgid "New experiment"
+#~ msgstr "Nuevo experimento"
+
+#~ msgid "Experiments"
+#~ msgstr "Experimentos"
+
+#~ msgid "Registered experiments"
+#~ msgstr "Experimentos registrados"
+
+#~ msgid "Experiment"
+#~ msgstr "Experimento"
+
+#~ msgid "Report"
+#~ msgstr "Reporte"
+
+#~ msgid "No experiments have been registered yet."
+#~ msgstr "Aún no hay experimentos registrados."
+
+#~ msgid "New web accessibility experiment"
+#~ msgstr "Nuevo experimento de accesibilidad web"
+
+#~ msgid ""
+#~ "This platform runs a reproducible web"
+#~ " accessibility experiment using automated "
+#~ "tools and LLM-assisted semantic "
+#~ "validation."
+#~ msgstr ""
+#~ "Esta plataforma ejecuta un experimento "
+#~ "reproducible de accesibilidad web mediante "
+#~ "herramientas automáticas y validación "
+#~ "semántica asistida por LLM."
+
+#~ msgid ""
+#~ "The experiment is running. This process"
+#~ " may take several seconds for each"
+#~ " URL evaluated."
+#~ msgstr ""
+#~ "El experimento se está ejecutando. Este"
+#~ " proceso puede tardar varios segundos "
+#~ "por cada URL evaluada."
+
+#~ msgid "Processing experiment"
+#~ msgstr "Procesando experimento"
+
+#~ msgid "Processing..."
+#~ msgstr "Procesando..."
+
+#~ msgid "Experiment report"
+#~ msgstr "Reporte del experimento"
+
+#~ msgid "Reproducible accessibility study"
+#~ msgstr "Estudio reproducible de accesibilidad"
+
+#~ msgid "mean"
+#~ msgstr "media"
+
+#~ msgid "median"
+#~ msgstr "mediana"
+
+#~ msgid "mean on a 1–10 comparative scale"
+#~ msgstr "media en una escala comparativa de 1 a 10"
+
+#~ msgid "Mean runtime"
+#~ msgstr "Tiempo medio de ejecución"
+
+#~ msgid "Axe density"
+#~ msgstr "Densidad Axe"
+
+#~ msgid ""
+#~ "Unweighted number of Axe violations "
+#~ "relative to page size. Use this "
+#~ "measure for cross-tool comparisons with"
+#~ " Lighthouse and WAVE AIM because it"
+#~ " does not introduce platform-defined "
+#~ "severity weights."
+#~ msgstr ""
+#~ "Número no ponderado de violaciones Axe"
+#~ " en relación con el tamaño de "
+#~ "la página. Utilice esta medida para "
+#~ "comparaciones entre herramientas con "
+#~ "Lighthouse y WAVE AIM porque no "
+#~ "introduce pesos de severidad definidos "
+#~ "por la plataforma."
+
+#~ msgid "Does Axe density vary inversely with Lighthouse score?"
+#~ msgstr "¿La densidad Axe varía de forma inversa con el puntaje Lighthouse?"
+
+#~ msgid "Does WAVE AIM vary inversely with Axe density?"
+#~ msgstr "¿WAVE AIM varía de forma inversa con la densidad Axe?"
+
+#~ msgid "Interactive figures retain URL-level provenance in their tooltips."
+#~ msgstr ""
+#~ "Las figuras interactivas conservan la "
+#~ "procedencia por URL en sus etiquetas "
+#~ "emergentes."
+
+#~ msgid "Axe density vs Lighthouse"
+#~ msgstr "Densidad Axe vs puntaje Lighthouse"
+
+#~ msgid ""
+#~ "Axe violations are normalized per 1,000"
+#~ " DOM nodes to reduce page-size "
+#~ "confounding."
+#~ msgstr ""
+#~ "Las violaciones Axe se normalizan por"
+#~ " cada 1,000 nodos DOM para reducir"
+#~ " la confusión debida al tamaño de "
+#~ "página."
+
+#~ msgid "Computational scaling"
+#~ msgstr "Escalamiento computacional"
+
+#~ msgid "DOM nodes and elapsed seconds expose pipeline performance costs."
+#~ msgstr ""
+#~ "Los nodos DOM y los segundos "
+#~ "transcurridos muestran el costo de "
+#~ "rendimiento del flujo."
+
+#~ msgid ""
+#~ "All WAVE categories are shown per "
+#~ "page. Errors, contrast errors, and "
+#~ "alerts indicate review needs; features, "
+#~ "structure, and ARIA describe detected "
+#~ "page elements and are not severity "
+#~ "levels."
+#~ msgstr ""
+#~ "Se muestran todas las categorías WAVE"
+#~ " por página. Los errores, errores de"
+#~ " contraste y alertas indican necesidades"
+#~ " de revisión; features, structure y "
+#~ "ARIA describen elementos detectados y no"
+#~ " son niveles de severidad."
+
+#~ msgid ""
+#~ "Both measures increase in the favorable"
+#~ " direction, but they use different "
+#~ "models and do not establish conformance."
+#~ msgstr ""
+#~ "Ambas medidas aumentan en la dirección"
+#~ " favorable, pero utilizan modelos "
+#~ "diferentes y no establecen conformidad."
+
+#~ msgid "WAVE AIM vs Axe density"
+#~ msgstr "WAVE AIM vs densidad Axe"
+
+#~ msgid ""
+#~ "Higher WAVE AIM is favorable while "
+#~ "higher Axe density is unfavorable, so"
+#~ " an inverse relationship is expected."
+#~ msgstr ""
+#~ "Un WAVE AIM mayor es favorable y"
+#~ " una densidad Axe mayor es "
+#~ "desfavorable, por lo que se espera "
+#~ "una relación inversa."
+
+#~ msgid "Semantic evidence"
+#~ msgstr "Evidencia semántica"
+
+#~ msgid ""
+#~ "Use Axe weighted impact density only "
+#~ "to prioritize expert inspection. Use Axe"
+#~ " density for cross-tool comparison "
+#~ "because it is unweighted. Lower "
+#~ "Lighthouse and lower WAVE AIM are "
+#~ "generally unfavorable, whereas higher Axe "
+#~ "measures are unfavorable."
+#~ msgstr ""
+#~ "Utilice la densidad de impacto ponderada"
+#~ " Axe únicamente para priorizar la "
+#~ "inspección experta. Utilice la densidad "
+#~ "Axe para comparar herramientas porque no"
+#~ " está ponderada. Valores menores de "
+#~ "Lighthouse y WAVE AIM suelen ser "
+#~ "desfavorables, mientras que valores Axe "
+#~ "mayores son desfavorables."
+
+#~ msgid "Open %(url)s in a new tab"
+#~ msgstr "Abrir %(url)s en una pestaña nueva"
+
+#~ msgid "Viewport capture of %(url)s"
+#~ msgstr "Captura del viewport de %(url)s"
+
+#~ msgid "Report type / render delay"
+#~ msgstr "Tipo de reporte / espera de renderizado"
+
+#~ msgid "Total violations"
+#~ msgstr "Violaciones totales"
+
+#~ msgid "Axe violations per 1,000 DOM nodes"
+#~ msgstr "Violaciones Axe por cada 1,000 nodos DOM"
+
+#~ msgid ""
+#~ "Higher AIM is favorable and higher "
+#~ "Axe density is unfavorable; an inverse"
+#~ " pattern is expected."
+#~ msgstr ""
+#~ "Un AIM mayor es favorable y una"
+#~ " densidad Axe mayor es desfavorable; "
+#~ "se espera un patrón inverso."
+
+#~ msgid "DOM size vs Axe density"
+#~ msgstr "Tamaño del DOM vs densidad Axe"
+
+#~ msgid ""
+#~ "This explores whether structurally larger "
+#~ "pages also exhibit a higher normalized"
+#~ " rate of Axe violations."
+#~ msgstr ""
+#~ "Esto explora si las páginas "
+#~ "estructuralmente más grandes también presentan"
+#~ " una tasa normalizada mayor de "
+#~ "violaciones Axe."
+
+#~ msgid ""
+#~ "Pages are ordered by their combined "
+#~ "relative performance across Axe density, "
+#~ "Lighthouse, and WAVE AIM."
+#~ msgstr ""
+#~ "Las páginas se ordenan por su "
+#~ "rendimiento relativo combinado en densidad "
+#~ "Axe, Lighthouse y WAVE AIM."
+
+#~ msgid ""
+#~ "At least three pages with complete "
+#~ "Axe density, Lighthouse, and WAVE AIM"
+#~ " measurements are required. With n <"
+#~ " 3 the percentile scale is not "
+#~ "informative; specifically, at n = 2 "
+#~ "ranks collapse to the endpoints 0 "
+#~ "and 100. Therefore the table, composite"
+#~ " score, tool disagreement, and calculation"
+#~ " panel are intentionally omitted. For "
+#~ "research studies, larger samples remain "
+#~ "preferable and this ranking should be"
+#~ " interpreted as descriptive and sample-"
+#~ "relative."
+#~ msgstr ""
+#~ "Se requieren al menos tres páginas "
+#~ "con mediciones completas de densidad "
+#~ "Axe, Lighthouse y WAVE AIM. Con n"
+#~ " < 3 la escala percentil no es"
+#~ " informativa; específicamente, con n = "
+#~ "2 los rangos colapsan a los "
+#~ "extremos 0 y 100. Por ello se "
+#~ "omiten intencionalmente la tabla, el "
+#~ "puntaje compuesto, el desacuerdo entre "
+#~ "herramientas y el panel de cálculo. "
+#~ "Para estudios de investigación siguen "
+#~ "siendo preferibles muestras mayores, y "
+#~ "esta clasificación debe interpretarse como "
+#~ "descriptiva y relativa a la muestra."
+
+#~ msgid ""
+#~ "A cross-tool ranking cannot be "
+#~ "calculated, so pages are ordered by "
+#~ "descending Axe weighted impact density "
+#~ "for expert-review priority."
+#~ msgstr ""
+#~ "No se puede calcular una clasificación"
+#~ " entre herramientas, por lo que las"
+#~ " páginas se ordenan por densidad de"
+#~ " impacto ponderada Axe descendente para "
+#~ "priorizar la revisión experta."
+
+#~ msgid ""
+#~ "The composite score and tool "
+#~ "disagreement require at least three "
+#~ "complete Axe density, Lighthouse, and "
+#~ "WAVE AIM measurements. Until then, Axe"
+#~ " weighted impact density provides an "
+#~ "Axe-only severity-weighted inspection "
+#~ "queue; it is not a cross-tool "
+#~ "score."
+#~ msgstr ""
+#~ "El puntaje compuesto y el desacuerdo "
+#~ "entre herramientas requieren al menos "
+#~ "tres mediciones completas de densidad "
+#~ "Axe, Lighthouse y WAVE AIM. Hasta "
+#~ "entonces, la densidad de impacto "
+#~ "ponderada Axe proporciona una cola de"
+#~ " inspección ponderada por severidad basada"
+#~ " sólo en Axe; no es un puntaje"
+#~ " entre herramientas."
+
+#~ msgid ""
+#~ "The Cross-tool Composite Score is "
+#~ "the equal-weighted mean of three "
+#~ "within-study percentile ranks: lower Axe"
+#~ " density, higher Lighthouse, and higher "
+#~ "WAVE AIM are favorable. Tool "
+#~ "disagreement is the range between those"
+#~ " three component percentiles; lower values"
+#~ " indicate greater convergence."
+#~ msgstr ""
+#~ "El puntaje compuesto entre herramientas "
+#~ "es la media con pesos iguales de"
+#~ " tres rangos percentiles dentro del "
+#~ "estudio: una menor densidad Axe, un "
+#~ "Lighthouse mayor y un WAVE AIM "
+#~ "mayor son favorables. El desacuerdo "
+#~ "entre herramientas es el rango entre "
+#~ "esos tres percentiles componentes; valores "
+#~ "menores indican mayor convergencia."
+
+#~ msgid ""
+#~ "A composite ranking requires at least"
+#~ " two pages with complete Axe density,"
+#~ " Lighthouse, and WAVE AIM measurements."
+#~ msgstr ""
+#~ "La clasificación compuesta requiere al "
+#~ "menos dos páginas con mediciones "
+#~ "completas de densidad Axe, Lighthouse y"
+#~ " WAVE AIM."
+
+#~ msgid ""
+#~ "A composite ranking requires at least"
+#~ " three pages with complete Axe "
+#~ "density, Lighthouse, and WAVE AIM "
+#~ "measurements. With fewer complete pages, "
+#~ "the 0–100 percentile scale is too "
+#~ "coarse to provide an informative "
+#~ "cross-tool ranking."
+#~ msgstr ""
+#~ "La clasificación compuesta requiere al "
+#~ "menos tres páginas con mediciones "
+#~ "completas de densidad Axe, Lighthouse y"
+#~ " WAVE AIM. Con menos páginas "
+#~ "completas, la escala percentil de 0 "
+#~ "a 100 es demasiado gruesa para "
+#~ "proporcionar una clasificación informativa "
+#~ "entre herramientas."
+
+#~ msgid ""
+#~ "Only pages with all three measurements"
+#~ " are included. Let n be the "
+#~ "number of complete pages in the "
+#~ "experiment; at least n = 2 is "
+#~ "required."
+#~ msgstr ""
+#~ "Sólo se incluyen las páginas que "
+#~ "tienen las tres mediciones. Sea n "
+#~ "el número de páginas completas del "
+#~ "experimento; se requiere al menos n "
+#~ "= 2."
+
+#~ msgid ""
+#~ "For each tool, pages receive an "
+#~ "average rank R from 1 to n. "
+#~ "Rank 1 is the most favorable "
+#~ "result and rank n is the least "
+#~ "favorable. Axe density is ranked from"
+#~ " lowest to highest; Lighthouse and "
+#~ "WAVE AIM are ranked from highest "
+#~ "to lowest. Equal measurements receive "
+#~ "the average of their tied rank "
+#~ "positions."
+#~ msgstr ""
+#~ "Para cada herramienta, las páginas "
+#~ "reciben un rango promedio R de 1"
+#~ " a n. El rango 1 es el "
+#~ "resultado más favorable y el rango "
+#~ "n es el menos favorable. La "
+#~ "densidad Axe se ordena de menor a"
+#~ " mayor; Lighthouse y WAVE AIM se "
+#~ "ordenan de mayor a menor. Las "
+#~ "mediciones iguales reciben el promedio "
+#~ "de las posiciones empatadas."
+
+#~ msgid ""
+#~ "Delete this experiment and all its "
+#~ "stored results and generated files? This"
+#~ " action cannot be undone."
+#~ msgstr ""
+#~ "¿Eliminar este experimento junto con "
+#~ "todos sus resultados almacenados y "
+#~ "archivos generados? Esta acción no se"
+#~ " puede deshacer."
+
+#~ msgid "A running experiment cannot be deleted."
+#~ msgstr "No se puede eliminar un experimento en ejecución."
+
+#~ msgid "The experiment could not be deleted from the database."
+#~ msgstr "No se pudo eliminar el experimento de la base de datos."
+
+#~ msgid "Experiment and all associated data were deleted."
+#~ msgstr "El experimento y todos sus datos asociados fueron eliminados."
+
+#~ msgid ""
+#~ "WAVE AIM is unavailable, so pages "
+#~ "are ordered by descending Axe weighted"
+#~ " impact density for expert-review "
+#~ "priority."
+#~ msgstr ""
+#~ "WAVE AIM no está disponible, por "
+#~ "lo que las páginas se ordenan por"
+#~ " densidad de impacto ponderada Axe "
+#~ "descendente para priorizar la revisión "
+#~ "experta."
+
+#~ msgid ""
+#~ "The composite score and tool "
+#~ "disagreement require complete WAVE AIM "
+#~ "measurements. Until they are available, "
+#~ "Axe weighted impact density provides an"
+#~ " Axe-only severity-weighted inspection "
+#~ "queue; it is not a cross-tool "
+#~ "score."
+#~ msgstr ""
+#~ "El puntaje compuesto y el desacuerdo "
+#~ "entre herramientas requieren mediciones WAVE"
+#~ " AIM completas. Mientras no estén "
+#~ "disponibles, la densidad de impacto "
+#~ "ponderada Axe proporciona una cola de"
+#~ " inspección ponderada por severidad y "
+#~ "exclusiva de Axe; no es un puntaje"
+#~ " entre herramientas."
+
+#~ msgid ""
+#~ "The evaluation experiment is running. "
+#~ "This process may take several seconds"
+#~ " for each URL evaluated."
+#~ msgstr ""
+#~ "El experimento de evaluación está en "
+#~ "ejecución. Este proceso puede tardar "
+#~ "varios segundos por cada URL evaluada."
+
+#~ msgid "Processing evaluation experiment"
+#~ msgstr "Procesando experimento de evaluación"
+
+#~ msgid "Accessibility evaluation %(timestamp)s"
+#~ msgstr "Evaluación de accesibilidad %(timestamp)s"
+
+#~ msgid "Axe total"
+#~ msgstr "Total Axe"
+
+#~ msgid ""
+#~ "WCAG profiles are cumulative. WCAG 2.2"
+#~ " AA is the default and matches "
+#~ "the selected standard in the comparison"
+#~ " screenshots."
+#~ msgstr ""
+#~ "Los perfiles WCAG son acumulativos. WCAG"
+#~ " 2.2 AA es el valor predeterminado"
+#~ " y coincide con el estándar "
+#~ "seleccionado en las capturas de "
+#~ "comparación."
+
+#~ msgid ""
+#~ "Disabled by default so WCAG issues "
+#~ "remain separate from advisory checks."
+#~ msgstr ""
+#~ "Desactivado por defecto para separar los"
+#~ " problemas WCAG de las comprobaciones "
+#~ "consultivas."
+
+#~ msgid "Show failed-rule counts in reports"
+#~ msgstr "Mostrar los conteos de reglas fallidas en los reportes"
+
+#~ msgid "Show needs-review counts in reports"
+#~ msgstr "Mostrar los conteos que requieren revisión en los reportes"
+
+#~ msgid "Show experimental Axe density metrics in reports"
+#~ msgstr "Mostrar métricas experimentales de densidad Axe en los reportes"
+
+#~ msgid ""
+#~ "Disabled by default. Axe issue counts"
+#~ " remain the primary result; density "
+#~ "metrics are optional page-size-"
+#~ "normalized diagnostics."
+#~ msgstr ""
+#~ "Desactivado por defecto. Los conteos de"
+#~ " incidencias Axe siguen siendo el "
+#~ "resultado principal; las métricas de "
+#~ "densidad son diagnósticos opcionales "
+#~ "normalizados por el tamaño de la "
+#~ "página."
+
+#~ msgid ""
+#~ "Affects new experiments. Results appear "
+#~ "in Axe issues and separately as "
+#~ "Best-practice issues in the URL "
+#~ "measurement matrix."
+#~ msgstr ""
+#~ "Afecta a los experimentos nuevos. Los"
+#~ " resultados aparecen en incidencias Axe "
+#~ "y por separado como incidencias de "
+#~ "buenas prácticas en la matriz por "
+#~ "URL."
+
+#~ msgid "Infrastructure settings that remain in .env"
+#~ msgstr "Configuración de infraestructura que permanece en .env"
+
+#~ msgid ""
+#~ "and Docker image identifiers. They are"
+#~ " required before the interface can "
+#~ "start."
+#~ msgstr ""
+#~ "y los identificadores de imágenes "
+#~ "Docker. Son necesarios antes de que "
+#~ "la interfaz pueda iniciar."
+
+#~ msgid ""
+#~ "WAVE was not used, so pages are"
+#~ " ordered by descending Axe issues for"
+#~ " expert-review priority."
+#~ msgstr ""
+#~ "WAVE no se utilizó, por lo que "
+#~ "las páginas se ordenan por número "
+#~ "descendente de incidencias Axe para "
+#~ "priorizar la revisión experta."
+
+#~ msgid ""
+#~ "WAVE was not used in this "
+#~ "experiment. Axe issues provide an "
+#~ "Axe-only inspection queue; it is not"
+#~ " a cross-tool score."
+#~ msgstr ""
+#~ "WAVE no se utilizó en este "
+#~ "experimento. Las incidencias Axe proporcionan"
+#~ " una cola de inspección basada sólo"
+#~ " en Axe; no es un puntaje entre"
+#~ " herramientas."
+
+#~ msgid ""
+#~ "Do critical and serious Axe issues "
+#~ "vary inversely with Lighthouse score?"
+#~ msgstr ""
+#~ "¿Las incidencias Axe críticas y serias"
+#~ " varían inversamente con el puntaje "
+#~ "Lighthouse?"
+
+#~ msgid "High-impact Axe issues vs Lighthouse"
+#~ msgstr "Incidencias Axe de alto impacto vs Lighthouse"
+
+#~ msgid "Import a portable experiment"
+#~ msgstr "Importar un experimento portable"
+
+#~ msgid "Experiment JSON file"
+#~ msgstr "Archivo JSON del experimento"
+
+#~ msgid "Import JSON"
+#~ msgstr "Importar JSON"
+
+#~ msgid "Download portable data"
+#~ msgstr "Descargar datos portables"
+
+#~ msgid "Order by"
+#~ msgstr "Ordenar por"
+
+#~ msgid "LLM providers"
+#~ msgstr "Proveedores LLM"
+
+#~ msgid "Select an exported experiment JSON file."
+#~ msgstr "Selecciona un archivo JSON de experimento exportado."
+
+#~ msgid "Combine"
+#~ msgstr "Combinar"
+
+#~ msgid "Combine stored results"
+#~ msgstr "Combinar resultados almacenados"
+
+#~ msgid "Combine stored URL results"
+#~ msgstr "Combinar resultados por URL almacenados"
+
+#~ msgid ""
+#~ "Build a new dataset or add to "
+#~ "an existing completed experiment without "
+#~ "evaluating the live pages again. Each"
+#~ " copied result retains its original "
+#~ "date and source experiment."
+#~ msgstr ""
+#~ "Crea un nuevo conjunto de datos o"
+#~ " agrega resultados a un experimento "
+#~ "completado sin volver a evaluar las "
+#~ "páginas. Cada resultado conserva su "
+#~ "fecha original y experimento de origen."
+
+#~ msgid "Create a new combined experiment"
+#~ msgstr "Crear un nuevo experimento combinado"
+
+#~ msgid "Used only when creating a new experiment"
+#~ msgstr "Se usa únicamente al crear un experimento nuevo"
+
+#~ msgid "Combine selected"
+#~ msgstr "Combinar seleccionados"
+
+#~ msgid "Select all visible results"
+#~ msgstr "Seleccionar todos los resultados visibles"
+
+#~ msgid "Filter by URL or experiment"
+#~ msgstr "Filtrar por URL o experimento"
+
+#~ msgid "Select a column heading to reorder the results."
+#~ msgstr "Seleccione el encabezado de una columna para reordenar los resultados."
+
+#~ msgid "Select %(url)s"
+#~ msgstr "Seleccionar %(url)s"
+
+#~ msgid "Already in destination"
+#~ msgstr "Ya existe en el destino"
+
+#~ msgid ""
+#~ "Enter one absolute URL per line. "
+#~ "The list is stored locally and can"
+#~ " be changed at any time."
+#~ msgstr ""
+#~ "Escriba una URL absoluta por línea. "
+#~ "La lista se almacena localmente y "
+#~ "puede modificarse en cualquier momento."
+
+#~ msgid "LLM-enabled experiment count"
+#~ msgstr "Cantidad de experimentos con LLM"
+
+#~ msgid "Experiments per provider"
+#~ msgstr "Experimentos por proveedor"
+
+#~ msgid "Frozen or reused URLs"
+#~ msgstr "URLs congeladas o reutilizadas"
+
+#~ msgid ""
+#~ "Select a .warp.json file exported by "
+#~ "this platform. Stored measurements and "
+#~ "embedded evidence are imported without "
+#~ "evaluating the live pages again."
+#~ msgstr ""
+#~ "Seleccione un archivo .warp.json exportado "
+#~ "por esta plataforma. Las mediciones "
+#~ "almacenadas y la evidencia incorporada "
+#~ "se importan sin volver a evaluar "
+#~ "las páginas web."
+
+#~ msgid ""
+#~ "Remove successful or failed URL results"
+#~ " to curate this experiment. You can"
+#~ " evaluate a failed URL separately and"
+#~ " add it later from Combine. Removing"
+#~ " every URL also deletes the "
+#~ "experiment."
+#~ msgstr ""
+#~ "Elimina resultados de URL correctos o"
+#~ " fallidos para depurar este experimento."
+#~ " Puedes evaluar una URL fallida por"
+#~ " separado y agregarla después desde "
+#~ "Combinar. Al eliminar todas las URL "
+#~ "también se elimina el experimento."
+
+#~ msgid "Filter by URL or status"
+#~ msgstr "Filtrar por URL o estado"
+
+#~ msgid "Remove selected URLs"
+#~ msgstr "Eliminar URL seleccionadas"
+
+#~ msgid "Measurements"
+#~ msgstr "Mediciones"
+
+#~ msgid "Select URL result"
+#~ msgstr "Seleccionar resultado de URL"
+
+#~ msgid "Completed"
+#~ msgstr "Completado"
+
+#~ msgid "Drop selected results here"
+#~ msgstr "Suelta aquí los resultados seleccionados"
+
+#~ msgid ""
+#~ "Remove successful or failed results. "
+#~ "Removing every URL also deletes the "
+#~ "experiment."
+#~ msgstr ""
+#~ "Elimina resultados correctos o fallidos. "
+#~ "Eliminar todas las URL también borra "
+#~ "el experimento."
+
+#~ msgid "Stored result library"
+#~ msgstr "Biblioteca de resultados guardados"
+
+#~ msgid "Used only for a new dataset"
+#~ msgstr "Se usa solamente para un conjunto nuevo"
+
+#~ msgid ""
+#~ "Use the selected observation when the"
+#~ " destination already contains the same "
+#~ "URL."
+#~ msgstr ""
+#~ "Usa la observación seleccionada cuando "
+#~ "el destino ya contiene la misma "
+#~ "URL."
+
+#~ msgid "Search URL or experiment"
+#~ msgstr "Buscar URL o experimento"
+
+#~ msgid "Select rows, or drag a row onto an experiment folder."
+#~ msgstr "Selecciona filas o arrastra una fila a la carpeta de un experimento."
+
+#~ msgid "Current"
+#~ msgstr "Actual"
+
+#~ msgid "Add the selected URL results to this experiment?"
+#~ msgstr "¿Agregar los resultados de URL seleccionados a este experimento?"
+
+#~ msgid "Name this dataset"
+#~ msgstr "Asigna un nombre al conjunto"
+
+msgid "Tranco sample"
+msgstr "Muestra de Tranco"
+
+msgid "Upload a permanently identified Tranco ranking. WARP deterministically selects five rank strata and records an ordered reserve sample for reproducibility."
+msgstr "Carga un ranking Tranco identificado permanentemente. WARP selecciona de forma determinista cinco estratos de rango y registra una muestra de reserva ordenada para reproducibilidad."
+
+msgid "Tranco ranking CSV or ZIP"
+msgstr "Ranking Tranco en CSV o ZIP"
+
+msgid "Permanent Tranco list ID"
+msgstr "ID permanente de la lista Tranco"
+
+msgid "Use the archived identifier from tranco-list.eu, not only the download date."
+msgstr "Usa el identificador archivado de tranco-list.eu, no solamente la fecha de descarga."
+
+msgid "Sampling seed"
+msgstr "Semilla de muestreo"
+
+msgid "Sites to evaluate per stratum"
+msgstr "Sitios por evaluar en cada estrato"
+
+msgid "Ordered reserve sites per stratum"
+msgstr "Sitios de reserva ordenados por estrato"
+
+msgid "Reserve sites are recorded but are not evaluated automatically."
+msgstr "Los sitios de reserva se registran, pero no se evalúan automáticamente."
+
+msgid "The requested experiment does not contain a Tranco sample."
+msgstr "El experimento solicitado no contiene una muestra de Tranco."
+
+msgid "Tranco sampling provenance"
+msgstr "Procedencia del muestreo Tranco"
+
+#, python-format
+msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s selected sites · %(reserve)s ordered reserves. Reserve sites were recorded but not evaluated automatically."
+msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios seleccionados · %(reserve)s reservas ordenadas. Los sitios de reserva se registraron, pero no se evaluaron automáticamente."
+
+msgid "Download sampling manifest"
+msgstr "Descargar manifiesto de muestreo"
+
+msgid "Tranco rank"
+msgstr "Rango Tranco"
+
+msgid "Rank stratum"
+msgstr "Estrato de rango"
+
+msgid "Select a Tranco CSV or ZIP file."
+msgstr "Selecciona un archivo CSV o ZIP de Tranco."
+
+msgid "Tranco sample and reserve sizes must be whole numbers."
+msgstr "Los tamaños de la muestra y la reserva Tranco deben ser números enteros."
+
+msgid "The Tranco list file is empty."
+msgstr "El archivo de la lista Tranco está vacío."
+
+msgid "The Tranco list exceeds the 100 MB upload limit."
+msgstr "La lista Tranco supera el límite de carga de 100 MB."
+
+msgid "A Tranco ZIP must contain exactly one CSV file."
+msgstr "Un ZIP de Tranco debe contener exactamente un archivo CSV."
+
+msgid "The CSV inside the Tranco ZIP exceeds 100 MB."
+msgstr "El CSV dentro del ZIP de Tranco supera los 100 MB."
+
+msgid "Upload the Tranco CSV or its original ZIP archive."
+msgstr "Carga el CSV de Tranco o su archivo ZIP original."
+
+msgid "The Tranco CSV must use UTF-8 encoding."
+msgstr "El CSV de Tranco debe usar codificación UTF-8."
+
+msgid "No valid ranked domains were found in the Tranco file."
+msgstr "No se encontraron dominios clasificados válidos en el archivo de Tranco."
+
+msgid "Enter the permanent Tranco list ID shown on tranco-list.eu."
+msgstr "Introduce el ID permanente de la lista Tranco mostrado en tranco-list.eu."
+
+msgid "Enter a sampling seed of at most 100 characters."
+msgstr "Introduce una semilla de muestreo de máximo 100 caracteres."
+
+msgid "Sites per stratum must be between 1 and 100."
+msgstr "Los sitios por estrato deben estar entre 1 y 100."
+
+msgid "Reserve sites per stratum must be between 0 and 200."
+msgstr "Los sitios de reserva por estrato deben estar entre 0 y 200."
+
+msgid "Global top 100"
+msgstr "100 líderes globales"
+
+msgid "Very high popularity"
+msgstr "Popularidad muy alta"
+
+msgid "High popularity"
+msgstr "Popularidad alta"
+
+msgid "Medium popularity"
+msgstr "Popularidad media"
+
+msgid "Long tail"
+msgstr "Cola larga"
+
+msgid "Popularity tail"
+msgstr "Cola de popularidad"
+
+msgid "Ranks 1–100"
+msgstr "Rangos 1–100"
+
+msgid "Ranks 101–1,000"
+msgstr "Rangos 101–1,000"
+
+msgid "Ranks 1,001–10,000"
+msgstr "Rangos 1,001–10,000"
+
+msgid "Ranks 10,001–100,000"
+msgstr "Rangos 10,001–100,000"
+
+msgid "Ranks 100,001–1,000,000"
+msgstr "Rangos 100,001–1,000,000"
+
+msgid "WARP will evaluate this many sites from each of the five popularity groups. For example, 10 produces 50 evaluated sites."
+msgstr "WARP evaluará esta cantidad de sitios de cada uno de los cinco grupos de popularidad. Por ejemplo, 10 produce 50 sitios evaluados."
+
+msgid "Backup sites selected in advance for each group. They are not evaluated or contacted unless they replace a failed site."
+msgstr "Sitios suplentes seleccionados previamente para cada grupo. No se evalúan ni se contactan a menos que sustituyan a un sitio fallido."
+
+msgid "Tranco sample quality control"
+msgstr "Control de calidad de la muestra Tranco"
+
+msgid "Stratified coverage"
+msgstr "Cobertura estratificada"
+
+msgid "Popularity group"
+msgstr "Grupo de popularidad"
+
+msgid "Rank interval"
+msgstr "Intervalo de rangos"
+
+msgid "Unused reserves"
+msgstr "Reservas sin usar"
+
+msgid "WARP can replace every failed sampled site with the next unused reserve from the same popularity group. The failed domain and reason remain recorded in the sampling manifest."
+msgstr "WARP puede sustituir cada sitio fallido de la muestra con la siguiente reserva sin usar del mismo grupo de popularidad. El dominio fallido y el motivo permanecen registrados en el manifiesto de muestreo."
+
+msgid "Replace failed sites and queue their reserve evaluations?"
+msgstr "¿Sustituir los sitios fallidos y poner en cola la evaluación de sus reservas?"
+
+msgid "Replace failed sites with reserves"
+msgstr "Sustituir sitios fallidos con reservas"
+
+#, python-format
+msgid "The manifest retains %(count)s previously excluded failed site(s) and their replacements."
+msgstr "El manifiesto conserva %(count)s sitio(s) fallido(s) previamente excluido(s) y sus sustituciones."
+
+msgid "Wait for the active evaluation to finish before replacing sites."
+msgstr "Espera a que termine la evaluación activa antes de sustituir sitios."
+
+msgid "No failed sampled sites have an unused reserve in the same stratum."
+msgstr "Ningún sitio fallido de la muestra tiene una reserva sin usar en el mismo estrato."
+
+msgid "The failed sites could not be replaced."
+msgstr "No fue posible sustituir los sitios fallidos."
+
+#, python-format
+msgid "%(count)s failed site(s) were replaced with the next reserve in the same stratum. The replacement evaluation was queued."
+msgstr "Se sustituyeron %(count)s sitio(s) fallido(s) con la siguiente reserva del mismo estrato. La evaluación de los reemplazos quedó en cola."
+
+msgid "Retry failed sites once before excluding them. This distinguishes a transient acquisition failure from a persistent failure without changing the sample."
+msgstr "Reintenta una vez los sitios fallidos antes de excluirlos. Esto distingue un fallo transitorio de adquisición de un fallo persistente sin modificar la muestra."
+
+msgid "Queue one controlled retry for every failed site?"
+msgstr "¿Poner en cola un reintento controlado para cada sitio fallido?"
+
+msgid "Retry failed sites once"
+msgstr "Reintentar una vez los sitios fallidos"
+
+msgid "Wait for the active evaluation to finish before retrying sites."
+msgstr "Espera a que termine la evaluación activa antes de reintentar sitios."
+
+msgid "No failed sampled sites are awaiting their single retry."
+msgstr "No hay sitios fallidos de la muestra pendientes de su único reintento."
+
+msgid "The failed sites could not be retried."
+msgstr "No fue posible reintentar los sitios fallidos."
+
+#, python-format
+msgid "%(count)s failed site(s) were queued for one controlled retry."
+msgstr "Se puso en cola un reintento controlado para %(count)s sitio(s) fallido(s)."
+
+msgid "Use the latest standard Tranco ranking or upload a permanently identified list. WARP deterministically selects five rank strata and records an ordered reserve sample for reproducibility."
+msgstr "Usa el ranking estándar más reciente de Tranco o carga una lista identificada permanentemente. WARP selecciona de forma determinista cinco estratos de rango y registra una muestra de reserva ordenada para reproducibilidad."
+
+msgid "Fetch and pin the latest standard Tranco list"
+msgstr "Obtener y fijar la lista estándar más reciente de Tranco"
+
+msgid "Recommended. WARP obtains the current list ID first and then downloads that exact archived list from tranco-list.eu."
+msgstr "Recomendado. WARP obtiene primero el ID de la lista actual y después descarga esa lista archivada exacta desde tranco-list.eu."
+
+msgid "Use the same seed and permanent list ID to reproduce exactly the same primary and reserve sites."
+msgstr "Usa la misma semilla y el mismo ID permanente para reproducir exactamente los mismos sitios principales y de reserva."
+
+msgid "Tranco returned an invalid permanent list ID."
+msgstr "Tranco devolvió un ID de lista permanente no válido."
+
+msgid "The latest standard Tranco list could not be downloaded."
+msgstr "No fue posible descargar la lista estándar más reciente de Tranco."
+
+msgid "The Tranco list exceeds the 100 MB download limit."
+msgstr "La lista Tranco supera el límite de descarga de 100 MB."
+
+msgid "Target sample"
+msgstr "Muestra objetivo"
+
+msgid "Initial acquisition yield"
+msgstr "Rendimiento inicial de adquisición"
+
+msgid "Primary exclusions"
+msgstr "Exclusiones primarias"
+
+msgid "Controlled retries"
+msgstr "Reintentos controlados"
+
+msgid "Reserve sites used"
+msgstr "Sitios de reserva utilizados"
+
+msgid "Reserve failures"
+msgstr "Fallos de reservas"
+
+msgid "Local HTML"
+msgstr "HTML local"
+
+msgid "Maximum: 50 per group (250 evaluated sites). WARP automatically records at least the same number of ordered reserves, with a minimum of 10 per group; reserves are contacted only when needed."
+msgstr "Máximo: 50 por grupo (250 sitios evaluados). WARP registra automáticamente al menos la misma cantidad de reservas ordenadas, con un mínimo de 10 por grupo; las reservas solo se contactan cuando son necesarias."
+
+msgid "Tranco sample size must be a whole number."
+msgstr "El tamaño de la muestra Tranco debe ser un número entero."
+
+msgid "Sites per stratum must be between 1 and 50."
+msgstr "Los sitios por estrato deben estar entre 1 y 50."
+
+msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites · %(reserve)s unused ordered reserves. WARP automatically retries each failed site once and then substitutes the next reserve from the same popularity group."
+msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo · %(reserve)s reservas ordenadas sin usar. WARP reintenta automáticamente una vez cada sitio fallido y después lo sustituye por la siguiente reserva del mismo grupo de popularidad."
+
+msgid "%(count)s site(s) remain incomplete because their popularity group exhausted its recorded reserve pool."
+msgstr "%(count)s sitio(s) permanecen incompletos porque su grupo de popularidad agotó el conjunto de reservas registrado."
+
+msgid "Global top 500"
+msgstr "Top 500 global"
+
+msgid "Ranks 1–500"
+msgstr "Posiciones 1–500"
+
+msgid "Ranks 501–5,000"
+msgstr "Posiciones 501–5,000"
+
+msgid "Ranks 5,001–50,000"
+msgstr "Posiciones 5,001–50,000"
+
+msgid "Ranks 50,001–250,000"
+msgstr "Posiciones 50,001–250,000"
+
+msgid "Ranks 250,001–1,000,000"
+msgstr "Posiciones 250,001–1,000,000"
+
+msgid "Maximum: 200 per group (1,000 evaluated sites). WARP automatically records the same number of ordered reserves, with a minimum of 10 per group; reserves are contacted only when needed."
+msgstr "Máximo: 200 por grupo (1,000 sitios evaluados). WARP registra automáticamente la misma cantidad de reservas ordenadas, con un mínimo de 10 por grupo; las reservas solo se contactan cuando son necesarias."
+
+msgid "Sites per stratum must be between 1 and 200."
+msgstr "Los sitios por estrato deben estar entre 1 y 200."
+
+msgid "WARP downloads and pins the latest standard Tranco ranking, then selects a reproducible sample from the popularity groups you choose."
+msgstr "WARP descarga y fija la lista estándar de Tranco más reciente y después selecciona una muestra reproducible de los grupos de popularidad elegidos."
+
+msgid "The seed controls which domains are selected. The same pinned list, seed, and group quantities always reproduce the same primary and reserve sites; changing the seed produces a different sample."
+msgstr "La semilla controla qué dominios se seleccionan. La misma lista fijada, semilla y cantidades por grupo siempre reproducen los mismos sitios principales y de reserva; cambiar la semilla produce una muestra diferente."
+
+msgid "Sites to evaluate by popularity group"
+msgstr "Sitios a evaluar por grupo de popularidad"
+
+msgid "Enter 0 to exclude a group. Values from 1 to 200 draw that many reproducible domains from the group; WARP creates and uses reserves automatically."
+msgstr "Introduce 0 para excluir un grupo. Los valores de 1 a 200 extraen esa cantidad de dominios reproducibles del grupo; WARP crea y utiliza las reservas automáticamente."
+
+msgid "Select at least one site from one Tranco popularity group."
+msgstr "Selecciona al menos un sitio de algún grupo de popularidad de Tranco."
+
+msgid "Sites per stratum must be between 0 and 200."
+msgstr "Los sitios por estrato deben estar entre 0 y 200."
+
+msgid "Acquisition failed — open for details"
+msgstr "Adquisición fallida — abre para ver detalles"
+
+msgid "No metrics or screenshot were stored because acquisition did not complete."
+msgstr "No se guardaron métricas ni captura porque la adquisición no se completó."
+
+msgid "Resume experiment"
+msgstr "Reanudar experimento"
+
+msgid "Resume this experiment? Stored results will be preserved and only pending URLs will be evaluated."
+msgstr "¿Reanudar este experimento? Se conservarán los resultados guardados y solo se evaluarán las URL pendientes."
+
+msgid "Only a paused or failed experiment can be resumed."
+msgstr "Solo se puede reanudar un experimento pausado o fallido."
+
+msgid "The experiment could not be resumed."
+msgstr "No se pudo reanudar el experimento."
+
+msgid "Experiment resumed. %(processed)s stored result(s) were preserved and %(pending)s URL(s) remain pending."
+msgstr "Experimento reanudado. Se conservaron %(processed)s resultado(s) y quedan %(pending)s URL pendientes."
+
+msgid "Pause experiment"
+msgstr "Pausar experimento"
+
+msgid "Pause this experiment? The URL currently being evaluated may finish, and all stored progress will be preserved."
+msgstr "¿Pausar este experimento? La URL que se está evaluando puede terminar y se conservará todo el progreso guardado."
+
+msgid "paused"
+msgstr "pausado"
+
+msgid "Paused"
+msgstr "Pausado"
+
+msgid "Evaluation paused"
+msgstr "Evaluación pausada"
+
+msgid "Stored results are safe. Resume whenever you are ready."
+msgstr "Los resultados guardados están seguros. Reanuda cuando estés listo."
+
+msgid "No new URL will start until the experiment is resumed; all stored observations remain available."
+msgstr "No se iniciará ninguna URL nueva hasta reanudar el experimento; todas las observaciones guardadas permanecen disponibles."
+
+msgid "Only a queued or running experiment can be paused."
+msgstr "Solo se puede pausar un experimento en cola o en ejecución."
+
+msgid "The experiment could not be paused."
+msgstr "No se pudo pausar el experimento."
+
+msgid "Experiment paused. Stored results and sampling progress were preserved."
+msgstr "Experimento pausado. Se conservaron los resultados y el avance del muestreo."
+
+msgid "Resumed %(count)s time(s) · last %(date)s"
+msgstr "Reanudado %(count)s vez/veces · última %(date)s"
+
+msgid "Recovery and replacement"
+msgstr "Recuperación y sustitución"
+
+msgid "final URLs complete"
+msgstr "URL finales completas"
+
+msgid "current failures"
+msgstr "fallos actuales"
+
+msgid "WARP is retrying failed sites and substituting ordered reserves from the same popularity group."
+msgstr "WARP está reintentando los sitios fallidos y sustituyéndolos por reservas ordenadas del mismo grupo de popularidad."
+
+msgid "Current group: %(name)s"
+msgstr "Grupo actual: %(name)s"
+
+msgid "Ranks 1–500 · maximum 100"
+msgstr "Posiciones 1–500 · máximo 100"
+
+msgid "Enter 0 to exclude a group. The Global top 500 accepts up to 100 sites; other groups accept up to 200. WARP creates and uses reserves automatically."
+msgstr "Introduce 0 para excluir un grupo. Global top 500 admite hasta 100 sitios; los demás grupos admiten hasta 200. WARP crea y utiliza las reservas automáticamente."
+
+msgid "Global top 500 accepts 0 to 100 sites; other groups accept 0 to 200."
+msgstr "Global top 500 admite de 0 a 100 sitios; los demás grupos admiten de 0 a 200."
+
+msgid "Acquisition review"
+msgstr "Revisión de adquisición"
+
+msgid "Responses requiring researcher inspection"
+msgstr "Respuestas que requieren inspección del investigador"
+
+msgid "These observations completed technically and remain in the analysis, but their captured response may be a redirect, security challenge, relocation notice, missing screenshot, or an Axe result with zero issues. Review the evidence before deciding exclusions."
+msgstr "Estas observaciones finalizaron técnicamente y permanecen en el análisis, pero la respuesta capturada puede ser una redirección, un desafío de seguridad, un aviso de traslado, una captura ausente o un resultado de Axe con cero incidencias. Revisa la evidencia antes de decidir exclusiones."
+
+msgid "Captured response"
+msgstr "Respuesta capturada"
+
+msgid "Review reason"
+msgstr "Motivo de revisión"
+
+msgid "Evidence"
+msgstr "Evidencia"
+
+msgid "Security challenge"
+msgstr "Desafío de seguridad"
+
+msgid "Relocation notice"
+msgstr "Aviso de traslado"
+
+msgid "Cross-domain redirect"
+msgstr "Redirección entre dominios"
+
+msgid "Screenshot unavailable"
+msgstr "Captura no disponible"
+
+msgid "Zero Axe issues"
+msgstr "Cero incidencias de Axe"
+
+msgid "Captured page evidence"
+msgstr "Evidencia de la página capturada"
+
+msgid "Tranco design and recovery"
+msgstr "Diseño y recuperación de Tranco"
+
+msgid "Permanent list"
+msgstr "Lista permanente"
+
+msgid "Target sample"
+msgstr "Muestra objetivo"
+
+msgid "Completed sample"
+msgstr "Muestra completada"
+
+msgid "Controlled retries"
+msgstr "Reintentos controlados"
+
+msgid "Reserve substitutions"
+msgstr "Sustituciones de reserva"
+
+msgid "Primary exclusions"
+msgstr "Exclusiones primarias"
+
+msgid "Reserve failures"
+msgstr "Fallos de reservas"
+
+msgid "The permanent list identifier, ranking digest, deterministic seed, selected domains, retry history, exclusions, and ordered replacements are preserved in the downloadable sampling manifest."
+msgstr "El identificador de la lista permanente, el resumen criptográfico del ranking, la semilla determinista, los dominios seleccionados, el historial de reintentos, las exclusiones y los reemplazos ordenados se conservan en el manifiesto de muestreo descargable."
+
+msgid "Complete-case analysis"
+msgstr "Análisis de casos completos"
+
+msgid "Coefficients use all %(count)s completed observations with both measures. The larger sample removes the small-sample warning, but associations remain descriptive and do not establish causation."
+msgstr "Los coeficientes utilizan las %(count)s observaciones completadas que tienen ambas medidas. La muestra mayor elimina la advertencia de muestra pequeña, pero las asociaciones siguen siendo descriptivas y no establecen causalidad."
+
+msgid "Measurement table pagination"
+msgstr "Paginación de la tabla de mediciones"
+
+msgid "Rows per page"
+msgstr "Filas por página"
+
+msgid "Previous"
+msgstr "Anterior"
+
+msgid "Next"
+msgstr "Siguiente"
+
+msgid "Page"
+msgstr "Página"
+
+msgid "of"
+msgstr "de"
+
+msgid "rows"
+msgstr "filas"
+
+msgid "Content pagination"
+msgstr "Paginación de contenido"
+
+msgid "Items per page"
+msgstr "Elementos por página"
+
+msgid "items"
+msgstr "elementos"
+
+msgid "Tranco acquisition by popularity group"
+msgstr "Adquisición Tranco por grupo de popularidad"
+
+msgid "Final coverage and acquisition effort"
+msgstr "Cobertura final y esfuerzo de adquisición"
+
+msgid "Target"
+msgstr "Objetivo"
+
+msgid "Final sample"
+msgstr "Muestra final"
+
+msgid "Domains evaluated"
+msgstr "Dominios evaluados"
+
+msgid "Excluded domains"
+msgstr "Dominios excluidos"
+
+msgid "Replacement share"
+msgstr "Proporción reemplazada"
+
+msgid "Replacement domains used"
+msgstr "Dominios de reemplazo utilizados"
+
+msgid "Replacement candidates excluded"
+msgstr "Candidatos de reemplazo excluidos"
+
+msgid "The sampling manifest preserves every excluded domain, operational reason, retry, and deterministic replacement."
+msgstr "El manifiesto de muestreo conserva cada dominio excluido, motivo operacional, reintento y reemplazo determinista."
+
+msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites. WARP retries unsuccessful acquisitions once and then follows the deterministic candidate order within the same popularity group until the target is complete."
+msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo. WARP reintenta una vez las adquisiciones fallidas y después sigue el orden determinista de candidatos dentro del mismo grupo de popularidad hasta completar el objetivo."
+
+msgid "Tranco measurements by popularity group"
+msgstr "Mediciones Tranco por grupo de popularidad"
+
+msgid "Descriptive comparison between strata"
+msgstr "Comparación descriptiva entre estratos"
+
+msgid "Interpretation boundary"
+msgstr "Límite de interpretación"
+
+msgid "These summaries compare automated measurements between Tranco strata. They do not estimate the percentage of accessible or WCAG-conformant websites."
+msgstr "Estos resúmenes comparan mediciones automatizadas entre estratos de Tranco. No estiman el porcentaje de sitios accesibles ni conformes con WCAG."
+
+msgid "Pages with no Axe Critical findings"
+msgstr "Páginas sin hallazgos críticos de Axe"
+
+msgid "Observed percentage in each completed stratum; zero automated critical findings does not establish conformance."
+msgstr "Porcentaje observado en cada estrato completo; cero hallazgos críticos automatizados no establece conformidad."
+
+msgid "Pages scoring at least 90 in Lighthouse"
+msgstr "Páginas con al menos 90 puntos en Lighthouse"
+
+msgid "Observed percentage by stratum; the Lighthouse score is not a WCAG conformance decision."
+msgstr "Porcentaje observado por estrato; la puntuación de Lighthouse no es una decisión de conformidad WCAG."
+
+msgid "Axe Critical distribution by stratum"
+msgstr "Distribución de hallazgos críticos de Axe por estrato"
+
+msgid "Lighthouse distribution by stratum"
+msgstr "Distribución de Lighthouse por estrato"
+
+msgid "Bars show the interquartile range and points show the median."
+msgstr "Las barras muestran el intervalo intercuartílico y los puntos muestran la mediana."
+
+msgid "WAVE AIM distribution by stratum"
+msgstr "Distribución de WAVE AIM por estrato"
+
+msgid "Interquartile ranges preserve the native AIM scale."
+msgstr "Los intervalos intercuartílicos conservan la escala nativa de AIM."
+
+msgid "High-severity LLM findings by stratum"
+msgstr "Hallazgos LLM de severidad alta por estrato"
+
+msgid "Model findings remain hypotheses for expert review."
+msgstr "Los hallazgos del modelo siguen siendo hipótesis para revisión experta."
+
+msgid "No Critical"
+msgstr "Sin críticos"
+
+msgid "Critical median [IQR]"
+msgstr "Mediana crítica [RIC]"
+
+msgid "Lighthouse median [IQR]"
+msgstr "Mediana Lighthouse [RIC]"
+
+msgid "Interquartile range"
+msgstr "Intervalo intercuartílico"
+
+msgid "No Axe Critical findings"
+msgstr "Sin hallazgos críticos de Axe"
+
+msgid "High-severity LLM findings"
+msgstr "Hallazgos LLM de severidad alta"
+
+msgid "Individual bar charts are omitted for large datasets because they obscure the distribution. URL-level measurements remain available in the paginated matrix and exported data."
+msgstr "Las gráficas de barras individuales se omiten en conjuntos grandes porque ocultan la distribución. Las mediciones por URL permanecen disponibles en la matriz paginada y en los datos exportados."
+
+msgid "An experiment can contain at most %(count)s URLs or HTML observations."
+msgstr "Un experimento puede contener como máximo %(count)s URLs u observaciones HTML."
+
+msgid "Enter one URL per line. If left empty, the internal dataset will be used. Maximum: 1,000 URLs per experiment."
+msgstr "Ingrese una URL por línea. Si se deja vacío, se usará el conjunto interno. Máximo: 1,000 URLs por experimento."
+
+msgid "Maximum: 1,000 HTML observations per experiment."
+msgstr "Máximo: 1,000 observaciones HTML por experimento."
+
+msgid "Share of Axe issue instances by stratum"
+msgstr "Proporción de incidencias Axe por estrato"
+
+msgid "Percentage of all Axe issue instances in the study contributed by each stratum. Mean issues per page are reported alongside it."
+msgstr "Porcentaje de todas las incidencias Axe del estudio aportado por cada estrato. También se informa la media de incidencias por página."
+
+msgid "Mean Lighthouse score by stratum"
+msgstr "Puntuación media de Lighthouse por estrato"
+
+msgid "Mean score on Lighthouse's native 0–100 scale; it is not a WCAG conformance percentage."
+msgstr "Puntuación media en la escala nativa 0–100 de Lighthouse; no es un porcentaje de conformidad WCAG."
+
+msgid "Axe issue distribution by stratum"
+msgstr "Distribución de incidencias Axe por estrato"
+
+msgid "Conventional boxplots show the median, interquartile range, 1.5×IQR whiskers, and outliers."
+msgstr "Los diagramas de caja convencionales muestran la mediana, el rango intercuartílico, bigotes de 1.5×RIC y valores atípicos."
+
+msgid "Share of Axe issues"
+msgstr "Proporción de incidencias Axe"
+
+msgid "Mean Lighthouse score"
+msgstr "Puntuación media de Lighthouse"
+
+msgid "Axe issue share"
+msgstr "Proporción de incidencias Axe"
+
+msgid "Mean Axe issues/page"
+msgstr "Media de incidencias Axe/página"
+
+msgid "Axe median [IQR]"
+msgstr "Mediana Axe [RIC]"
+
+msgid "Lighthouse mean · median [IQR]"
+msgstr "Media Lighthouse · mediana [RIC]"
+
+msgid "Tranco stratified analysis"
+msgstr "Análisis estratificado de Tranco"
+
+msgid "Acquisition quality and automated measurements are summarized by predefined popularity group."
+msgstr "La calidad de adquisición y las mediciones automatizadas se resumen por grupo de popularidad predefinido."
+
+msgid "Axe issue instances · log scale"
+msgstr "Incidencias Axe · escala logarítmica"
+
+msgid "Conventional boxplots use a log1p display scale so zero values and extreme outliers remain visible; axis labels show original issue counts."
+msgstr "Los diagramas de caja convencionales usan una escala visual log1p para mantener visibles los ceros y valores atípicos extremos; las etiquetas del eje muestran las cantidades originales de incidencias."
+
+msgid "First page"
+msgstr "Primera página"
+
+msgid "Previous page"
+msgstr "Página anterior"
+
+msgid "Next page"
+msgstr "Página siguiente"
+
+msgid "Last page"
+msgstr "Última página"
+
+msgid "Preparing export…"
+msgstr "Preparando exportación…"
+
+msgid "Restore a portable platform export as a new, independent experiment. Use Manage URLs when you intentionally want to combine stored results."
+msgstr "Restaura una exportación portátil de la plataforma como un experimento nuevo e independiente. Usa Gestionar URLs cuando quieras combinar resultados almacenados intencionalmente."
+
+msgid "If left empty, WARP uses the exported experiment name and marks it as imported."
+msgstr "Si se deja vacío, WARP usa el nombre del experimento exportado y lo marca como importado."
+
+msgid "Import in progress"
+msgstr "Importación en curso"
+
+msgid "Uploading, validating, and restoring the complete experiment. Large files may take several minutes."
+msgstr "Subiendo, validando y restaurando el experimento completo. Los archivos grandes pueden tardar varios minutos."
+
+msgid "Importing…"
+msgstr "Importando…"
+
+msgid "Additional observations"
+msgstr "Observaciones adicionales"
+
+#, python-format
+msgid "%(count)s result(s) added outside the Tranco sampling workflow have no rank stratum and are excluded from stratified comparisons."
+msgstr "%(count)s resultado(s) añadidos fuera del flujo de muestreo Tranco no tienen estrato de rango y se excluyen de las comparaciones estratificadas."
+msgid "New accessibility acquisition"
+msgstr "Nueva adquisición de accesibilidad"
+
+msgid "Acquire and preserve web content, then run reproducible automated evaluation and optional LLM-assisted semantic review."
+msgstr "Adquiere y preserva contenido web; después ejecuta una evaluación automatizada reproducible y una revisión semántica opcional asistida por LLM."
+
+msgid "Acquisition source"
+msgstr "Fuente de adquisición"
+
+msgid "Acquisition name"
+msgstr "Nombre de la adquisición"
+
+msgid "Acquisition"
+msgstr "Adquisición"
+
+msgid "Evaluations"
+msgstr "Evaluaciones"
+
+msgid "Evaluation"
+msgstr "Evaluación"
+
+msgid "New acquisition"
+msgstr "Nueva adquisición"
+
+msgid "Find an acquired page"
+msgstr "Buscar una página adquirida"
+
+msgid "Search by URL or evaluation"
+msgstr "Buscar por URL o evaluación"
+
+msgid "Selected page"
+msgstr "Página seleccionada"
+
+msgid "Choose a page below"
+msgstr "Selecciona una página de la lista"
+
+msgid "Available acquired pages"
+msgstr "Páginas adquiridas disponibles"
+
+msgid "No stored source snapshot"
+msgstr "Sin instantánea de origen almacenada"
+
+msgid "No acquired pages match this search."
+msgstr "Ninguna página adquirida coincide con la búsqueda."
+
+msgid "An accepted accessible version already exists"
+msgstr "Ya existe una versión accesible aceptada"
+
+msgid "Open the existing result or explicitly choose to remediate this page again."
+msgstr "Abre el resultado existente o elige explícitamente remediar esta página otra vez."
+
+msgid "Open accepted version"
+msgstr "Abrir versión aceptada"
+
+msgid "Remediate again"
+msgstr "Remediar nuevamente"
+
+msgid "Accepted version available"
+msgstr "Versión aceptada disponible"
+
+msgid "An accepted version already exists. Remediate again and spend additional model tokens? The previous run will remain in the reproducible history."
+msgstr "Ya existe una versión aceptada. ¿Deseas remediarla nuevamente y gastar tokens adicionales? La ejecución anterior permanecerá en el historial reproducible."
+
+msgid "Remediate this page again?"
+msgstr "¿Remediar esta página nuevamente?"
+
+msgid "An accepted accessible version already exists. Opened the latest result instead of spending tokens on a duplicate remediation."
+msgstr "Ya existe una versión accesible aceptada. Se abrió el resultado más reciente en lugar de gastar tokens en una remediación duplicada."
+
+msgid "The remediation agents are working"
+msgstr "Los agentes de remediación están trabajando"
+
+msgid "Accessibility barriers by category"
+msgstr "Barreras de accesibilidad por categoría"
+
+msgid "Fathallah taxonomy: Axe measures syntactic and layout barriers; semantic barriers require contextual specialist assessment."
+msgstr "Taxonomía de Fathallah: Axe mide barreras sintácticas y de layout; las barreras semánticas requieren evaluación contextual de especialistas."
+
+msgid "Syntactic"
+msgstr "Sintácticas"
+
+msgid "Semantic"
+msgstr "Semánticas"
+
+msgid "Layout"
+msgstr "Layout"
+
+msgid "Not assessed"
+msgstr "No evaluadas"
+
+msgid "findings"
+msgstr "hallazgos"
+
+msgid "Unclassified"
+msgstr "Sin clasificar"
+
+msgid "Counts are affected elements, not merely distinct Axe rule names. Categories are evidence and do not add a gate under Automated metrics."
+msgstr "Los conteos son elementos afectados, no sólo nombres de reglas Axe. Las categorías son evidencia y no agregan una condición en Métricas automáticas."
+
+msgid "Automated accessibility thresholds were achieved"
+msgstr "Se alcanzaron los umbrales automáticos de accesibilidad"
+
+msgid "Preservation evidence needs attention"
+msgstr "La evidencia de preservación requiere atención"
+
+msgid "text retained"
+msgstr "texto conservado"
+
+msgid "links retained"
+msgstr "enlaces conservados"
+
+msgid "This warning does not change acceptance under Automated metrics."
+msgstr "Esta advertencia no cambia la aceptación con Métricas automáticas."
+
+msgid "Acquire and freeze web content for reproducible automated evaluation and later remediation."
+msgstr "Adquiere y congela contenido web para su evaluación automatizada reproducible y posterior remediación."
+
+#, python-format
+msgid "Enter one URL per line. If left empty, the internal dataset will be used. Maximum: %(count)s manually entered URLs."
+msgstr "Ingrese una URL por línea. Si se deja vacío, se usará el conjunto interno. Máximo: %(count)s URLs ingresadas manualmente."
+
+#, python-format
+msgid "Manual acquisition accepts at most %(count)s URLs."
+msgstr "La adquisición manual acepta como máximo %(count)s URLs."
+
+msgid "Preservation references are 90 percent of source text and 85 percent of source link destinations. They are reported as evidence and do not change Automated metrics acceptance."
+msgstr "Las referencias de preservación son 90 por ciento del texto y 85 por ciento de los destinos de enlaces originales. Se reportan como evidencia y no cambian la aceptación con Métricas automáticas."
+
+msgid "Double-click to view report"
+msgstr "Doble clic para abrir el reporte"
+
+msgid "Repair method"
+msgstr "Método de reparación"
+
+msgid "patches applied"
+msgstr "parches aplicados"
+
+msgid "Repair representation"
+msgstr "Representación de reparación"
+
+msgid "Lossless DOM patch"
+msgstr "Parche DOM sin pérdida"
+
+msgid "Completed"
+msgstr "Completada"
+
+msgid "Accepted"
+msgstr "Aceptada"
+
+msgid "Running"
+msgstr "En curso"
+
+msgid "Queued"
+msgstr "En cola"
+
+msgid "Failed"
+msgstr "Fallida"
+
+msgid "Metrics not achieved"
+msgstr "Umbrales no alcanzados"
+
+msgid "Research dashboard"
+msgstr "Panel de investigación"
+
+msgid "Dashboard"
+msgstr "Panel de inicio"
+
+msgid "ATPGE research workspace"
+msgstr "Espacio de investigación ATPGE"
+
+msgid "Web accessibility research at a glance"
+msgstr "La investigación en accesibilidad web de un vistazo"
+
+msgid "Acquire reproducible pages, evaluate barriers, reconstruct accessible candidates, and compare their evidence."
+msgstr "Adquiere páginas reproducibles, evalúa barreras, reconstruye versiones accesibles y compara sus evidencias."
+
+msgid "ATPGE workflow"
+msgstr "Flujo de trabajo ATPGE"
+
+msgid "Acquire"
+msgstr "Adquirir"
+
+msgid "Evaluate"
+msgstr "Evaluar"
+
+msgid "Remediate"
+msgstr "Remediar"
+
+msgid "Compare"
+msgstr "Comparar"
+
+msgid "active"
+msgstr "en curso"
+
+msgid "Acquired pages"
+msgstr "Páginas adquiridas"
+
+msgid "Axe issues measured"
+msgstr "incidencias Axe medidas"
+
+msgid "Average Lighthouse"
+msgstr "Lighthouse promedio"
+
+msgid "across completed page evaluations"
+msgstr "en las evaluaciones de páginas completadas"
+
+msgid "Remediation runs"
+msgstr "Ejecuciones de remediación"
+
+msgid "accepted"
+msgstr "aceptadas"
+
+msgid "Remediation cost"
+msgstr "Costo de remediación"
+
+msgid "recorded LLM and optional WAVE cost"
+msgstr "costo registrado de LLM y WAVE opcional"
+
+msgid "Recent evaluations"
+msgstr "Evaluaciones recientes"
+
+msgid "Recent remediations"
+msgstr "Remediaciones recientes"
+
+msgid "View all"
+msgstr "Ver todas"
+
+msgid "No evaluations yet."
+msgstr "Todavía no hay evaluaciones."
+
+msgid "No remediations yet."
+msgstr "Todavía no hay remediaciones."
+msgid "Reconstruction strategy"
+msgstr "Estrategia de reconstrucción"
+
+msgid "Complete page generation"
+msgstr "Generación de la página completa"
+
+msgid "Coordinated area generation (pilot)"
+msgstr "Generación coordinada por zonas (piloto)"
+msgid "Areas"
+msgstr "Zonas"
+
+msgid "Retained areas"
+msgstr "Zonas conservadas"
+
+msgid "Restored areas"
+msgstr "Zonas recuperadas"
+msgid "Minimal patches"
+msgstr "Parches mínimos"
+
+msgid "Localized repair"
+msgstr "Reparación localizada"
+
+msgid "Coordinated repair"
+msgstr "Reparación coordinada"
+
+msgid "Selective regeneration"
+msgstr "Regeneración selectiva"
+
+msgid "Content-preserving recomposition"
+msgstr "Recomposición con contenido protegido"
+
+msgid "Name and color identify the executed approach using the current slider labels; historical configuration remains in the iteration evidence."
+msgstr "El nombre y el color identifican el enfoque ejecutado con las etiquetas actuales del slider; la configuración histórica se conserva en la evidencia de las iteraciones."
+
+msgid "Verified Bootstrap component rendering: supported content is rebuilt with versioned components and checked for preservation of ordered text, resources and control relationships. Unknown structures retain their original semantics; this is not WCAG certification."
+msgstr "Renderizado con componentes verificados de Bootstrap: el contenido compatible se reconstruye con componentes versionados y se comprueba la conservación del texto ordenado, los recursos y las relaciones de los controles. Las estructuras desconocidas conservan su semántica original; esto no es una certificación WCAG."
+
+msgid "Redesign the page shell while preserving original semantic content blocks."
+msgstr "Rediseña la estructura de la página conservando los bloques semánticos originales."
+
+msgid "Rebuild supported content with verified Bootstrap components; preserve source data and relationships."
+msgstr "Reconstruye el contenido compatible con componentes verificados de Bootstrap; conserva los datos y sus relaciones."
+
+msgid "Born-accessible regeneration"
+msgstr "Regeneración born-accessible"
+
+msgid "Recreate only planner-selected components; preserve the rest."
+msgstr "Recrea únicamente los componentes seleccionados por el planificador; conserva el resto."
+
+msgid "Markdown specialist"
+msgstr "Especialista Markdown"
+
+msgid "Frozen local Markdown plus UI inventory"
+msgstr "Markdown local congelado más inventario de interfaz"
+
+msgid "Jina Reader from frozen HTML"
+msgstr "Jina Reader a partir del HTML congelado"
+
+msgid "Architecture planner: GPT-6 Luna, independent of the generator tier. Specialist capability is experimental, not certified."
+msgstr "Planificador de arquitectura: GPT-6 Luna, independiente del nivel generador. Su capacidad especializada es experimental, no certificada."
+
+msgid "Intervention approach"
+msgstr "Enfoque de intervención"
+
+msgid "Inspired by the literature; not an exact reproduction"
+msgstr "Inspirado en la literatura; no es una reproducción exacta"
+
+msgid "Specialist architecture plan"
+msgstr "Plan del especialista de arquitectura"
+msgid "ACT retrieval coverage"
+msgstr "Cobertura de recuperación ACT"
+
+msgid "Examples and matched passed/failed pairs: %(examples)s / %(pairs)s"
+msgstr "Ejemplos y pares correcto/incorrecto: %(examples)s / %(pairs)s"
+
+msgid "Covered concepts"
+msgstr "Conceptos cubiertos"
+
+msgid "Concepts without retrieved evidence"
+msgstr "Conceptos sin evidencia recuperada"
+
+msgid "No examples were supplied in this iteration; enabled RAG does not imply used RAG."
+msgstr "No se proporcionaron ejemplos en esta iteración; habilitar RAG no implica haberlo utilizado."
+msgid "Markdown context plus HTML and task inventory"
+msgstr "Contexto Markdown más HTML e inventario de tareas"
+msgid "Up to %(count)s ACT examples after a failed iteration; actual retrieval is listed below."
+msgstr "Hasta %(count)s ejemplos ACT después de una iteración fallida; la recuperación real se muestra abajo."
+
+msgid "Execution approach"
+msgstr "Modo de ejecución"
+
+msgid "Iterative ATPGE — agents and refinement"
+msgstr "ATPGE iterativo — agentes y refinamiento"
+
+msgid "Zero-shot — single call"
+msgstr "Zero-shot — una sola llamada"
+
+msgid "Zero-shot prompting: the model receives the frozen HTML and instructions, without solved examples. One call produces a corrected page; no planner, RAG, screenshot or refinement loop. Axe and Lighthouse evaluate the response afterwards, without feedback to the model."
+msgstr "Prompt zero-shot: el modelo recibe el HTML congelado y las instrucciones, sin ejemplos resueltos. Una llamada produce la página corregida; sin planificador, RAG, captura ni ciclo de refinamiento. Axe y Lighthouse evalúan la respuesta después, sin devolver sus resultados al modelo."
+
+msgid "Iterative: agents propose a candidate, measure it with Axe and Lighthouse, and refine it within the configured limits. The best evaluated candidate is retained."
+msgstr "Iterativo: los agentes proponen una candidata, la miden con Axe y Lighthouse y la refinan dentro de los límites configurados. Se conserva la mejor candidata evaluada."
+
+msgid "Single-shot baseline"
+msgstr "Zero-shot — una sola llamada"
+
+msgid "One model call; no agents, RAG or refinement"
+msgstr "Una llamada al modelo; sin agentes, RAG ni refinamiento"
+
+msgid "Single-shot model assessment"
+msgstr "Respuesta del modelo en una sola llamada"
+
+msgid "Best evaluated candidate"
+msgstr "Mejor candidato evaluado"
+
+msgid "Model strategy"
+msgstr "Estrategia de modelos"
+
+msgid "Accessibility and preservation"
+msgstr "Accesibilidad y preservación"
+
+msgid "Original-page preservation"
+msgstr "Preservación de la página original"
+
+msgid "Page to remediate"
+msgstr "Página a remediar"
+
+msgid "Optional knowledge grounding"
+msgstr "Conocimiento de apoyo opcional"
+
+msgid "Curated multi-provider accessibility pool"
+msgstr "Selección curada de modelos de varios proveedores"
+
+msgid "Maximum visual preservation"
+msgstr "Máxima preservación visual"
+
+msgid "Preservation first"
+msgstr "Prioridad a la preservación"
+
+msgid "Accessibility with controlled change"
+msgstr "Accesibilidad con cambios controlados"
+
+msgid "Accessibility first"
+msgstr "Prioridad a la accesibilidad"
+
+msgid "Screen-reader first"
+msgstr "Prioridad al lector de pantalla"
+
+msgid "Smallest repairs; preserves native layout and behavior."
+msgstr "Parches mínimos que conservan el diseño y comportamiento originales."
+
+msgid "Limited semantic and contrast correction."
+msgstr "Correcciones semánticas y de contraste localizadas."
+
+msgid "Recognizable design with targeted repair."
+msgstr "Reparaciones coordinadas que mantienen reconocible el diseño."
+
+msgid "Visual resemblance optional; content and tasks mandatory."
+msgstr "La semejanza visual es opcional; el contenido y las tareas deben conservarse."
+
+msgid "Iteration limit"
+msgstr "Límite de iteraciones"
+
+msgid "Minimum Lighthouse"
+msgstr "Lighthouse mínimo"
+
+msgid "Maximum Axe issues"
+msgstr "Máximo de incidencias Axe"
+
+msgid "Examples retrieved after a failed iteration"
+msgstr "Ejemplos recuperados después de una iteración fallida"
+
+msgid "Expert fine tuning"
+msgstr "Ajustes avanzados"
+
+msgid "Use expert configuration"
+msgstr "Usar configuración avanzada"
+
+msgid "Enable it only to replace all automatic choices in steps 2, 3, and 4."
+msgstr "Actívala sólo para sustituir las decisiones automáticas de los pasos 2, 3 y 4."
+
+msgid "Fine tuning calculated by the automatic recipes"
+msgstr "Ajustes calculados por las estrategias automáticas"
+
+msgid "Configuration and acceptance rule"
+msgstr "Configuración y condiciones de aceptación"
+
+msgid "Axe issue reduction"
+msgstr "Reducción de incidencias Axe"
+
+msgid "Lighthouse gap recovered"
+msgstr "Brecha de Lighthouse recuperada"
+
+msgid "iterations"
+msgstr "iteraciones"
+
+msgid "ACT examples after failure"
+msgstr "ejemplos ACT después de una iteración fallida"
+
+msgid "Native / scoped components"
+msgstr "Componentes nativos / estilos locales"
+
+msgid "Temperature"
+msgstr "Temperatura"
+
+msgid "The single-call reference receives the frozen HTML, without component knowledge or a page template."
+msgstr "La referencia de una sola llamada recibe el HTML congelado, sin conocimiento de componentes ni plantilla de página."
+
+msgid "Evaluation only"
+msgstr "Sólo evaluación"
+
+msgid "Axe and Lighthouse measure the response; their findings are not sent to the single-call generator."
+msgstr "Axe y Lighthouse miden la respuesta; sus hallazgos no se envían al generador de una sola llamada."
+
+msgid "Low reasoning"
+msgstr "Razonamiento bajo"
+
+msgid "Medium reasoning"
+msgstr "Razonamiento medio"
+
+msgid "High reasoning"
+msgstr "Razonamiento alto"
+
+msgid "Extra-high reasoning"
+msgstr "Razonamiento extra alto"
+
+msgid "Maximum reasoning"
+msgstr "Razonamiento máximo"
+
+msgid "No adjustable reasoning"
+msgstr "Sin razonamiento ajustable"
+
+msgid "Requested reasoning"
+msgstr "Razonamiento solicitado"
+
+msgid "Not recorded"
+msgstr "No registrado"
+
+msgid "Low requested reasoning"
+msgstr "Razonamiento solicitado bajo"
+
+msgid "Medium requested reasoning"
+msgstr "Razonamiento solicitado medio"
+
+msgid "High requested reasoning"
+msgstr "Razonamiento solicitado alto"
+
+msgid "Extra-high Luna; high Gemini"
+msgstr "Luna extra alto; Gemini alto"
+
+msgid "Maximum Luna; high Gemini"
+msgstr "Luna máximo; Gemini alto"
+
+msgid "Affordable current models with low reasoning; fixed-mode coding alternatives are available here."
+msgstr "Modelos actuales económicos con razonamiento bajo; aquí también hay alternativas con modo fijo."
+
+msgid "The same affordable models with medium reasoning, not a premium model upgrade."
+msgstr "Los mismos modelos económicos con razonamiento medio, no un cambio a modelos premium."
+
+msgid "The same affordable models with high reasoning; more thinking may consume more tokens and time."
+msgstr "Los mismos modelos económicos con razonamiento alto; pensar más puede consumir más tokens y tiempo."
+
+msgid "Gemini Flash supports low, medium and high only. Higher slider stops keep Gemini at high."
+msgstr "Gemini Flash solo admite bajo, medio y alto. Los niveles superiores mantienen Gemini en alto."
+
+msgid "No Sol, Astra or Preview models in the automatic pool."
+msgstr "El pool automático no incluye Sol, Astra ni modelos Preview."
+
+msgid "Maximum reasoning on the affordable Luna model, not an Ultra-priced model. Gemini remains at high."
+msgstr "Razonamiento máximo en Luna económico, no un modelo de precio Ultra. Gemini se mantiene en alto."
+
+msgid "One generator is selected from this pool for the task and pinned across iterations. The planner is separate; specialists run only with comprehensive review."
+msgstr "Se elige un generador de este pool según la tarea y se mantiene entre iteraciones. El planificador es independiente; los especialistas solo participan con revisión exhaustiva."
+
+msgid "Exact generator model"
+msgstr "Modelo generador exacto"
+
+msgid "Use the configured provider model"
+msgstr "Usar el modelo configurado del proveedor"
+
+msgid "Economical repair"
+msgstr "Reparación económica"
+
+msgid "Low reasoning with Luna and Flash; economical coding and Llama alternatives."
+msgstr "Razonamiento bajo con Luna y Flash; alternativas económicas de código y Llama."
+
+msgid "Balanced capability and cost"
+msgstr "Capacidad y costo equilibrados"
+
+msgid "Medium reasoning with Luna and Flash; Qwen coding variants and Llama Maverick."
+msgstr "Razonamiento medio con Luna y Flash; variantes Qwen de código y Llama Maverick."
+
+msgid "Stronger models, bounded reasoning"
+msgstr "Modelos más capaces, razonamiento limitado"
+
+msgid "Adds GPT-6 Luna with high reasoning and Coder Plus; effort is defined per model."
+msgstr "Agrega GPT-6 Luna con razonamiento alto y Coder Plus; el esfuerzo se define por modelo."
+
+msgid "Luna high; economical alternatives"
+msgstr "Luna alto; alternativas económicas"
+
+msgid "Luna and Gemini use high reasoning. Coding variants and Maverick stay available."
+msgstr "Luna y Gemini usan razonamiento alto. Se mantienen las variantes de código y Maverick."
+
+msgid "No Astra or Preview models; Sol is reserved for the last level with low reasoning."
+msgstr "Sin Astra ni modelos Preview; Sol se reserva para el último nivel con razonamiento bajo."
+
+msgid "Controlled maximum capability"
+msgstr "Capacidad máxima controlada"
+
+msgid "Sol uses low reasoning and Gemini high; no Sol high or maximum reasoning."
+msgstr "Sol usa razonamiento bajo y Gemini alto; no se usa Sol alto ni máximo."
+
+msgid "No Astra or Preview models; higher capacity can still cost more per token."
+msgstr "Sin Astra ni modelos Preview; una mayor capacidad puede costar más por token."
+
+msgid "Effort shown is the maximum allowed; automatic selection may request less. A bounded routing preflight is included in the cost."
+msgstr "El esfuerzo mostrado es el máximo permitido; la selección automática puede solicitar menos. El costo incluye una consulta breve de selección."
+msgid "Born-accessible"
+msgstr "Accesible de origen"
+msgid "Completed with warnings"
+msgstr "Completada con advertencias"
+
+msgid "Available results"
+msgstr "Resultados disponibles"
+
+msgid "Configuration and research targets"
+msgstr "Configuración y metas de investigación"
+
+msgid "Research targets"
+msgstr "Metas de investigación"
+
+msgid "Content-locked regeneration"
+msgstr "Regeneración con contenido protegido"
+
+msgid "Known duplicate captured menus may be consolidated. Raw word retention can decrease without losing unique link destinations."
+msgstr "Los menús duplicados identificados en la captura pueden consolidarse. La retención bruta de palabras puede disminuir sin perder destinos únicos de enlaces."
+
+msgid "Local assembly QA"
+msgstr "Verificación local del ensamblado"
+
+msgid "The model designs the layout; the assembler preserves original content blocks and reading order. Native form submission data is retained, but original application scripts are not ported. Dynamic controls may become static content; task equivalence and screen-reader usability are not certified."
+msgstr "El modelo diseña la estructura; el ensamblador conserva los bloques de contenido original y su orden de lectura. Se conservan los datos de envío de formularios nativos, pero no se trasladan los scripts de la aplicación original. Los controles dinámicos pueden convertirse en contenido estático; no se certifica equivalencia funcional ni usabilidad con lectores de pantalla."
+
+msgid "A remediation result already exists"
+msgstr "Ya existe un resultado de remediación"
+
+msgid "Open existing result"
+msgstr "Abrir resultado existente"
+
+msgid "Whole-page regeneration — single call"
+msgstr "Regeneración completa — una llamada"
+
+msgid "Whole-page regeneration + localized refinement"
+msgstr "Regeneración completa + refinamiento localizado"
+
+msgid "Use the original Bootstrap structural reference"
+msgstr "Usar la referencia estructural original de Bootstrap"
+
+msgid "Use a Bootstrap reference matched to the page type"
+msgstr "Usar una referencia de Bootstrap según el tipo de página"
+
+msgid "Required design base"
+msgstr "Base de diseño obligatoria"
+
+msgid "Choose the remediation model"
+msgstr "Elegir el modelo de remediación"
+
+msgid "Choose a supported design base."
+msgstr "Elige una base de diseño compatible."
+
+msgid "Choose the model · ordered by reference cost"
+msgstr "Elige el modelo · ordenado por costo de referencia"
+
+msgid "Choose the model"
+msgstr "Elige el modelo"
+
+msgid "Choose a model from the slider."
+msgstr "Elige un modelo del deslizador."
+
+msgid "Reference pricing"
+msgstr "Tarifas de referencia"
+
+msgid "You choose the exact model. OpenRouter provides access but does not select another model. Cost levels do not change reasoning: adjustable effort stays low."
+msgstr "Tú eliges el modelo exacto. OpenRouter proporciona el acceso, pero no selecciona otro modelo. Los niveles de costo no cambian el razonamiento: el esfuerzo ajustable se mantiene bajo."
+
+msgid "The selected model is used for generation and refinement; no automatic substitution."
+msgstr "El modelo elegido se usa para generar y refinar, sin sustitución automática."
+
+msgid "Input / output USD per million tokens"
+msgstr "Entrada / salida en USD por millón de tokens"
+
+msgid "Catalogue verified"
+msgstr "Catálogo verificado"
+
+msgid "Reference only; actual cost depends on provider, tokens and iterations."
+msgstr "Solo referencia; el costo real depende del proveedor, los tokens y las iteraciones."
+
+msgid "User selected"
+msgstr "Elegido por el usuario"
+
+msgid "Refinement interrupted; evaluated result retained"
+msgstr "Refinamiento interrumpido; se conserva el resultado evaluado"
+
+msgid "Remediation report"
+msgstr "Reporte de remediación"
+
+msgid "Intervention approach"
+msgstr "Enfoque de intervención"
+
+msgid "Remediation stopped; no evaluated candidate available"
+msgstr "Remediación interrumpida; no hay una candidata evaluada disponible"
+
+msgid "OpenRouter rejected the request because of insufficient credit or a billing limit (HTTP 402)."
+msgstr "OpenRouter rechazó la solicitud por crédito insuficiente o un límite de facturación (HTTP 402)."
+
+msgid "The API did not respond within the allowed time."
+msgstr "La API no respondió dentro del tiempo permitido."
+
+msgid "A connection to the API could not be established. Check the network and service availability."
+msgstr "No se pudo establecer conexión con la API. Revisa la red y la disponibilidad del servicio."
+
+msgid "The process encountered an error and could not continue."
+msgstr "El proceso encontró un error y no pudo continuar."
+
+msgid "The evaluated candidate remains available below; the interruption does not erase its results."
+msgstr "La candidata evaluada sigue disponible más abajo; la interrupción no elimina sus resultados."
+
+msgid "No evaluated result can be returned. Resolve the error before starting another run."
+msgstr "No se puede devolver un resultado evaluado. Resuelve el error antes de iniciar otra ejecución."
+
+msgid "Technical error details"
+msgstr "Detalle técnico del error"
+
+msgid "Measurement interpretation"
+msgstr "Interpretación de las mediciones"
+
+msgid "Choose the model · experimental tiers"
+msgstr "Elige el modelo · niveles experimentales"
+
+msgid "Model order reflects experimental tiers, not a strict price ranking."
+msgstr "El orden representa niveles experimentales, no una clasificación estricta por precio."
+
+msgid "Process strategy"
+msgstr "Estrategia del proceso"
+
+msgid "Override model, intervention and knowledge settings."
+msgstr "Permite personalizar el modelo, la intervención y el conocimiento utilizado."
+
+msgid "Expert configuration overrides model, intervention and knowledge settings."
+msgstr "La configuración experta personaliza el modelo, la intervención y el conocimiento utilizado."
+
+msgid "Requested temperature"
+msgstr "Temperatura solicitada"
+
+msgid "The configured temperature was sent, but this model does not advertise temperature support in the provider catalogue. Its effective application is not confirmed; do not attribute differences to temperature alone."
+msgstr "Se envió la temperatura configurada, pero este modelo no anuncia soporte para ella en el catálogo del proveedor. No se confirma su aplicación efectiva; no atribuyas las diferencias únicamente a la temperatura."
+
+msgid "Original whole-document prompt with the configured temperature. The initial page is retained separately; subsequent iterations, if enabled, apply only localized patches and roll back regressions. Select HTML or Markdown in expert settings."
+msgstr "Prompt original de regeneración completa con la temperatura configurada. La página inicial se conserva por separado; las iteraciones posteriores, si se habilitan, solo aplican parches localizados y revierten regresiones. Selecciona HTML o Markdown en los ajustes expertos."
+
+msgid "HTML regeneration"
+msgstr "Regeneración desde HTML"
+
+msgid "Markdown regeneration"
+msgstr "Regeneración desde Markdown"
+
+msgid "Regenerate from complete HTML, then refine with localized patches."
+msgstr "Regenera desde el HTML completo y después refina con parches localizados."
+
+msgid "Regenerate from Markdown with greater design freedom, then refine with localized patches."
+msgstr "Regenera desde Markdown con mayor libertad de diseño y después refina con parches localizados."
+
+msgid "Original whole-document prompt at temperature 0.5. The initial page is retained separately; subsequent iterations, if enabled, apply only localized patches and roll back regressions. Select HTML or Markdown in expert settings."
+msgstr "Prompt original de regeneración completa con temperatura 0.5. La página inicial se conserva por separado; las iteraciones posteriores, si se habilitan, solo aplican parches localizados y revierten regresiones. Selecciona HTML o Markdown en los ajustes expertos."
+
+msgid "Local"
+msgstr "Local"
+
+msgid "Local LLM (Ollama)"
+msgstr "LLM local (Ollama)"
+
+msgid "Install Ollama separately. Configure both fields to add the local model as the first slider step; clear both to disable it. No cloud fallback."
+msgstr "Instala Ollama por separado. Configura ambos campos para agregar el modelo local como primer paso del slider; vacía ambos para desactivarlo. Sin cambio automático a la nube."
+
+msgid "Ollama server address"
+msgstr "Dirección del servidor Ollama"
+
+msgid "From Docker on macOS, use host.docker.internal rather than localhost. The server must be reachable from the worker."
+msgstr "Desde Docker en macOS, usa host.docker.internal en lugar de localhost. El worker debe poder conectarse al servidor."
+
+msgid "Installed local model"
+msgstr "Modelo local instalado"
+
+msgid "Enter the exact installed model name and tag. Models are not downloaded by this software."
+msgstr "Ingresa el nombre y etiqueta exactos del modelo instalado. Este software no descarga modelos."
+
+msgid "This local model supports images"
+msgstr "Este modelo local admite imágenes"
+
+msgid "Enable only for a vision model; otherwise screenshots are omitted. Reported local LLM API cost is zero, excluding hardware, electricity and optional WAVE."
+msgstr "Actívalo solo para un modelo con visión; de lo contrario, se omiten las capturas. El costo reportado de la API del LLM local es cero; excluye equipo, electricidad y WAVE opcional."
+
+msgid "Test saved Ollama connection"
+msgstr "Probar conexión guardada de Ollama"
+
+msgid "Ollama connection verified; the configured model is available. No generation was performed."
+msgstr "Conexión con Ollama verificada; el modelo configurado está disponible. No se realizó ninguna generación."
+
+msgid "Could not verify Ollama. Check the saved server address, installed model and worker connectivity."
+msgstr "No se pudo verificar Ollama. Revisa la dirección guardada del servidor, el modelo instalado y la conectividad del worker."
+
+msgid "External Ollama server · no cloud fallback · excludes hardware and electricity costs."
+msgstr "Servidor Ollama externo · sin cambio automático a la nube · excluye costos de equipo y electricidad."
+
+msgid "Enter a valid Ollama HTTP/HTTPS address without credentials, query or fragment."
+msgstr "Ingresa una dirección HTTP/HTTPS válida de Ollama sin credenciales, parámetros ni fragmento."
+
+msgid "Enter the exact installed local model name, for example llama3.1:8b (not a cloud model)."
+msgstr "Ingresa el nombre exacto del modelo local instalado, por ejemplo llama3.1:8b (no un modelo de nube)."
+
+msgid "Use your own Ollama server, not the Ollama cloud endpoint."
+msgstr "Usa tu propio servidor Ollama, no el servicio de nube de Ollama."
+
+msgid "Use ACT examples during refinement"
+msgstr "Usar ejemplos ACT durante el refinamiento"
+
+msgid "Optional research factor: compare with and without ACT examples. It does not change the first generation or the evaluation thresholds."
+msgstr "Factor opcional de investigación: compara con y sin ejemplos ACT. No modifica la primera generación ni los umbrales de evaluación."
+
+msgid "Adaptive W3C ACT grounding"
+msgstr "Conocimiento adaptativo de reglas ACT de W3C"
+
+msgid "The first candidate uses no retrieved material. After a measured failure, relevant passed and failed ACT examples guide refinement."
+msgstr "La primera candidata no usa material recuperado. Tras detectar una falla, ejemplos ACT pertinentes que pasan y fallan guían el refinamiento."
+
+msgid "code examples in the local vector database"
+msgstr "ejemplos de código en la base vectorial local"
+
+msgid "New remediation"
+msgstr "Nueva remediación"
+
+msgid "Start remediation"
+msgstr "Iniciar remediación"
+
+msgid "Manual selection"
+msgstr "Selección manual"
+
+msgid "Deletion could not be confirmed. Refresh the list before trying again."
+msgstr "No se pudo confirmar el borrado. Actualiza la lista antes de volver a intentarlo."
+
+msgid "ACT grounding is always armed. Relevant passed and failed examples are retrieved only when measured difficulties require refinement; the first generation is unchanged."
+msgstr "El apoyo ACT siempre está preparado. Los ejemplos pertinentes de casos que pasan y fallan se recuperan solo cuando las dificultades detectadas requieren refinamiento; la primera generación no cambia."
+
+msgid "ACT grounding is enabled by default and retrieves relevant examples only when refinement is needed. Disable it for controlled comparisons; the first generation is unchanged."
+msgstr "El apoyo ACT está activado por defecto y recupera ejemplos pertinentes solo cuando se necesita refinamiento. Desactívalo para comparaciones controladas; la primera generación no cambia."
+
+msgid "ACT grounding"
+msgstr "Apoyo ACT"
+
+msgid "Enabled (default)"
+msgstr "Activado (por defecto)"
+
+msgid "Axe target not reached"
+msgstr "Objetivo de Axe no alcanzado"
+
+msgid "RAG used"
+msgstr "RAG utilizado"
+
+msgid "Adaptive example limit"
+msgstr "Límite adaptativo de ejemplos"
+
+msgid "Adaptive retrieval supplies complete matching example pairs during refinement; actual use is listed per iteration."
+msgstr "La recuperación adaptativa aporta parejas completas de ejemplos pertinentes durante el refinamiento; el uso real se muestra en cada iteración."
+
+msgid "Missing coverage does not necessarily mean missing knowledge: the example limit, activation policy and availability of complete matching pairs also affect retrieval."
+msgstr "La falta de cobertura no necesariamente implica que falte conocimiento: también influyen el límite de ejemplos, la política de activación y la disponibilidad de parejas completas que correspondan al problema."
+
+msgid "Complementary guidance example — not an official ACT testcase"
+msgstr "Ejemplo de guía complementaria — no es un caso oficial de ACT"
+
+msgid "RAG not used — no examples supplied in this iteration."
+msgstr "RAG no utilizado — no se enviaron ejemplos en esta iteración."
+
+msgid "RAG not used in this iteration."
+msgstr "RAG no utilizado en esta iteración."
+
+msgid "Lighthouse target not reached"
+msgstr "Objetivo de Lighthouse no alcanzado"
+
+msgid "Content preservation is below the reference levels. Review the retention measurements below."
+msgstr "La conservación del contenido está por debajo de los niveles de referencia. Revisa las mediciones de retención más abajo."
+
+msgid "Review the iteration decisions below for the recorded warning."
+msgstr "Revisa las decisiones de las iteraciones más abajo para consultar la advertencia registrada."
+
+msgid "The evaluated result remains available. Unmet targets do not reject the candidate."
+msgstr "El resultado evaluado sigue disponible. No alcanzar los objetivos no implica rechazar la candidata."
+
+msgid "Disabled — comparison without RAG"
+msgstr "Desactivado — comparación sin RAG"
+
+msgid "Original whole-document prompt with the configured temperature. The initial page is retained separately; subsequent iterations, if enabled, apply only localized patches and roll back regressions. Select HTML or Markdown using the preservation slider."
+msgstr "Prompt del documento completo con la temperatura configurada. La página inicial se conserva por separado; las iteraciones posteriores aplican únicamente parches focalizados y revierten las regresiones. Selecciona HTML o Markdown con el slider de preservación."
+msgid "Agent runtime evidence"
+msgstr "Evidencia de ejecución de agentes"
+
+msgid "Versioned skills"
+msgstr "Skills versionadas"
+
+msgid "Validated tools"
+msgstr "Herramientas validadas"
+
+msgid "Runtime state"
+msgstr "Estado de ejecución"
+
+msgid "Skill manifest"
+msgstr "Manifiesto de skills"
+
+msgid "MCP servers are not used in this run."
+msgstr "Esta ejecución no utiliza servidores MCP."
+
+msgid "skills"
+msgstr "skills"
+
+msgid "tool calls"
+msgstr "llamadas de herramienta"
+
+msgid "No agent skill was activated for this scientific baseline."
+msgstr "No se activó ninguna skill de agente para esta línea base científica."
+
+msgid "No tool call was recorded."
+msgstr "No se registró ninguna llamada de herramienta."

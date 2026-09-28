@@ -1,0 +1,16 @@
+{% set preservation_names={15:_('Minimal patches'),35:_('Localized repair'),55:_('Coordinated repair'),75:_('HTML regeneration'),90:_('Markdown regeneration')} %}
+{% set preservation_colors={15:'#2f9e66',35:'#2686c9',55:'#6558c8',75:'#9b4fc2',90:'#c3486b'} %}
+{% set tier_names={'local':_('Local'),'low':'Light','medium':_('Medium'),'high':_('High'),'xhigh':_('Extra high'),'max':_('Ultra')} %}
+{% set tier_colors={'local':'#64748b','low':'#2f9e66','medium':'#2686c9','high':'#6558c8','xhigh':'#9b4fc2','max':'#c3486b'} %}
+{% macro model_strategy_tier(run) -%}
+{% set model=run.generator_model|default('') %}
+{{ 'local' if model.startswith('ollama/') else run.model_cost_tier|default('low') }}
+{%- endmacro %}
+{% macro model_identity(model, label=none) -%}
+{% set provider=model.split('/')[0] %}
+{% if provider == 'ollama' %}
+{% set local_name=model.split('/')[-1]|lower %}
+{% if local_name.startswith('qwen') %}{% set provider='qwen' %}{% elif local_name.startswith('llama') %}{% set provider='meta-llama' %}{% elif local_name.startswith('gemma') %}{% set provider='google' %}{% endif %}
+{% endif %}
+<span class="run-model-identity" title="{{ model }}"><span class="model-company-icon model-company-{{ provider }}" aria-hidden="true">{% if provider == 'openai' %}{% include '_openai_icon.html' %}{% elif provider == 'anthropic' %}{% include '_anthropic_icon.html' %}{% elif provider == 'google' %}<svg viewBox="0 0 24 24"><path d="M12 1C13.5 8 16 10.5 23 12c-7 1.5-9.5 4-11 11C10.5 16 8 13.5 1 12 8 10.5 10.5 8 12 1Z" fill="currentColor"/></svg>{% elif provider == 'meta-llama' %}<svg viewBox="0 0 24 24"><path d="M2 16c0-14 8-10 10-4s10 10 10 0S14 4 12 12 2 22 2 16Z" fill="none" stroke="currentColor" stroke-width="2.3"/></svg>{% else %}<span>{{ '◎' if provider == 'openai' else ('✦' if provider == 'qwen' else provider[:1]|upper) }}</span>{% endif %}</span><span>{{ label if label else model.split('/')[-1]|replace('gpt-','GPT-')|replace('gemini-','Gemini ')|replace('qwen3-','Qwen3 ')|replace('llama-4-','Llama 4 ') }}<small>{{ 'OpenAI' if provider == 'openai' else ('Google' if provider == 'google' else ('Meta' if provider == 'meta-llama' else ('Qwen' if provider == 'qwen' else ('Anthropic' if provider == 'anthropic' else provider)))) }}</small></span></span>
+{%- endmacro %}

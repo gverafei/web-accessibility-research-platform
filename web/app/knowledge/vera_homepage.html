@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Example of top bar. -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Example of secondary bar, menu or header with images -->
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h2 class="card-title h5">{{title}}</h2>
+                            <p class="card-text">{{text}}.</p>
+                            <a href="..." class="btn btn-primary">{{text}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <h1>{{main title}}</h1>
+        <!-- Example of carrousel -->
+        <div id="carouselExample" class="carousel slide">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="..." class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="..." class="d-block w-100" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <!-- Example of list of elements -->
+        <div class="container text-center">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h2 class="card-title h5">{{title}}</h2>
+                            <p class="card-text">{{text}}.</p>
+                            <a href="..." class="btn btn-primary">{{text}}</a>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary">{{text}}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h2 class="card-title h5">{{title}}</h2>
+                            <p class="card-text">{{text}}.</p>
+                            <a href="..." class="btn btn-primary">{{text}}</a>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary">{{text}}</small>
+                        </div>
+                    </div>
+                </div>
+                ...
+                <!-- Could add more columns -->
+            </div>
+            <!-- Could add more rows and cols -->
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                ...
+            </div>
+        </div>
+
+        <!-- Example of columns -->
+        <div class="container text-center">
+            <div class="row align-items-start">
+                <div class="col">
+                    Could add an element here from list of elements.
+                </div>
+                <div class="col">
+                    Could add an element here from list of elements.
+                </div>
+                <div class="col">
+                    Could add an element here from list of elements.
+                </div>
+                ...
+                <!-- Could add more columns -->
+            </div>
+            <!-- Could add more rows -->
+            <div class="row align-items-start">
+                ...
+            </div>
+        </div>
+
+        <!-- Example of a modal or popup windows with button trigger -->
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Launch demo modal
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Example of Tables -->
+        <table class="table table-bordered">
+            <thead>
+                ...
+            </thead>
+            <tbody>
+                <tr class="table-active">
+                    ...
+                </tr>
+                <tr>
+                    ...
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>John</td>
+                    <td>Doe</td>
+                    <td class="table-active">@social</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Example of forms -->
+        <form>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </main>
+
+    <!-- Example of a sitemap in the footer -->
+    <footer class="bd-footer py-4 py-md-5 mt-5 bg-body-tertiary">
+        <div class="container px-4 px-md-3">
+            <div class="row">
+                <div class="col-lg-3 mb-3">
+                    <a class="d-inline-flex align-items-center mb-2 text-body-emphasis text-decoration-none" href="/"
+                        aria-label="...">
+                        <img width="50" src="..." alt="{{image description}}">
+                        <span class="fs-5">{{title}}</span>
+                    </a>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">{{description of the site}}.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-9 mb-3">
+                    <h2 class="h5">Mapa de sitio</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a class="link-body-emphasis" href="...">Home</a></li>
+                        <li class="mb-2"><a class="link-body-emphasis" href="...">...</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
