@@ -1032,7 +1032,7 @@ Measured findings are fallible localization evidence, not permission to game the
                     if run.get('markdown_provider')=='jina' and markdown_view['provider']!='jina':
                         raise ValueError('Requested Jina baseline unavailable; local Markdown is not substituted for this experiment')
                     content=markdown_view['markdown']; provider=markdown_view['provider']
-                original_messages=generation_messages(content,source_base,True,adaptive=True,reference_document=rendered_source,framework=selected_framework(run.get('template_selection')))
+                original_messages=generation_messages(content,source_base,reference_document=rendered_source,framework=selected_framework(run.get('template_selection')))
                 regeneration_evidence=generation_evidence(original_messages,run['transformation_format'],provider,run['temperature'])
                 if run.get('transformation_format')=='markdown':
                     quality_check=markdown_quality(rendered_source,content,source_base)

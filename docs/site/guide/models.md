@@ -13,7 +13,7 @@ The bundled catalogue lives in `web/app/remediation_model_choices.py`, in `defau
 | GPT-6 Luna — default | `openai/gpt-6-luna` | Light (`low`) |
 | Gemini 3.8 Flash | `google/gemini-3.8-flash` | High |
 | GPT-6 Luna | `openai/gpt-6-luna` | High |
-| GPT-6 Sol | `openai/gpt-6-sol` | Light (`low`) |
+| GPT-6.1 Sol | `openai/gpt-6.1-sol` | Light (`low`) |
 | GPT-6 Astra | `openai/gpt-6-astra` | Light (`low`) |
 | Claude Opus 5.5 | `anthropic/claude-opus-5.5` | Light (`low`) |
 

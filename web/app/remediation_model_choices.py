@@ -18,7 +18,7 @@ def default_catalog():
         ('openai/gpt-6-luna', 'GPT-6 Luna', 'high', 'low', '#2f9e66', True, False),
         ('google/gemini-3.8-flash', 'Gemini 3.8 Flash', 'high', 'high', '#6558c8', True, True),
         ('openai/gpt-6-luna', 'GPT-6 Luna', 'xhigh', 'high', '#9b4fc2', True, False),
-        ('openai/gpt-6-sol', 'GPT-6 Sol', 'max', 'low', '#c3486b', True, False),
+        ('openai/gpt-6.1-sol', 'GPT-6.1 Sol', 'max', 'low', '#c3486b', True, False),
         ('openai/gpt-6-astra', 'GPT-6 Astra', 'max', 'low', '#c9269e', True, False),
         ('anthropic/claude-opus-5.5', 'Claude Opus 5.5', 'max', 'low', '#aea229', True, True),
     )

@@ -16,7 +16,7 @@ class UserModelChoiceTests(unittest.TestCase):
         self.assertEqual(choices[4]['model'],'openai/gpt-6-luna')
         self.assertEqual(choices[4]['tier'],'xhigh')
         self.assertEqual(choices[4]['reasoning_effort'],'high')
-        self.assertEqual(choices[5]['id'],'openai/gpt-6-sol')
+        self.assertEqual(choices[5]['id'],'openai/gpt-6.1-sol')
         self.assertEqual(choices[5]['tier'],'max')
         self.assertEqual(choices[5]['reasoning_effort'],'low')
         self.assertEqual(choices[6]['id'],'openai/gpt-6-astra')
@@ -28,7 +28,7 @@ class UserModelChoiceTests(unittest.TestCase):
             self.assertNotIn('openrouter/auto',choice['id'])
             self.assertNotIn('preview',choice['id'])
         self.assertFalse(model_choice('qwen/qwen3-coder-plus')['vision'])
-        self.assertFalse(model_choice('openai/gpt-6-sol')['temperature_supported'])
+        self.assertFalse(model_choice('openai/gpt-6.1-sol')['temperature_supported'])
         with self.assertRaises(ValueError): model_choice('openrouter/auto')
 
 
@@ -51,17 +51,17 @@ class UserModelRouteTests(unittest.TestCase):
         return response,cursor
 
     def test_selected_sol_is_persisted_without_router_or_other_models(self):
-        response,cursor=self.submit('openai/gpt-6-sol')
+        response,cursor=self.submit('openai/gpt-6.1-sol')
         self.assertEqual(response.status_code,302)
         inserts=[call.args for call in cursor.execute.call_args_list
                  if call.args[0].startswith('INSERT INTO remediation_runs')]
         self.assertEqual(len(inserts),1)
         values=inserts[0][1]
-        self.assertEqual(values[5],'openai/gpt-6-sol')
-        self.assertEqual(values[7],'openai/gpt-6-sol')
+        self.assertEqual(values[5],'openai/gpt-6.1-sol')
+        self.assertEqual(values[7],'openai/gpt-6.1-sol')
         self.assertEqual(values[18],'user')
         self.assertEqual(values[19],'max')
-        self.assertEqual(json.loads(values[20]),['openai/gpt-6-sol'])
+        self.assertEqual(json.loads(values[20]),['openai/gpt-6.1-sol'])
         self.assertEqual(values[14],.5)
 
     def test_luna_high_selection_persists_api_model_and_recipe(self):

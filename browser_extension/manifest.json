@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Web Accessibility Research Platform",
-  "version": "0.1.12",
+  "version": "1.0.0",
   "description": "WARP accessibility acquisition, remediation, and evaluation initiated from the current page URL.",
   "permissions": ["activeTab", "tabs", "scripting", "storage", "sidePanel", "notifications", "alarms"],
   "host_permissions": ["http://*/*", "https://*/*"],

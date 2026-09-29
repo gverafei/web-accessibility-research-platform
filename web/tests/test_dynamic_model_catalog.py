@@ -14,7 +14,7 @@ class DynamicCatalogueTests(unittest.TestCase):
         self.assertEqual({c['model'] for c in choices}, {
             'meta-llama/llama-4-maverick', 'qwen/qwen3-coder-plus',
             'openai/gpt-6-luna', 'google/gemini-3.8-flash',
-            'openai/gpt-6-sol', 'openai/gpt-6-astra', 'anthropic/claude-opus-5.5',
+            'openai/gpt-6.1-sol', 'openai/gpt-6-astra', 'anthropic/claude-opus-5.5',
         })
         defaults = [c for c in choices if c['is_default']]
         self.assertEqual(len(defaults), 1)
@@ -25,6 +25,13 @@ class DynamicCatalogueTests(unittest.TestCase):
     def test_bundled_defaults_never_replace_a_saved_catalogue(self):
         saved = [dict(default_catalog()[2], id='researcher-model', model='future/research-model')]
         self.assertEqual([c['id'] for c in configured_catalog(self.settings(saved))], ['researcher-model'])
+
+    def test_saved_older_sol_remains_selectable_without_being_bundled(self):
+        saved = [dict(default_catalog()[5], id='openai/gpt-6-sol',
+                      model='openai/gpt-6-sol', label='GPT-6 Sol')]
+        self.assertEqual(model_choice('openai/gpt-6-sol', self.settings(saved))['model'],
+                         'openai/gpt-6-sol')
+        self.assertNotIn('openai/gpt-6-sol', {choice['model'] for choice in default_catalog()})
 
     def test_unknown_future_model_works_without_a_code_change(self):
         choice = dict(default_catalog()[2], id='my-lola', model='openai/gpt-lola-6.1', label='GPT Lola 6.1')

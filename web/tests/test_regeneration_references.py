@@ -19,7 +19,7 @@ class PageReferencesTests(unittest.TestCase):
         self.assertEqual(len(BeautifulSoup(ensure_design_base(duplicated,'bootstrap')[0],'html.parser').select('script[src]')),1)
 
     def test_interaction_contract_includes_examples_and_accessibility_limits(self):
-        messages=generation_messages('<nav>Links</nav>','https://example.org/',adaptive=True)
+        messages=generation_messages('<nav>Links</nav>','https://example.org/')
         advice=messages[3]['content']
         for term in ('data-bs-toggle="collapse"','aria-controls','bootstrap.bundle.min.js','shown.bs.modal','script-disabled','keyboard'):
             self.assertIn(term,advice)
@@ -36,7 +36,7 @@ class PageReferencesTests(unittest.TestCase):
         self.assertIn('card-content',reference['html'])
         self.assertIn('is-12-mobile',reference['html'])
         self.assertNotIn('is-12 ',reference['html'])
-        messages=generation_messages('# Content','https://example.org/',adaptive=True,framework='bulma')
+        messages=generation_messages('# Content','https://example.org/',framework='bulma')
         self.assertIn('BULMA 1.0.4 CONTRACT',messages[0]['content'])
         self.assertIn('no built-in JavaScript',messages[3]['content'])
         candidate,_=ensure_design_base('<html><head><link rel="stylesheet" href="https://cdn.test/bootstrap.css"></head><body>Content</body></html>','bulma')
@@ -81,8 +81,8 @@ class PageReferencesTests(unittest.TestCase):
 
     def test_markdown_uses_html_for_classification_without_replacing_input(self):
         source = '<main>'+'<article>Original</article>'*3+'</main>'
-        messages = generation_messages('# Complete Markdown', 'https://example.org/', True,
-                                       adaptive=True, reference_document=source)
+        messages = generation_messages('# Complete Markdown', 'https://example.org/',
+                                       reference_document=source)
         self.assertEqual(messages[2]['content'], '# Complete Markdown')
         self.assertIn(REFINED_INSTRUCTION, messages[0]['content'])
         evidence = generation_evidence(messages, 'markdown', 'local')
@@ -92,7 +92,7 @@ class PageReferencesTests(unittest.TestCase):
         self.assertIn('not content or a required layout', messages[3]['content'])
 
     def test_new_regeneration_requires_a_reference(self):
-        messages = generation_messages('<h1>Source</h1>', 'https://example.org/', adaptive=True)
+        messages = generation_messages('<h1>Source</h1>', 'https://example.org/')
         self.assertEqual(len(messages), 5)
         evidence = generation_evidence(messages, 'html', 'local')
         self.assertTrue(evidence['structural_reference'])
@@ -107,12 +107,14 @@ class PageReferencesTests(unittest.TestCase):
             self.assertNotIn('card-body',reference['html'])
             self.assertNotIn('row-cols',reference['html'])
             self.assertFalse(BeautifulSoup(reference['html'],'html.parser').find_all('script'))
-        messages=generation_messages('# Original', 'https://example.org/', adaptive=True,framework='pico')
+        messages=generation_messages('# Original', 'https://example.org/', framework='pico')
         self.assertEqual(generation_evidence(messages,'markdown','local')['structural_reference_metadata']['framework'],'pico')
         self.assertIn('overrides Bootstrap-specific advice',messages[0]['content'])
         with self.assertRaises(ValueError): select_reference('<h1>Original</h1>','unknown')
 
-    def test_literal_baseline_still_available(self):
-        messages = generation_messages('# Source', 'https://example.org/', True)
-        self.assertEqual(generation_evidence(messages, 'markdown', 'local')['version'], 'vera-whole-document-v1')
-        self.assertIn('Pricing', messages[4]['content'])
+    def test_current_reference_is_selected_without_legacy_baseline(self):
+        messages = generation_messages('# Source', 'https://example.org/')
+        evidence = generation_evidence(messages, 'markdown', 'local')
+        self.assertEqual(evidence['version'], 'whole-document-content-faithful-v3')
+        self.assertEqual(evidence['structural_reference_metadata']['framework'], 'bootstrap')
+        self.assertNotIn('Pricing', messages[4]['content'])

@@ -23,7 +23,7 @@ This map connects documentation topics to their implementation files. Paths are 
 | Intervention constraints | `web/app/remediation_approaches.py` |
 | Selection/completion/stopping | `web/app/remediation_selection.py`, `web/app/remediation_completion.py`, `web/app/remediation_adaptive.py` |
 | Source preservation and replay | `web/app/remediation_content_contract.py` |
-| Regeneration/design references | `web/app/vera_regeneration.py`, `web/app/regeneration_references.py` |
+| Whole-document prompt and design references | `web/app/vera_prompt.py`, `web/app/vera_regeneration.py`, `web/app/regeneration_references.py` |
 | Markdown extraction | `web/app/remediation_extraction.py` |
 | ACT retrieval/synchronization | `web/app/remediation_rag.py`, `web/app/sync_act_rag.py`, `web/app/remediation_rag_supplement.py` |
 | Database/schema | `web/app/database.py` |

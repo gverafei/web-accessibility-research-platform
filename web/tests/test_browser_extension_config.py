@@ -64,7 +64,7 @@ class ExtensionControlsTests(unittest.TestCase):
         self.assertEqual(cursor.execute.call_args_list[0].args[0].count('%s'), len(values))
 
     def test_regeneration_has_execution_mode_and_reference(self):
-        config = extension_configuration({'selected_model': 'openai/gpt-6-sol', 'preservation_level': 3}, {})
+        config = extension_configuration({'selected_model': 'openai/gpt-6.1-sol', 'preservation_level': 3}, {})
         cursor = MagicMock(lastrowid=10)
         create_run(cursor, 42, 'https://example.org/', config, {})
         values = cursor.execute.call_args_list[0].args[1]
@@ -73,7 +73,7 @@ class ExtensionControlsTests(unittest.TestCase):
 
     def test_invalid_slider_level_is_rejected(self):
         with self.assertRaises(ValueError):
-            extension_configuration({'selected_model': 'openai/gpt-6-sol', 'preservation_level': 6}, {})
+            extension_configuration({'selected_model': 'openai/gpt-6.1-sol', 'preservation_level': 6}, {})
 
     def test_delayed_local_request_keeps_its_original_endpoint(self):
         frozen = {'endpoint': 'http://original:11434', 'model': 'gemma4:latest', 'vision': False}

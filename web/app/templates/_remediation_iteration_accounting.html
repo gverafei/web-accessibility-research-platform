@@ -1,0 +1,5 @@
+{% if item.strategy and item.strategy.recovery %}
+<small>{{ _('Iteration token counts, cost and duration unavailable; the original run totals are shown above.') }}</small>
+{% else %}
+<small>{{ _("Iteration total for every participating LLM") }}: {{ item.input_tokens + item.output_tokens }} {{ _("tokens") }} · ${{ '%.6f'|format(item.cost_usd|float) }}{% if item.wave_credits_used %} · {{ item.wave_credits_used }} {{ _("WAVE credits") }} (${{ '%.6f'|format(item.wave_cost_usd|float) }}){% endif %} · {{ '%.1f'|format(item.execution_seconds|float) }} s</small>
+{% endif %}

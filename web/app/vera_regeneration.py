@@ -4,14 +4,12 @@ import re
 from collections import Counter
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from pathlib import Path
 from html.parser import HTMLParser
 from vera_prompt import SYSTEM_PROMPT, REFINED_INSTRUCTION, PROMPT_VERSION
 from regeneration_references import select_reference, reference_instruction
 from remediation_content_contract import original_page_wrapper
 
 PROMPT_SOURCE='https://github.com/gverafei/conceptual-model/blob/main/conceptual-model.ipynb'
-TEMPLATE_INSTRUCTION='The following is an accessibility-aware structural template to guide the regeneration. Use it as a reference for semantic structure, ARIA usage, and responsive layout. Use bootstrap classes to make it responsive and accessible.'
 MODES={'regenerate_only','regenerate_refine'}
 
 
@@ -20,45 +18,34 @@ def preservation_refinement_needed(mode, content_pass, missing_tasks):
     return mode=='regenerate_refine' and (not content_pass or bool(missing_tasks))
 
 
-def generation_messages(content, root_url, structural_reference=False, *, adaptive=False, reference_document=None, framework='bootstrap'):
+def generation_messages(content, root_url, *, reference_document=None, framework='bootstrap'):
     if not content.strip(): raise ValueError('Regeneration input is empty')
     if len(content)>180000: raise ValueError('Regeneration input exceeds its allowance; no truncated input submitted')
-    messages=[{'role':'system','content':SYSTEM_PROMPT},
+    messages=[{'role':'system','content':SYSTEM_PROMPT+REFINED_INSTRUCTION},
               {'role':'user','content':f"Use the following content to create a new accessible web page version. The root URL is '{root_url}'."},
               {'role':'user','content':content}]
-    if adaptive:
-        messages[0]['content'] += REFINED_INSTRUCTION
-        from regeneration_references import DESIGN_BASES
-        if framework not in DESIGN_BASES: raise ValueError('Unsupported regeneration design base')
-        from regeneration_components import component_instruction
-        messages[0]['content'] += '\nMANDATORY DESIGN BASE: '+DESIGN_BASES[framework][0]+'. Include the exact stylesheet '+DESIGN_BASES[framework][1]+'. This selection overrides Bootstrap-specific advice above. Do not mix frameworks. Retain the selected base during refinements.\n'+component_instruction(framework)
-    if structural_reference or adaptive:
-        if adaptive:
-            reference=select_reference(reference_document if reference_document is not None else content,framework)
-            messages.extend([{'role':'user','content':reference_instruction(reference)},{'role':'user','content':reference['html']}])
-        else:
-            reference=(Path(__file__).parent/'knowledge'/'vera_homepage.html').read_text(encoding='utf-8').replace('\n','')
-            messages.extend([{'role':'user','content':TEMPLATE_INSTRUCTION},{'role':'user','content':reference}])
+    from regeneration_references import DESIGN_BASES
+    if framework not in DESIGN_BASES: raise ValueError('Unsupported regeneration design base')
+    from regeneration_components import component_instruction
+    messages[0]['content'] += '\nMANDATORY DESIGN BASE: '+DESIGN_BASES[framework][0]+'. Include the exact stylesheet '+DESIGN_BASES[framework][1]+'. This selection overrides Bootstrap-specific advice above. Do not mix frameworks. Retain the selected base during refinements.\n'+component_instruction(framework)
+    reference=select_reference(reference_document if reference_document is not None else content,framework)
+    messages.extend([{'role':'user','content':reference_instruction(reference)},{'role':'user','content':reference['html']}])
     return messages
 
 
 def generation_evidence(messages, representation, source_provider, temperature=.5):
-    adaptive=REFINED_INSTRUCTION in messages[0]['content']
     reference_metadata=None
     if len(messages)==5 and messages[3]['content'].startswith('PAGE_REFERENCE_METADATA: '):
         import json
         reference_metadata=json.loads(messages[3]['content'].split('\n',1)[0].removeprefix('PAGE_REFERENCE_METADATA: '))
-    return {'version':PROMPT_VERSION if adaptive else 'vera-whole-document-v1','prompt_source':PROMPT_SOURCE,
+    return {'version':PROMPT_VERSION,'prompt_source':PROMPT_SOURCE,
             'structural_reference_metadata':reference_metadata,
             'system_prompt_sha256':hashlib.sha256(messages[0]['content'].encode()).hexdigest(),
             'literal_system_prompt_sha256':hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest(),
             'input_sha256':hashlib.sha256(messages[2]['content'].encode()).hexdigest(),
             'representation':representation,'source_provider':source_provider,
             'structural_reference':len(messages)==5,'temperature':float(temperature),
-            'messages':messages,'reproduction':False,
-            'differences':['Current model and configured provider endpoint, not the historical direct-provider call',
-                           'Current frozen acquisition; historical input downloads unavailable',
-                           'Explicit output token ceiling; independent evaluator configuration']}
+            'messages':messages}
 
 
 class _DocumentBoundaries(HTMLParser):

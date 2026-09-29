@@ -38,8 +38,8 @@ class WholeRegenerationTests(unittest.TestCase):
         self.assertEqual(omission_context(source,source,'https://example.org/'),[])
     def test_original_message_roles_and_separate_complete_input(self):
         messages=generation_messages('<html>Exact source</html>','https://example.org/')
-        self.assertEqual([m['role'] for m in messages],['system','user','user'])
-        self.assertEqual(messages[0]['content'],SYSTEM_PROMPT)
+        self.assertEqual([m['role'] for m in messages],['system','user','user','user','user'])
+        self.assertTrue(messages[0]['content'].startswith(SYSTEM_PROMPT))
         self.assertEqual(messages[1]['content'],"Use the following content to create a new accessible web page version. The root URL is 'https://example.org/'.")
         self.assertEqual(messages[2]['content'],'<html>Exact source</html>')
         self.assertNotIn('data-warp-slot',SYSTEM_PROMPT)
@@ -75,15 +75,15 @@ class WholeRegenerationTests(unittest.TestCase):
         self.assertEqual({item['url'] for item in missing['links']},{'https://example.org/','https://example.org/help'})
         self.assertEqual(missing['images'],[])
 
-    def test_original_structural_reference_is_not_a_published_page(self):
-        messages=generation_messages('# Source','https://example.org/',True)
+    def test_structural_reference_is_selected_for_the_current_design_base(self):
+        messages=generation_messages('# Source','https://example.org/')
         self.assertEqual(len(messages),5)
-        self.assertIn('navbar-expand-lg',messages[4]['content'])
-        self.assertNotIn('\n',messages[4]['content'])
+        self.assertIn('bootstrap',messages[4]['content'])
         evidence=generation_evidence(messages,'markdown','jina')
         self.assertTrue(evidence['structural_reference'])
         self.assertEqual(evidence['temperature'],.5)
-        self.assertFalse(evidence['reproduction'])
+        self.assertNotIn('reproduction',evidence)
+        self.assertNotIn('differences',evidence)
 
     def test_experimental_temperature_is_recorded_not_silently_reset(self):
         messages=generation_messages('# Exact source','https://example.org/')

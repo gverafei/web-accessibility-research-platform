@@ -55,6 +55,16 @@ class ConfigurationTabsTests(unittest.TestCase):
         self.assertNotIn('The model catalogue has its own save button',
                          self.page.select_one('#configurationGeneral').get_text())
 
+    def test_provider_search_and_close_share_a_compact_control_row(self):
+        row = self.page.select_one('#modelProviderPicker .model-provider-search-row')
+        self.assertIsNotNone(row)
+        self.assertEqual(row.select_one('label[for="providerModelSearch"]').get_text(strip=True),
+                         'Search provider models')
+        controls = row.select_one('.model-provider-search-controls')
+        self.assertIsNotNone(controls.select_one('input#providerModelSearch'))
+        self.assertIsNotNone(controls.select_one('button#closeProviderPicker'))
+        self.assertNotIn('btn-sm', controls.select_one('button')['class'])
+
 
 if __name__ == '__main__':
     unittest.main()
