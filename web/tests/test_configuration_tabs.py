@@ -65,6 +65,13 @@ class ConfigurationTabsTests(unittest.TestCase):
         self.assertIsNotNone(controls.select_one('button#closeProviderPicker'))
         self.assertNotIn('btn-sm', controls.select_one('button')['class'])
 
+    def test_model_save_feedback_is_visible_beside_its_button(self):
+        button = self.page.select_one('#saveModelsButton')
+        status = self.page.select_one('#modelCatalogStatus')
+        self.assertIs(button.parent, status.parent)
+        self.assertEqual(status['role'], 'status')
+        self.assertEqual(status['aria-live'], 'polite')
+
 
 if __name__ == '__main__':
     unittest.main()

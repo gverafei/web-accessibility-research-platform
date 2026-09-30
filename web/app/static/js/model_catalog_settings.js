@@ -8,8 +8,9 @@
   const es = document.documentElement.lang.startsWith('es');
   const say = (en, spanish) => es ? spanish : en;
   let choices = [], available = [], dirty = false;
+  const showStatus = (message, state = 'info') => { status.textContent = message; status.dataset.state = state; };
   const element = (tag, text, cls) => { const n = document.createElement(tag); if (text) n.textContent = text; if (cls) n.className = cls; return n; };
-  const changed = () => { dirty = true; status.textContent = say('Unsaved changes', 'Cambios sin guardar'); };
+  const changed = () => { dirty = true; showStatus(say('Unsaved changes', 'Cambios sin guardar'), 'unsaved'); };
   function select(values, selected, update) {
     const n = element('select', null, 'form-select form-select-sm');
     values.forEach(([value, name]) => n.add(new Option(name, value)));
@@ -65,24 +66,25 @@
       button.append(element('strong',item.label),element('small',item.model));
       const features=[item.vision?say('Text + images','Texto + imágenes'):say('Text','Texto'),item.reasoning_supported?say('Adjustable reasoning','Razonamiento configurable'):say('Fixed / default reasoning','Razonamiento fijo / predeterminado')];
       button.append(element('small',features.join(' · ')));
-      button.onclick=()=>{if(choices.length>=32){status.textContent=say('Maximum: 32 choices.','Máximo: 32 opciones.');return;}
+      button.onclick=()=>{if(choices.length>=32){showStatus(say('Maximum: 32 choices.','Máximo: 32 opciones.'), 'error');return;}
         choices.push({...item,id:`choice-${crypto.randomUUID()}`,enabled:true,is_default:false,tier:'high',reasoning_effort:null,color:'#2686c9'});changed();render();picker.hidden=true;};results.append(button);
     });
     if(!matching.length)results.append(element('p',say('No matching models.','Sin modelos coincidentes.')));
     else if(matching.length>60)results.append(element('p',say('Refine the search to see more models.','Afina la búsqueda para ver más modelos.')));
   }
   document.getElementById('discoverModelsButton').onclick=async()=>{
-    picker.hidden=false;status.textContent=say('Loading provider catalogue…','Cargando catálogo del proveedor…');
-    try{available=(await jsonRequest(`${endpoint}/discover`)).models;renderProvider();status.textContent=say('Choose a model to add.','Selecciona un modelo para agregarlo.');search.focus();}
-    catch(error){status.textContent=error.message;}
+    picker.hidden=false;showStatus(say('Loading provider catalogue…','Cargando catálogo del proveedor…'));
+    try{available=(await jsonRequest(`${endpoint}/discover`)).models;renderProvider();showStatus(say('Choose a model to add.','Selecciona un modelo para agregarlo.'));search.focus();}
+    catch(error){showStatus(error.message, 'error');}
   };
   document.getElementById('closeProviderPicker').onclick=()=>picker.hidden=true;
   search.oninput=renderProvider;
   document.getElementById('saveModelsButton').onclick=async()=>{
     const button=document.getElementById('saveModelsButton');button.disabled=true;
-    try{choices=(await jsonRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({choices})})).choices;dirty=false;render();status.textContent=say('Saved. New runs use this catalogue; existing runs are unchanged.','Guardado. Las nuevas corridas usan este catálogo; las anteriores no cambian.');}
-    catch(error){status.textContent=error.message;}finally{button.disabled=false;}
+    showStatus(say('Saving model catalogue…','Guardando catálogo de modelos…'));
+    try{choices=(await jsonRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({choices})})).choices;dirty=false;render();showStatus(say('✓ Model catalogue saved.','✓ Catálogo de modelos guardado.'), 'success');}
+    catch(error){showStatus(error.message, 'error');}finally{button.disabled=false;}
   };
   window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
-  jsonRequest(endpoint).then(data=>{choices=data.choices;render();}).catch(error=>status.textContent=error.message);
+  jsonRequest(endpoint).then(data=>{choices=data.choices;render();}).catch(error=>showStatus(error.message, 'error'));
 })();
