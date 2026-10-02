@@ -1,5 +1,5 @@
-site_name: WARP Documentation
-site_description: User and developer documentation for the Web Accessibility Research Platform
+site_name: A11yResearch Documentation
+site_description: User and developer documentation for A11yResearch, the Web Accessibility Research Platform
 site_url: https://gverafei.github.io/web-accessibility-research-platform/
 repo_url: https://github.com/gverafei/web-accessibility-research-platform
 repo_name: gverafei/web-accessibility-research-platform
@@ -112,7 +112,7 @@ nav:
   - Development:
       - Development environment: development/index.md
       - Tests and verification: development/testing.md
-      - Extending WARP: development/extending.md
+      - Extending A11yResearch: development/extending.md
       - Maintaining this documentation: development/documentation.md
   - Reference:
       - Troubleshooting: reference/troubleshooting.md

@@ -1,6 +1,6 @@
 # Installation
 
-WARP runs as six cooperating Docker services. Its single `docker-compose.yml` builds the application services from the repository so the application, extension and documentation correspond to the same source revision.
+A11yResearch runs as six cooperating Docker services. Its single `docker-compose.yml` builds the application services from the repository so the application, extension and documentation correspond to the same source revision.
 
 ## Requirements
 
@@ -38,7 +38,7 @@ docker compose logs --tail=100 web db worker
 
 The web service compiles the English/Spanish translation catalogues from the checked-out source before serving requests. Compiled catalogues are generated locally, not committed to Git.
 
-Web and worker build from `web/Dockerfile`, evaluator from `evaluator/Dockerfile`, and dataset-server from `dataset_server/Dockerfile`. No prebuilt WARP images are downloaded from Docker Hub. MySQL and Qdrant still use their official images; building the application also downloads base images and dependencies when they are not already cached.
+Web and worker build from `web/Dockerfile`, evaluator from `evaluator/Dockerfile`, and dataset-server from `dataset_server/Dockerfile`. No prebuilt A11yResearch images are downloaded from Docker Hub. MySQL and Qdrant still use their official images; building the application also downloads base images and dependencies when they are not already cached.
 
 To build without starting or restarting any service:
 

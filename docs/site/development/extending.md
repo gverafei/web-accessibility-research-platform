@@ -1,6 +1,6 @@
-# Extending WARP
+# Extending A11yResearch
 
-WARP exposes extension points for models, tools, remediation procedures, measurements and sampling designs. Versioned configuration and evidence connect these components to the experiments that use them.
+A11yResearch exposes extension points for models, tools, remediation procedures, measurements and sampling designs. Versioned configuration and evidence connect these components to the experiments that use them.
 
 ## Add a model without code changes
 

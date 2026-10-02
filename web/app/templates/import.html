@@ -14,7 +14,7 @@
             <div class="col-12">
                 <label class="form-label" for="import_title">{{ _("Imported experiment name") }}</label>
                 <input class="form-control" id="import_title" name="import_title" placeholder="{{ _('Optional') }}">
-                <div class="form-text">{{ _("If left empty, WARP uses the exported experiment name and marks it as imported.") }}</div>
+                <div class="form-text">{{ _("If left empty, A11yResearch uses the exported experiment name and marks it as imported.") }}</div>
             </div>
             <div class="col-12"><button class="btn btn-primary import-submit" type="submit"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9m0 0 4 4m-4-4-4 4M5 4h14"/></svg><span>{{ _("Import experiment") }}</span></button><div class="import-progress mt-3" hidden aria-live="polite"><div class="progress" role="progressbar" aria-label="{{ _('Import in progress') }}"><div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div></div><small>{{ _("Uploading, validating, and restoring the complete experiment. Large files may take several minutes.") }}</small></div></div>
         </form>

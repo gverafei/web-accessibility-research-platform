@@ -590,13 +590,11 @@ msgid "Show Axe Best Practices in reports"
 msgstr "Mostrar buenas prácticas de Axe en los reportes"
 
 #: app/templates/configuration.html:11
-msgid ""
-"Display only. Adds Best Practices to Axe totals and shows their separate "
-"column in every compatible experiment."
-msgstr ""
-"Sólo controla la visualización. Suma las buenas prácticas a los totales "
-"de Axe y muestra su columna separada en todos los experimentos "
-"compatibles."
+msgid "Display only. Shows Best Practices separately; main Axe scores and remediation targets always exclude them."
+msgstr "Sólo controla la visualización. Muestra las buenas prácticas por separado; los valores principales de Axe y los objetivos de remediación siempre las excluyen."
+
+msgid "Axe scores exclude Best Practices. Historical acceptance statuses remain as originally recorded."
+msgstr "Los valores de Axe excluyen las buenas prácticas. Los estados históricos de aceptación se conservan como fueron registrados."
 
 #: app/templates/configuration.html:12
 msgid "Show Failed rules in URL measurement matrix"
@@ -1046,8 +1044,8 @@ msgstr "o"
 msgid "ZIP containing HTML files"
 msgstr "ZIP con archivos HTML"
 
-msgid "WARP finds .html and .htm files anywhere inside the ZIP."
-msgstr "WARP encuentra los archivos .html y .htm en cualquier carpeta del ZIP."
+msgid "A11yResearch finds .html and .htm files anywhere inside the ZIP."
+msgstr "A11yResearch encuentra los archivos .html y .htm en cualquier carpeta del ZIP."
 
 msgid "Choose HTML files or a ZIP, not both. Selecting one clears and disables the other."
 msgstr "Selecciona archivos HTML o un ZIP, no ambos. Al elegir una opción se limpia y desactiva la otra."
@@ -1133,6 +1131,9 @@ msgstr ""
 #: app/templates/report.html:11 app/templates/report.html:22
 msgid "Evaluation in progress"
 msgstr "Evaluación en progreso"
+
+msgid "Progress updates are temporarily unavailable. Retrying…"
+msgstr "Las actualizaciones del avance no están disponibles temporalmente. Reintentando…"
 
 #: app/templates/report.html:11
 msgid "Building the report"
@@ -3463,8 +3464,8 @@ msgstr "Desconocida"
 msgid "Tranco sample"
 msgstr "Muestra de Tranco"
 
-msgid "Upload a permanently identified Tranco ranking. WARP deterministically selects five rank strata and records an ordered reserve sample for reproducibility."
-msgstr "Carga un ranking Tranco identificado permanentemente. WARP selecciona de forma determinista cinco estratos de rango y registra una muestra de reserva ordenada para reproducibilidad."
+msgid "Upload a permanently identified Tranco ranking. A11yResearch deterministically selects five rank strata and records an ordered reserve sample for reproducibility."
+msgstr "Carga un ranking Tranco identificado permanentemente. A11yResearch selecciona de forma determinista cinco estratos de rango y registra una muestra de reserva ordenada para reproducibilidad."
 
 msgid "Tranco ranking CSV or ZIP"
 msgstr "Ranking Tranco en CSV o ZIP"
@@ -3572,8 +3573,8 @@ msgstr "Rangos 10,001–100,000"
 msgid "Ranks 100,001–1,000,000"
 msgstr "Rangos 100,001–1,000,000"
 
-msgid "WARP will evaluate this many sites from each of the five popularity groups. For example, 10 produces 50 evaluated sites."
-msgstr "WARP evaluará esta cantidad de sitios de cada uno de los cinco grupos de popularidad. Por ejemplo, 10 produce 50 sitios evaluados."
+msgid "A11yResearch will evaluate this many sites from each of the five popularity groups. For example, 10 produces 50 evaluated sites."
+msgstr "A11yResearch evaluará esta cantidad de sitios de cada uno de los cinco grupos de popularidad. Por ejemplo, 10 produce 50 sitios evaluados."
 
 msgid "Backup sites selected in advance for each group. They are not evaluated or contacted unless they replace a failed site."
 msgstr "Sitios suplentes seleccionados previamente para cada grupo. No se evalúan ni se contactan a menos que sustituyan a un sitio fallido."
@@ -3593,8 +3594,8 @@ msgstr "Intervalo de rangos"
 msgid "Unused reserves"
 msgstr "Reservas sin usar"
 
-msgid "WARP can replace every failed sampled site with the next unused reserve from the same popularity group. The failed domain and reason remain recorded in the sampling manifest."
-msgstr "WARP puede sustituir cada sitio fallido de la muestra con la siguiente reserva sin usar del mismo grupo de popularidad. El dominio fallido y el motivo permanecen registrados en el manifiesto de muestreo."
+msgid "A11yResearch can replace every failed sampled site with the next unused reserve from the same popularity group. The failed domain and reason remain recorded in the sampling manifest."
+msgstr "A11yResearch puede sustituir cada sitio fallido de la muestra con la siguiente reserva sin usar del mismo grupo de popularidad. El dominio fallido y el motivo permanecen registrados en el manifiesto de muestreo."
 
 msgid "Replace failed sites and queue their reserve evaluations?"
 msgstr "¿Sustituir los sitios fallidos y poner en cola la evaluación de sus reservas?"
@@ -3641,14 +3642,14 @@ msgstr "No fue posible reintentar los sitios fallidos."
 msgid "%(count)s failed site(s) were queued for one controlled retry."
 msgstr "Se puso en cola un reintento controlado para %(count)s sitio(s) fallido(s)."
 
-msgid "Use the latest standard Tranco ranking or upload a permanently identified list. WARP deterministically selects five rank strata and records an ordered reserve sample for reproducibility."
-msgstr "Usa el ranking estándar más reciente de Tranco o carga una lista identificada permanentemente. WARP selecciona de forma determinista cinco estratos de rango y registra una muestra de reserva ordenada para reproducibilidad."
+msgid "Use the latest standard Tranco ranking or upload a permanently identified list. A11yResearch deterministically selects five rank strata and records an ordered reserve sample for reproducibility."
+msgstr "Usa el ranking estándar más reciente de Tranco o carga una lista identificada permanentemente. A11yResearch selecciona de forma determinista cinco estratos de rango y registra una muestra de reserva ordenada para reproducibilidad."
 
 msgid "Fetch and pin the latest standard Tranco list"
 msgstr "Obtener y fijar la lista estándar más reciente de Tranco"
 
-msgid "Recommended. WARP obtains the current list ID first and then downloads that exact archived list from tranco-list.eu."
-msgstr "Recomendado. WARP obtiene primero el ID de la lista actual y después descarga esa lista archivada exacta desde tranco-list.eu."
+msgid "Recommended. A11yResearch obtains the current list ID first and then downloads that exact archived list from tranco-list.eu."
+msgstr "Recomendado. A11yResearch obtiene primero el ID de la lista actual y después descarga esa lista archivada exacta desde tranco-list.eu."
 
 msgid "Use the same seed and permanent list ID to reproduce exactly the same primary and reserve sites."
 msgstr "Usa la misma semilla y el mismo ID permanente para reproducir exactamente los mismos sitios principales y de reserva."
@@ -3686,8 +3687,8 @@ msgstr "HTML local"
 msgid "Tranco sample size must be a whole number."
 msgstr "El tamaño de la muestra Tranco debe ser un número entero."
 
-msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites · %(reserve)s unused ordered reserves. WARP automatically retries each failed site once and then substitutes the next reserve from the same popularity group."
-msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo · %(reserve)s reservas ordenadas sin usar. WARP reintenta automáticamente una vez cada sitio fallido y después lo sustituye por la siguiente reserva del mismo grupo de popularidad."
+msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites · %(reserve)s unused ordered reserves. A11yResearch automatically retries each failed site once and then substitutes the next reserve from the same popularity group."
+msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo · %(reserve)s reservas ordenadas sin usar. A11yResearch reintenta automáticamente una vez cada sitio fallido y después lo sustituye por la siguiente reserva del mismo grupo de popularidad."
 
 msgid "%(count)s site(s) remain incomplete because their popularity group exhausted its recorded reserve pool."
 msgstr "%(count)s sitio(s) permanecen incompletos porque su grupo de popularidad agotó el conjunto de reservas registrado."
@@ -3710,8 +3711,8 @@ msgstr "Posiciones 50,001–250,000"
 msgid "Ranks 250,001–1,000,000"
 msgstr "Posiciones 250,001–1,000,000"
 
-msgid "WARP downloads and pins the latest standard Tranco ranking, then selects a reproducible sample from the popularity groups you choose."
-msgstr "WARP descarga y fija la lista estándar de Tranco más reciente y después selecciona una muestra reproducible de los grupos de popularidad elegidos."
+msgid "A11yResearch downloads and pins the latest standard Tranco ranking, then selects a reproducible sample from the popularity groups you choose."
+msgstr "A11yResearch descarga y fija la lista estándar de Tranco más reciente y después selecciona una muestra reproducible de los grupos de popularidad elegidos."
 
 msgid "The seed controls which domains are selected. The same pinned list, seed, and group quantities always reproduce the same primary and reserve sites; changing the seed produces a different sample."
 msgstr "La semilla controla qué dominios se seleccionan. La misma lista fijada, semilla y cantidades por grupo siempre reproducen los mismos sitios principales y de reserva; cambiar la semilla produce una muestra diferente."
@@ -3785,8 +3786,8 @@ msgstr "URL finales completas"
 msgid "current failures"
 msgstr "fallos actuales"
 
-msgid "WARP is retrying failed sites and substituting ordered reserves from the same popularity group."
-msgstr "WARP está reintentando los sitios fallidos y sustituyéndolos por reservas ordenadas del mismo grupo de popularidad."
+msgid "A11yResearch is retrying failed sites and substituting ordered reserves from the same popularity group."
+msgstr "A11yResearch está reintentando los sitios fallidos y sustituyéndolos por reservas ordenadas del mismo grupo de popularidad."
 
 msgid "Current group: %(name)s"
 msgstr "Grupo actual: %(name)s"
@@ -3920,8 +3921,8 @@ msgstr "Candidatos de reemplazo excluidos"
 msgid "The sampling manifest preserves every excluded domain, operational reason, retry, and deterministic replacement."
 msgstr "El manifiesto de muestreo conserva cada dominio excluido, motivo operacional, reintento y reemplazo determinista."
 
-msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites. WARP retries unsuccessful acquisitions once and then follows the deterministic candidate order within the same popularity group until the target is complete or no unused domains remain."
-msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo. WARP reintenta una vez las adquisiciones fallidas y después sigue el orden determinista de candidatos dentro del mismo grupo de popularidad hasta completar el objetivo o agotar los dominios sin usar."
+msgid "Permanent list %(list_id)s · SHA-256 %(digest)s… · seed %(seed)s · %(selected)s target sites. A11yResearch retries unsuccessful acquisitions once and then follows the deterministic candidate order within the same popularity group until the target is complete or no unused domains remain."
+msgstr "Lista permanente %(list_id)s · SHA-256 %(digest)s… · semilla %(seed)s · %(selected)s sitios objetivo. A11yResearch reintenta una vez las adquisiciones fallidas y después sigue el orden determinista de candidatos dentro del mismo grupo de popularidad hasta completar el objetivo o agotar los dominios sin usar."
 
 msgid "Tranco measurements by popularity group"
 msgstr "Mediciones Tranco por grupo de popularidad"
@@ -4019,6 +4020,9 @@ msgstr "Proporción de incidencias Axe"
 msgid "Mean Axe issues/page"
 msgstr "Media de incidencias Axe/página"
 
+msgid "Arithmetic mean of WCAG Axe issue instances per completed page in each stratum; Best Practices are excluded."
+msgstr "Media aritmética de incidencias Axe WCAG por página completada en cada estrato; se excluyen las buenas prácticas."
+
 msgid "Axe median [IQR]"
 msgstr "Mediana Axe [RIC]"
 
@@ -4055,8 +4059,8 @@ msgstr "Preparando exportación…"
 msgid "Restore a portable platform export as a new, independent experiment. Use Manage URLs when you intentionally want to combine stored results."
 msgstr "Restaura una exportación portátil de la plataforma como un experimento nuevo e independiente. Usa Gestionar URLs cuando quieras combinar resultados almacenados intencionalmente."
 
-msgid "If left empty, WARP uses the exported experiment name and marks it as imported."
-msgstr "Si se deja vacío, WARP usa el nombre del experimento exportado y lo marca como importado."
+msgid "If left empty, A11yResearch uses the exported experiment name and marks it as imported."
+msgstr "Si se deja vacío, A11yResearch usa el nombre del experimento exportado y lo marca como importado."
 
 msgid "Import in progress"
 msgstr "Importación en curso"
@@ -4234,8 +4238,8 @@ msgstr "Panel de investigación"
 msgid "Dashboard"
 msgstr "Panel de inicio"
 
-msgid "ATPGE research workspace"
-msgstr "Espacio de investigación ATPGE"
+msgid "A11yResearch workspace"
+msgstr "Espacio de trabajo A11yResearch"
 
 msgid "Web accessibility research at a glance"
 msgstr "La investigación en accesibilidad web de un vistazo"
@@ -4933,8 +4937,8 @@ msgstr "No se activó ninguna skill de agente para esta línea base científica.
 msgid "No tool call was recorded."
 msgstr "No se registró ninguna llamada de herramienta."
 
-msgid "Choose any whole-number target within each group's available domains; enter 0 to exclude a group. WARP uses unused domains from the same group as reserves. If that group is exhausted, the target remains unmet; other groups are not used to fill it."
-msgstr "Elige un objetivo entero dentro de los dominios disponibles de cada grupo; introduce 0 para excluirlo. WARP utiliza como reservas los dominios sin usar del mismo grupo. Si se agota ese grupo, el objetivo queda incompleto; no se usan otros grupos para llenarlo."
+msgid "Choose any whole-number target within each group's available domains; enter 0 to exclude a group. A11yResearch uses unused domains from the same group as reserves. If that group is exhausted, the target remains unmet; other groups are not used to fill it."
+msgstr "Elige un objetivo entero dentro de los dominios disponibles de cada grupo; introduce 0 para excluirlo. A11yResearch utiliza como reservas los dominios sin usar del mismo grupo. Si se agota ese grupo, el objetivo queda incompleto; no se usan otros grupos para llenarlo."
 
 msgid "There is no fixed observation-count limit. Larger evaluations require more processing time and storage."
 msgstr "No hay un límite fijo de observaciones. Las evaluaciones más grandes requieren más tiempo de procesamiento y almacenamiento."
@@ -4947,6 +4951,9 @@ msgstr "Usa cantidades enteras para los estratos de Tranco definidos."
 
 msgid "Stratum recovery exhausted"
 msgstr "Recuperación del estrato agotada"
+
+msgid "Filter pages"
+msgstr "Filtrar páginas"
 
 msgid "%(count)s target slot(s) remain unmet after controlled retries and same-stratum recovery. The requested targets are unchanged; successful pages are retained and no other group is used to fill these slots."
 msgstr "Quedan %(count)s lugares del objetivo sin completar después de los reintentos controlados y la recuperación dentro del mismo estrato. Los objetivos solicitados no cambian; las páginas válidas se conservan y no se usa otro grupo para llenar esos lugares."

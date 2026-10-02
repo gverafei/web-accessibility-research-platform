@@ -1,6 +1,6 @@
 # Maintaining this documentation
 
-The site uses Material for MkDocs and publishes from the same Git repository as WARP. Its source is plain Markdown in `docs/site`; the sidebar and build configuration are in root `mkdocs.yml`.
+The site uses Material for MkDocs and publishes from the same Git repository as A11yResearch. Its source is plain Markdown in `docs/site`; the sidebar and build configuration are in root `mkdocs.yml`.
 
 ## Preview locally
 

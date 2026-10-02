@@ -1,6 +1,6 @@
 # Building research datasets
 
-WARP helps turn a costly sequence of browser visits, accessibility measurements and evidence collection into a reusable corpus. Its value is not that any small sample necessarily reproduces the entire web; it is that a declared protocol can be executed and its evidence retained for further experiments.
+A11yResearch helps turn a costly sequence of browser visits, accessibility measurements and evidence collection into a reusable corpus. Its value is not that any small sample necessarily reproduces the entire web; it is that a declared protocol can be executed and its evidence retained for further experiments.
 
 ## Define the estimand and scope
 

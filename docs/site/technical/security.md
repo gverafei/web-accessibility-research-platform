@@ -22,7 +22,7 @@ Neither CSP nor filename validation makes all uploaded active content safe. Revi
 
 ## Model boundaries
 
-Before applying generated changes, WARP validates JSON operations, selectors, complete HTML and preservation requirements. Run settings determine budgets and change scope. Tool records and source links identify the measurements and retrieved examples used during processing.
+Before applying generated changes, A11yResearch validates JSON operations, selectors, complete HTML and preservation requirements. Run settings determine budgets and change scope. Tool records and source links identify the measurements and retrieved examples used during processing.
 
 Cloud prompts can contain captured page content and, for supported workflows, screenshot evidence. Provider data-handling terms and authorization to share that content are relevant when choosing local or cloud processing.
 

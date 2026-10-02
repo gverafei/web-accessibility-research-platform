@@ -1,6 +1,6 @@
 # Agentic remediation runtime
 
-WARP coordinates model-assisted diagnosis/generation with typed tools and deterministic controls. Its versioned remediation procedures are defined in `web/app/agent_skills/manifest.json` and loaded by the application at runtime.
+A11yResearch coordinates model-assisted diagnosis/generation with typed tools and deterministic controls. Its versioned remediation procedures are defined in `web/app/agent_skills/manifest.json` and loaded by the application at runtime.
 
 ## State machine
 

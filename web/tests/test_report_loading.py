@@ -20,6 +20,15 @@ main = importlib.import_module("main")
 
 
 class LoadingReportTestCase(unittest.TestCase):
+    def test_tranco_bars_use_means_in_native_units(self):
+        template = (APP_DIR / 'templates' / 'report.html').read_text()
+        self.assertIn('"Mean Axe issues/page")|tojson }},"axe_mean","#18529d");', template)
+        self.assertIn('"Mean Lighthouse score")|tojson }},"lighthouse_mean","#28ad56",100);', template)
+        helper = template.split('const trancoBarChart=', 1)[1].split('\n', 1)[0]
+        self.assertIn('text:label', helper)
+        self.assertNotIn('text:"%"', helper)
+        self.assertNotIn('trancoBarChart("trancoZeroCriticalChart",{{ _("Share of Axe', template)
+
     def test_scatter_styling_is_registered_before_report_charts(self):
         template = (APP_DIR / 'templates' / 'report.html').read_text()
         self.assertIn("filename='js/scatter_visuals.js'", template)
@@ -55,7 +64,7 @@ class LoadingReportTestCase(unittest.TestCase):
         self.assertNotIn('AS llm_tokens', route[route.index('def experiments():'):route.index('all_experiments = cursor.fetchall()')])
 
     def test_list_deletions_use_shared_in_place_handler(self):
-        for name in ('experiments.html', 'remediation_history.html'):
+        for name in ('experiments.html', '_remediation_history_rows.html'):
             template = (APP_DIR / 'templates' / name).read_text()
             self.assertIn('data-list-delete', template)
             self.assertIn('data-delete-error=', template)
@@ -96,12 +105,14 @@ class LoadingReportTestCase(unittest.TestCase):
     def test_research_list_filters_are_instant_and_local(self):
         evaluations=(APP_DIR/'templates'/'experiments.html').read_text()
         remediations=(APP_DIR/'templates'/'remediation_history.html').read_text()
+        remediation_script=(APP_DIR/'static/js/remediation_history.js').read_text()
         comparisons=(APP_DIR/'templates'/'comparisons.html').read_text()
         styles=(APP_DIR/'static'/'css'/'style.css').read_text()
         self.assertIn('id="evaluationListFilter"',evaluations)
         self.assertIn("evaluationFilter.addEventListener('input'",evaluations)
         self.assertIn('id="remediationListFilter"',remediations)
-        self.assertIn("remediationFilter.addEventListener('input'",remediations)
+        self.assertIn("input.addEventListener('input', filter)",remediation_script)
+        self.assertIn("filename='js/remediation_history.js'",remediations)
         self.assertIn("pageFilter.addEventListener('input'",comparisons)
         self.assertIn("event=>event.preventDefault()",comparisons)
         self.assertIn('.comparison-source-controls>button[type="submit"]{display:none}',styles)

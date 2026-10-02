@@ -7,6 +7,30 @@ from routes.extension_api import create_run, request_payload
 
 
 class ExtensionControlsTests(unittest.TestCase):
+    def test_web_and_extension_share_bilingual_intervention_copy(self):
+        from flask import Flask
+        from flask_babel import Babel, force_locale, gettext
+        from pathlib import Path
+        from remediation_control_copy import control_copy
+        from routes.extension_api import extension_api_bp
+        app = Flask(__name__)
+        app.config['BABEL_TRANSLATION_DIRECTORIES'] = str(Path(__file__).resolve().parents[1] / 'app/translations')
+        Babel(app)
+        app.register_blueprint(extension_api_bp)
+        with patch('routes.extension_api.get_settings', return_value={}):
+            response = app.test_client().get('/api/browser-extension/configuration')
+        self.assertEqual(response.status_code, 200)
+        for locale in ('en', 'es'):
+            with app.app_context(), force_locale(locale):
+                self.assertEqual(response.json['ui_copy'][locale], control_copy(gettext))
+        copy = response.json['ui_copy']['en']['preservation']
+        self.assertEqual(copy[0]['name'], 'Minimal patches')
+        self.assertEqual(copy[3]['description'], 'Regenerate from complete HTML, then refine with localized patches.')
+        self.assertNotEqual(response.json['ui_copy']['es'], response.json['ui_copy']['en'])
+        for item in copy:
+            self.assertNotIn('$', item['description'])
+            self.assertNotIn('seconds', item['description'])
+
     def test_configured_targets_are_visible_and_frozen_during_acquisition(self):
         settings = {'remediation_min_lighthouse':'98', 'remediation_max_axe':'0'}
         for approach in extension_catalog(settings)['preservation']:

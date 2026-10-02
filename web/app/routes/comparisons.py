@@ -8,6 +8,7 @@ from flask import Blueprint, flash, jsonify, redirect, render_template, request,
 from flask_babel import gettext as _
 
 from database import get_connection
+from axe_metrics import project_wcag, persist_metrics
 from settings import get_settings
 
 
@@ -36,6 +37,7 @@ def quantiles(values):
 
 
 def comparison_analysis(members):
+    members = [project_wcag(row) for row in members]
     # Each metric uses its own complete cases. Missing optional-tool data is
     # never interpreted as zero and does not exclude the observation elsewhere.
     completed = list(members)
@@ -276,6 +278,11 @@ def insert_members(cursor, comparison_id, result_ids, group_label="Unassigned"):
             now_local(),
         ))
         added += cursor.rowcount
+        if cursor.rowcount and 'axe_wcag_violations' in row:
+            metrics = {key: value for key, value in row.items() if key.startswith('axe_wcag_')}
+            metrics['axe_best_practice_issues'] = row.get('axe_best_practice_issues')
+            metrics['axe_combined_violations'] = row.get('axe_violations')
+            persist_metrics(cursor, 'comparison_members', cursor.lastrowid, metrics)
     return added
 
 
@@ -288,7 +295,7 @@ def insert_remediation_members(cursor, comparison_id, run_ids, group_label="Unas
     if existing+len(run_ids)>MAX_COMPARISON_MEMBERS:
         raise ValueError("A comparison can contain at most 1,000 observations.")
     cursor.execute(f"""SELECT rr.id run_id,rr.accepted_iteration_id,ri.output_url,ri.candidate_key,
-                               ri.axe_violations,ri.lighthouse_score,ri.wave_aim_score,ri.created_at,
+                               ri.axe_violations,ri.axe_wcag_violations,ri.axe_best_practice_issues,ri.axe_metrics_json,ri.lighthouse_score,ri.wave_aim_score,ri.created_at,
                                er.experiment_id source_experiment_id,e.title source_experiment_title,
                                COALESCE(er.display_name,o.display_name,o.observation_key,er.url) source_name
                         FROM remediation_runs rr
@@ -313,6 +320,13 @@ def insert_remediation_members(cursor, comparison_id, run_ids, group_label="Unas
             row["accepted_iteration_id"],row["output_url"],f"{row['source_name']} · remediated {suffix}"[:255],
             group_label,row["created_at"],row["axe_violations"],row["lighthouse_score"],row["wave_aim_score"],now_local()))
         added+=cursor.rowcount
+        if cursor.rowcount and row.get('axe_wcag_violations') is not None:
+            metrics = row.get('axe_metrics_json') or {}
+            if isinstance(metrics, str): metrics = json.loads(metrics)
+            metrics = {**metrics, 'axe_wcag_violations': row['axe_wcag_violations'],
+                       'axe_best_practice_issues': row.get('axe_best_practice_issues'),
+                       'axe_combined_violations': row.get('axe_violations')}
+            persist_metrics(cursor, 'comparison_members', cursor.lastrowid, metrics)
     return added
 
 
@@ -360,7 +374,7 @@ def comparisons():
         cursor.execute("""SELECT m.id,
                                   COALESCE(r.display_name,o.display_name,o.observation_key,m.display_name) AS display_name,
                                   m.locator,m.source_experiment_id,m.evaluated_at,
-                                  m.axe_violations,m.lighthouse_score,m.sort_order
+                                  m.axe_wcag_violations AS axe_violations,m.lighthouse_score,m.sort_order
                            FROM comparison_members m
                            LEFT JOIN experiment_results r ON r.id=m.source_result_id
                            LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id
@@ -374,7 +388,7 @@ def comparisons():
             parameters=[comparison_id or 0,source_id]
             where="r.experiment_id=%s AND r.status='completed'"
             if query: where+=" AND (r.url LIKE %s OR r.display_name LIKE %s OR r.page_title LIKE %s)"; parameters.extend([like,like,like])
-            cursor.execute(f"""SELECT r.id,r.url,r.axe_violations,r.lighthouse_score,r.evaluated_at,e.source_type,
+            cursor.execute(f"""SELECT r.id,r.url,r.axe_wcag_violations AS axe_violations,r.lighthouse_score,r.evaluated_at,e.source_type,
                 CASE WHEN cm.id IS NULL THEN 0 ELSE 1 END already_added,
                 COALESCE(r.display_name,o.display_name,o.observation_key,r.url) display_name
                 FROM experiment_results r JOIN experiments e ON e.id=r.experiment_id
@@ -387,7 +401,7 @@ def comparisons():
             parameters=[comparison_id or 0,source_id]
             where="rr.id=%s AND rr.status IN ('accepted','completed_with_warnings')"
             if query: where+=" AND (er.url LIKE %s OR er.display_name LIKE %s OR er.page_title LIKE %s)"; parameters.extend([like,like,like])
-            cursor.execute(f"""SELECT rr.id,ri.output_url url,ri.axe_violations,ri.lighthouse_score,ri.created_at evaluated_at,
+            cursor.execute(f"""SELECT rr.id,ri.output_url url,ri.axe_wcag_violations AS axe_violations,ri.lighthouse_score,ri.created_at evaluated_at,
                 'local_html' source_type,CASE WHEN cm.id IS NULL THEN 0 ELSE 1 END already_added,
                 CONCAT(COALESCE(er.display_name,o.display_name,o.observation_key,er.url),' · remediated ',LEFT(COALESCE(ri.candidate_key,CAST(rr.id AS CHAR)),8)) display_name
                 FROM remediation_runs rr JOIN remediation_iterations ri ON ri.id=rr.accepted_iteration_id
@@ -485,7 +499,7 @@ def comparison_detail(comparison_id):
                       LEFT JOIN experiment_results r ON r.id=m.source_result_id
                       LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id
                       WHERE m.comparison_id=%s ORDER BY m.sort_order,m.id""", (comparison_id,))
-    members = cursor.fetchall(); cursor.close(); conn.close()
+    members = [project_wcag(row) for row in cursor.fetchall()]; cursor.close(); conn.close()
     analysis = comparison_analysis(members)
     return render_template("comparison_detail.html", study=study, members=members, analysis=analysis,
                            chart_data=json.dumps(analysis["summaries"]),

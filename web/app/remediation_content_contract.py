@@ -7,6 +7,7 @@ image descriptions are never invented. It does not certify forms or JS tasks.
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from collections import Counter
+import json
 import re
 
 
@@ -15,25 +16,34 @@ def grounded_lighthouse_context(findings, document):
 
     Preserve raw reports unchanged. A missing selector is not a repaired audit:
     it is excluded only from the patch prompt, with explicit omission evidence.
-    Non-node audits and selectors that cannot be interpreted are retained.
+    Non-node audits are retained. Invalid CSS is actionable only when an exact,
+    unique ID from its original snippet exists in the stored document.
     """
     soup = BeautifulSoup(document, 'html.parser')
     grounded, omitted = [], []
     for finding in findings:
         items, missing = [], []
         for item in finding.get('items', []):
+            item = dict(item)
             selector = item.get('selector')
             try:
                 matched = not selector or bool(soup.select(selector))
             except Exception:
-                matched = True
+                snippet = BeautifulSoup(item.get('snippet') or '', 'html.parser').find(id=True)
+                identity = snippet.get('id') if snippet else None
+                exact = soup.find_all(id=identity) if identity else []
+                matched = len(exact) == 1 and exact[0].name == snippet.name
+                if matched:
+                    item.update(selector='[id='+json.dumps(identity)+']',
+                                original_selector=selector,
+                                selector_grounding='unique exact snippet ID in stored DOM')
             if matched:
                 items.append(dict(item))
             else:
                 missing.append(selector)
         if missing:
             omitted.append({'audit': finding.get('audit'), 'selectors': missing,
-                            'reason': 'Not present in the stored patch document; raw audit retained'})
+                            'reason': 'Selector absent or uninterpretable in stored patch document; raw audit retained'})
         if items or not finding.get('items'):
             grounded.append(dict(finding, items=items))
     return grounded, omitted
@@ -91,13 +101,14 @@ def captured_widget_replay_warnings(original, evaluated):
             counts[key]+=1
         return counts
     before,after=controls(original),controls(evaluated)
+    from frozen_carousel_replay import carousel_warnings
     return [{'control':key[0],'source_count':count,'rendered_count':after[key],
              'evidence':'same native option data repeated after captured scripts replayed'}
-            for key,count in before.items() if after[key]>count]
+            for key,count in before.items() if after[key]>count] + carousel_warnings(original, evaluated)
 
 
 def prepare_frozen_widget_replay(document):
-    """Dehydrate only proven bootstrap-select generated markup before replay.
+    """Normalize only proven, library-specific captured widgets before replay.
 
     DOM snapshots retain generated controls but not the JS plugin instance.
     Replaying the original scripts then nests duplicate controls. Keep the
@@ -143,6 +154,8 @@ def prepare_frozen_widget_replay(document):
         select.extract(); owner.replace_with(select)
         evidence.append({'component':'bootstrap-select','id':identifier,'name':name,
             'options':sum(options.values()),'method':'generated wrapper and exact duplicate option list dehydrated; native select retained'})
+    from frozen_carousel_replay import prepare_carousels
+    evidence.extend(prepare_carousels(soup))
     return (str(soup) if evidence else document),evidence
 
 

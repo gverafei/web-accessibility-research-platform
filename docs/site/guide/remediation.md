@@ -1,6 +1,6 @@
 # Remediation
 
-A remediation run starts from a completed result with a readable stored HTML snapshot. WARP preserves that source, creates separate candidates and remeasures them. It does not edit the remote website.
+A remediation run starts from a completed result with a readable stored HTML snapshot. A11yResearch preserves that source, creates separate candidates and remeasures them. It does not edit the remote website.
 
 ## Submit a run
 
@@ -23,7 +23,7 @@ The source record, model snapshot and applicable targets are retained with the r
 | 4 | HTML regeneration | Generate a complete page from the acquired HTML using a selected design base; later refinements are localized |
 | 5 | Markdown regeneration | Generate a complete page from quality-checked Markdown and retained content evidence; later refinements are localized |
 
-WARP validates generated operations against the selected policy before applying them. For example, minimal patches allow local changes while rejecting element replacement and global body/HTML CSS overrides.
+A11yResearch validates generated operations against the selected policy before applying them. For example, minimal patches allow local changes while rejecting element replacement and global body/HTML CSS overrides.
 
 For regeneration, the web module offers Bootstrap, Pico and Bulma design bases. The extension uses Bootstrap. A regeneration run retains the initial complete generation and can refine it without discarding the best measured candidate.
 

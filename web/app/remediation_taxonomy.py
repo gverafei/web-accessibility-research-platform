@@ -56,6 +56,8 @@ def axe_taxonomy(raw_path):
     except (OSError, ValueError, KeyError, TypeError):
         return result
     for violation in violations:
+        if 'best-practice' in violation.get('tags', []):
+            continue
         rule_id = str(violation.get("id") or "unknown")
         category = category_for_rule(rule_id)
         instances = max(1, len(violation.get("nodes") or []))

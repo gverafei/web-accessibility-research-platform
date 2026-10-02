@@ -29,7 +29,7 @@ def main():
         cursor = connection.cursor(dictionary=True)
         cursor.execute(
             """
-            SELECT id, url, axe_violations, dom_nodes, axe_raw_path, screenshot_path
+            SELECT id, url, axe_wcag_violations AS axe_violations, dom_nodes, axe_raw_path, screenshot_path
             FROM experiment_results
             WHERE status='completed' AND acquisition_signals IS NULL
             """

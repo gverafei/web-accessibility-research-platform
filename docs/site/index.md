@@ -1,5 +1,5 @@
 ---
-title: WARP — web accessibility research, end to end
+title: A11yResearch — web accessibility research, end to end
 ---
 
 <div class="warp-hero" markdown>
@@ -13,7 +13,7 @@ Acquire and evaluate collections of web pages, repair accessibility barriers wit
 [Explore the architecture](technical/architecture.md){ .md-button }
 </div>
 
-WARP brings browser acquisition, Axe and Lighthouse measurements, optional WAVE evaluation, agentic remediation and portable experiment records into one Docker-based research environment. This documentation explains both how to conduct an experiment and how the implementation works.
+A11yResearch brings browser acquisition, Axe and Lighthouse measurements, optional WAVE evaluation, agentic remediation and portable experiment records into one Docker-based research environment. This documentation explains both how to conduct an experiment and how the implementation works.
 
 <div class="warp-flow" aria-label="Research workflow">
 <span>Acquire</span><b aria-hidden="true">→</b><span>Measure</span><b aria-hidden="true">→</b><span>Curate</span><b aria-hidden="true">→</b><span>Remediate</span><b aria-hidden="true">→</b><span>Compare & share</span>
@@ -56,7 +56,7 @@ Compose evaluations and exchange portable experiment packages with collaborators
 
 ## What you can expect
 
-| Capability | What WARP records |
+| Capability | What A11yResearch records |
 | --- | --- |
 | Collection-level evaluation | Page-level measurements, browser/tool metadata, screenshots and HTML evidence |
 | Explicit AI experiments | Chosen model and reasoning, frozen configuration, prompts, usage and recorded charges |

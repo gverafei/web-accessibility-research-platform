@@ -1,6 +1,6 @@
 # HTTP interfaces and automation
 
-WARP's Flask routes support its local UI and extension. They are not a versioned, authenticated public SaaS API. Use the documented inputs against the source revision you pinned and verify the response status before continuing.
+A11yResearch's Flask routes support its local UI and extension. They are not a versioned, authenticated public SaaS API. Use the documented inputs against the source revision you pinned and verify the response status before continuing.
 
 !!! warning "Live operations"
     Acquisition examples visit websites and write evidence. Remediation and cloud categorization examples can incur provider charges. The snippets below are documentation, not commands that the documentation build executes.
@@ -113,7 +113,9 @@ curl --fail --header 'Content-Type: application/json' \
   http://localhost/api/browser-extension/requests
 ```
 
-Success returns HTTP 202 with `id` and initial status. Use that ID to poll progress until processing finishes. Linked acquisition records provide the source provenance and original capture date.
+New requests return HTTP 202 with `id`, initial status and `reused: false`. Compatible stored or in-progress requests return HTTP 200 with their existing `id` and `reused: true`; no new run is created. Reuse is the default. Add the JSON boolean `"force_rerun": true` to request a fresh acquisition (without evaluation-cache reuse) and a new remediation. Matching uses the same stored source and the full frozen extension configuration.
+
+Use that ID to poll progress until processing finishes. Terminal responses include `report_url` and `measurements`: `original` and `final` each contain `axe` and `lighthouse`; `targets` contains their frozen thresholds; `iteration_id` identifies the served retained candidate. Missing measurements are JSON `null`. Linked acquisition records provide source provenance and the original capture date. Implementation: `web/app/routes/extension_api.py` and `web/app/browser_extension_results.py`.
 
 ## Catalogue JSON
 

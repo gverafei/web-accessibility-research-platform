@@ -1,6 +1,6 @@
 # Evaluation reports
 
-Open a completed evaluation from **Evaluations**. WARP prepares its collection-level analysis and displays a loading view while a large report is being assembled.
+Open a completed evaluation from **Evaluations**. A11yResearch prepares its collection-level analysis and displays a loading view while a large report is being assembled.
 
 ## URL measurement matrix
 

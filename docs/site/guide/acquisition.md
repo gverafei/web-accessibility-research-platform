@@ -15,7 +15,7 @@ There is no fixed observation-count cap in the acquisition form or queueing hand
 
 ## Collection size and resource planning
 
-A researcher can request thousands of pages or a million-page collection. WARP does not reject it because it exceeds an illustrative example, but removing that policy cap does not make processing free or instantaneous. Plan for browser time, memory, evidence storage and, if enabled, WAVE charges. Acquisition itself does not use LLMs. Run a pilot before committing a large collection.
+A researcher can request thousands of pages or a million-page collection. A11yResearch does not reject it because it exceeds an illustrative example, but removing that policy cap does not make processing free or instantaneous. Plan for browser time, memory, evidence storage and, if enabled, WAVE charges. Acquisition itself does not use LLMs. Run a pilot before committing a large collection.
 
 The URL list is stored as MySQL `LONGTEXT`, including an automatic widening migration for older installations. The HTTP request byte budget is configured by `MAX_DATASET_UPLOAD_BYTES` (default 1,610,612,736 bytes); individual form fields use that same budget, rather than Flask's smaller default. Local archive byte/path protections still apply. Database packet limits, available RAM/disk, proxy request limits and deployment timeouts can also constrain a very large submission. Configure these deployment resources for the planned workload.
 
@@ -23,7 +23,7 @@ Submit large collections through the background evaluation workflow. The job per
 
 ## Fresh versus reused observations
 
-With reuse enabled, WARP looks for a completed compatible record rather than performing an unnecessary new visit. The signature includes evaluation controls such as tool selection, Axe standard and dynamic-page timing. Reused records retain source identifiers and their original evaluation date; their copy does not represent a fresh visit on the composition date.
+With reuse enabled, A11yResearch looks for a completed compatible record rather than performing an unnecessary new visit. The signature includes evaluation controls such as tool selection, Axe standard and dynamic-page timing. Reused records retain source identifiers and their original evaluation date; their copy does not represent a fresh visit on the composition date.
 
 Disable reuse when your research question requires a current measurement. Check provenance in the report before treating any collection as a single-time snapshot of the web.
 
@@ -37,7 +37,7 @@ Recorded processing seconds are not necessarily the elapsed wall-clock duration.
 
 Successful results can include rendered source HTML, response HTML when available, a screenshot, raw Axe/Lighthouse reports, optional WAVE output, page features and acquisition metadata. Completeness depends on the actual tool response and the acquisition type. Confirm the artifacts rather than assuming a completed counter guarantees every file is present.
 
-Acquisition failures and incomplete tool responses appear with their status and error details. WARP's quality/recovery handling is described in [Evaluation pipeline](../technical/evaluation.md) and [Jobs and recovery](../technical/jobs.md).
+Acquisition failures and incomplete tool responses appear with their status and error details. A11yResearch's quality/recovery handling is described in [Evaluation pipeline](../technical/evaluation.md) and [Jobs and recovery](../technical/jobs.md).
 
 ## Practical pilot
 

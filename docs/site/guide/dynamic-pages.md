@@ -1,6 +1,6 @@
 # Dynamic-page acquisition
 
-Modern pages often reveal content only after script execution, delayed network requests or scrolling. WARP uses a bounded acquisition policy to expose more of that content before retaining HTML and screenshots.
+Modern pages often reveal content only after script execution, delayed network requests or scrolling. A11yResearch uses a bounded acquisition policy to expose more of that content before retaining HTML and screenshots.
 
 ## Acquisition sequence
 

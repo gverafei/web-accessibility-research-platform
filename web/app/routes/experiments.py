@@ -30,6 +30,7 @@ from flask import (
 from flask_babel import gettext as _
 
 from database import get_connection
+from axe_metrics import project_wcag
 from classify_site_categories import (
     CATEGORIES as WEBAIM_SITE_CATEGORIES,
     classify_managed_urls,
@@ -174,7 +175,7 @@ def index():
         (SELECT COALESCE(SUM(cost_incurred_usd),0) FROM experiment_results) cost
         FROM experiments""")
     evaluations=cursor.fetchone() or {}
-    cursor.execute("SELECT COUNT(*) pages,COALESCE(SUM(axe_violations),0) axe_issues,ROUND(AVG(lighthouse_score),1) lighthouse FROM experiment_results WHERE status='completed'")
+    cursor.execute("SELECT COUNT(*) pages,COALESCE(SUM(axe_wcag_violations),0) axe_issues,ROUND(AVG(lighthouse_score),1) lighthouse FROM experiment_results WHERE status='completed'")
     pages=cursor.fetchone() or {}
     cursor.execute("""SELECT COUNT(*) total,SUM(status='accepted') accepted,
         SUM(accepted_iteration_id IS NOT NULL) available,
@@ -197,28 +198,28 @@ def index():
     most_used_strategy={"name":approach_for(strategy_row.get('accessibility_priority')).name,
                         "uses":int(strategy_row.get('uses') or 0)} if strategy_row else {}
     cursor.execute("""SELECT ri.generator_model model,COUNT(*) runs,
-        SUM(GREATEST(er.axe_violations-ri.axe_violations,0)) removed,
+        SUM(GREATEST(er.axe_wcag_violations-ri.axe_wcag_violations,0)) removed,
         SUM(rr.total_cost_usd) cost,
-        SUM(GREATEST(er.axe_violations-ri.axe_violations,0))/SUM(rr.total_cost_usd) removed_per_dollar
+        SUM(GREATEST(er.axe_wcag_violations-ri.axe_wcag_violations,0))/SUM(rr.total_cost_usd) removed_per_dollar
         FROM remediation_runs rr
         JOIN remediation_iterations ri ON ri.id=rr.accepted_iteration_id
         JOIN experiment_results er ON er.id=rr.source_result_id
         WHERE rr.total_cost_usd>0 AND ri.generator_model IS NOT NULL
         AND ri.generator_model NOT LIKE 'system/%'
-        AND ri.axe_violations IS NOT NULL AND er.axe_violations IS NOT NULL
+        AND ri.axe_wcag_violations IS NOT NULL AND er.axe_wcag_violations IS NOT NULL
         GROUP BY ri.generator_model HAVING removed>0
         ORDER BY removed_per_dollar DESC LIMIT 1""")
     value_model=cursor.fetchone() or {}
     cursor.execute("""SELECT ri.generator_model model,COUNT(*) runs,
-        SUM(er.axe_violations) original_issues,
-        SUM(GREATEST(er.axe_violations-ri.axe_violations,0)) removed,
-        100*SUM(GREATEST(er.axe_violations-ri.axe_violations,0))/SUM(er.axe_violations) reduction_percent
+        SUM(er.axe_wcag_violations) original_issues,
+        SUM(GREATEST(er.axe_wcag_violations-ri.axe_wcag_violations,0)) removed,
+        100*SUM(GREATEST(er.axe_wcag_violations-ri.axe_wcag_violations,0))/SUM(er.axe_wcag_violations) reduction_percent
         FROM remediation_runs rr
         JOIN remediation_iterations ri ON ri.id=rr.accepted_iteration_id
         JOIN experiment_results er ON er.id=rr.source_result_id
         WHERE ri.generator_model IS NOT NULL
         AND ri.generator_model NOT LIKE 'system/%'
-        AND ri.axe_violations IS NOT NULL AND er.axe_violations>0
+        AND ri.axe_wcag_violations IS NOT NULL AND er.axe_wcag_violations>0
         GROUP BY ri.generator_model HAVING removed>0
         ORDER BY reduction_percent DESC,runs DESC LIMIT 1""")
     accessibility_model=cursor.fetchone() or {}
@@ -844,7 +845,7 @@ def compose_experiment():
             ORDER BY e.id DESC, COALESCE(r.evaluated_at, r.created_at) DESC, r.id DESC
             """
         )
-        available_results = cursor.fetchall()
+        available_results = [project_wcag(row) for row in cursor.fetchall()]
         cursor.execute(
             "SELECT id, title, source_type FROM experiments WHERE status = 'completed' ORDER BY created_at DESC"
         )
@@ -860,7 +861,7 @@ def compose_experiment():
             cursor.execute(
                 """
                 SELECT id, url, normalized_url, status, error_message, provenance, evaluated_at, created_at,
-                       source_experiment_id, axe_violations, lighthouse_score,
+                       source_experiment_id, axe_wcag_violations AS axe_violations, lighthouse_score,
                        wave_status, wave_errors, semantic_status, display_name, dataset_observation_id
                 FROM experiment_results WHERE experiment_id=%s ORDER BY id
                 """,
@@ -998,7 +999,7 @@ def compose_experiment():
                 "id": cloned_id, "url": source.get("url"), "normalized_url": normalized,
                 "display_name": source.get("display_name") or source.get("url"),
                 "status": source.get("status"),
-                "axe_violations": source.get("axe_violations"),
+                "axe_violations": project_wcag(source).get("axe_violations"),
                 "lighthouse_score": source.get("lighthouse_score"),
                 "evaluated_at": str(source.get("evaluated_at") or source.get("created_at") or ""),
                 "provenance": "composed",
@@ -2044,6 +2045,7 @@ def build_paired_analysis(results):
 
 
 def build_experiment_analysis(results):
+    results = [project_wcag(row) for row in results]
     valid_results = [item for item in results if item.get("status") == "completed"]
     total_urls = len(results)
     completed_urls = len(valid_results)
@@ -2923,20 +2925,7 @@ def experiment_report(experiment_id):
 
     report_settings = get_settings()
     show_axe_best_practices = as_bool(experiment.get("axe_include_best_practices"))
-    if not show_axe_best_practices:
-        wcag_fields = {
-            "axe_violations": "axe_wcag_violations",
-            "axe_critical": "axe_wcag_critical",
-            "axe_serious": "axe_wcag_serious",
-            "axe_moderate": "axe_wcag_moderate",
-            "axe_minor": "axe_wcag_minor",
-            "axe_failed_rules": "axe_wcag_failed_rules",
-            "axe_needs_review": "axe_wcag_needs_review",
-        }
-        for item in results:
-            for displayed, wcag_only in wcag_fields.items():
-                if item.get(wcag_only) is not None:
-                    item[displayed] = item[wcag_only]
+    results = [project_wcag(row) for row in results]
     experiment["axe_include_best_practices"] = show_axe_best_practices
 
     chart_labels = [item.get("display_url") or item["url"] for item in results]
@@ -3492,7 +3481,7 @@ def download_experiment_csv(experiment_id):
         WHERE r.experiment_id = %s
         ORDER BY r.id ASC
     """, (experiment_id,))
-    results = cursor.fetchall()
+    results = [project_wcag(row) for row in cursor.fetchall()]
 
     cursor.close()
     conn.close()
@@ -3542,6 +3531,8 @@ def download_experiment_csv(experiment_id):
         "axe_needs_review_rules",
         "axe_best_practice_issues",
         "axe_best_practice_rules",
+        "axe_combined_issue_instances",
+        "axe_counting_policy",
         "axe_critical",
         "axe_serious",
         "axe_moderate",
@@ -3619,6 +3610,8 @@ def download_experiment_csv(experiment_id):
             item.get("axe_needs_review_rules"),
             item.get("axe_best_practice_issues"),
             item.get("axe_best_practice_rules"),
+            item.get("axe_combined_violations"),
+            item.get("axe_counting_policy"),
             item.get("axe_critical"),
             item.get("axe_serious"),
             item.get("axe_moderate"),

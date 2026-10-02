@@ -10,11 +10,14 @@ from flask import Blueprint, Response, flash, redirect, render_template, request
 from flask_babel import gettext as _
 
 from database import get_connection
+from axe_metrics import project_wcag
+from remediation_taxonomy import axe_taxonomy
 from remediation_rag import status as rag_status
 from settings import get_settings
 from remediation_recipes import automatic_recipe, common_conditions
-from remediation_model_choices import model_choices, model_choice, frozen_model_configuration
+from remediation_model_choices import model_choices, model_choice, frozen_model_configuration, run_model_presentation
 from remediation_approaches import presentation_priority, presentation_name
+from remediation_control_copy import control_copy
 
 
 remediation_bp = Blueprint("remediation", __name__, url_prefix="/remediation")
@@ -130,17 +133,24 @@ def delete_template(template_id):
 
 @remediation_bp.get("/")
 def runs():
+    live_ids = None
+    if 'live_ids' in request.args:
+        values = request.args['live_ids'].split(',')
+        if not 1 <= len(values) <= 50 or any(not value.isdecimal() or len(value) > 10 for value in values):
+            return Response('Invalid run identifiers', status=400)
+        live_ids = tuple(dict.fromkeys(int(value) for value in values))
+    where = 'WHERE rr.id IN (' + ','.join(['%s'] * len(live_ids)) + ')' if live_ids else ''
     conn=get_connection(); cursor=conn.cursor(dictionary=True)
     cursor.execute("""SELECT rr.*,
         CASE WHEN e.source_type='local_html' THEN COALESCE(r.display_name,o.display_name,o.observation_key)
              ELSE COALESCE(r.display_name,r.captured_url,r.url) END source_name,
-        r.axe_violations original_axe,r.lighthouse_score original_lighthouse,r.wave_aim_score original_aim,
-        accepted.axe_violations remediated_axe,
+        r.axe_wcag_violations original_axe,r.lighthouse_score original_lighthouse,r.wave_aim_score original_aim,
+        accepted.axe_wcag_violations remediated_axe,
         accepted.lighthouse_score remediated_lighthouse,
         accepted.wave_aim_score remediated_aim,
         accepted.dom_distance remediated_dom_distance,
         accepted.strategy_json accepted_strategy_json,
-        latest.axe_violations latest_axe,
+        latest.axe_wcag_violations latest_axe,
         latest.lighthouse_score latest_lighthouse,
         latest.wave_aim_score latest_aim,
         latest.dom_distance latest_dom_distance,
@@ -154,10 +164,11 @@ def runs():
         JOIN experiments e ON e.id=r.experiment_id
         LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id
         LEFT JOIN remediation_iterations accepted ON accepted.id=rr.accepted_iteration_id
-        LEFT JOIN remediation_iterations latest ON latest.id=(SELECT ri.id FROM remediation_iterations ri WHERE ri.run_id=rr.id ORDER BY (GREATEST(COALESCE(ri.axe_violations,999999)-rr.max_axe,0)+GREATEST(rr.min_lighthouse-COALESCE(ri.lighthouse_score,0),0)) ASC,ri.iteration_number ASC LIMIT 1)
-        ORDER BY rr.id DESC""")
+        LEFT JOIN remediation_iterations latest ON latest.id=(SELECT ri.id FROM remediation_iterations ri WHERE ri.run_id=rr.id ORDER BY (GREATEST(COALESCE(ri.axe_wcag_violations,999999)-rr.max_axe,0)+GREATEST(rr.min_lighthouse-COALESCE(ri.lighthouse_score,0),0)) ASC,ri.iteration_number ASC LIMIT 1)
+        """ + where + " ORDER BY rr.id DESC", live_ids or ())
     histories=cursor.fetchall()
-    cursor.execute("SELECT run_id,generator_model,reviewer_model,agent_usage_json FROM remediation_iterations ORDER BY run_id,iteration_number")
+    participation_where = 'WHERE run_id IN (' + ','.join(['%s'] * len(live_ids)) + ')' if live_ids else ''
+    cursor.execute("SELECT run_id,generator_model,reviewer_model,agent_usage_json FROM remediation_iterations " + participation_where + " ORDER BY run_id,iteration_number", live_ids or ())
     participation={}
     policies={row['id']:row.get('review_policy') for row in histories}
     for iteration in cursor.fetchall():
@@ -176,6 +187,7 @@ def runs():
                 roles.setdefault(model,set()).add(entry.get('role') or 'Agent')
     for row in histories:
         row['participants']=[]
+        row['model_presentation']=run_model_presentation(row)
         try:
             recorded=json.loads(row.get('accepted_strategy_json') or row.get('latest_strategy_json') or '{}')
             row['presentation_priority']=presentation_priority(row.get('accessibility_priority'),recorded)
@@ -200,6 +212,10 @@ def runs():
         row["result_lighthouse"]=row.get("remediated_lighthouse") if row["status"] in {"accepted","completed_with_warnings"} else row.get("latest_lighthouse")
         row["result_aim"]=row.get("remediated_aim") if row["status"] in {"accepted","completed_with_warnings"} else row.get("latest_aim")
         row["improvement"]=improvement_metrics(row.get("original_axe"),row.get("result_axe"),row.get("original_lighthouse"),row.get("result_lighthouse"))
+    if live_ids is not None:
+        response = Response(render_template('_remediation_history_rows.html', runs=histories), mimetype='text/html')
+        response.headers['Cache-Control'] = 'no-store'
+        return response
     axe_pairs=[(float(row["original_axe"]),float(row["remediated_axe"])) for row in accepted if row["original_axe"] is not None and row["remediated_axe"] is not None]
     lighthouse_summary=global_lighthouse_metrics(completed)
     aim_gains=[float(row["remediated_aim"])-float(row["original_aim"]) for row in accepted if row.get("original_aim") is not None and row["remediated_aim"] is not None]
@@ -338,11 +354,11 @@ def new_run():
         if markdown_provider not in {"local","jina"}: markdown_provider="local"
         cursor.execute("UPDATE remediation_runs SET markdown_provider=%s WHERE id=%s",(markdown_provider,run_id))
         conn.commit(); cursor.close(); conn.close(); return redirect(url_for("remediation.run_detail",run_id=run_id))
-    cursor.execute("""SELECT r.id,r.normalized_url,CASE WHEN e.source_type='local_html' THEN COALESCE(r.display_name,o.observation_key) ELSE COALESCE(r.captured_url,r.url) END display_name,r.url acquired_url,r.axe_violations,r.lighthouse_score,r.wave_aim_score,r.evaluated_at,e.title,d.storage_key,o.relative_path,r.source_snapshot_path,r.response_source_path FROM experiment_results r JOIN experiments e ON e.id=r.experiment_id LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id LEFT JOIN datasets d ON d.id=o.dataset_id WHERE r.status='completed' ORDER BY r.evaluated_at DESC,r.id DESC""")
+    cursor.execute("""SELECT r.id,r.normalized_url,CASE WHEN e.source_type='local_html' THEN COALESCE(r.display_name,o.observation_key) ELSE COALESCE(r.captured_url,r.url) END display_name,r.url acquired_url,r.axe_wcag_violations AS axe_violations,r.lighthouse_score,r.wave_aim_score,r.evaluated_at,e.title,d.storage_key,o.relative_path,r.source_snapshot_path,r.response_source_path FROM experiment_results r JOIN experiments e ON e.id=r.experiment_id LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id LEFT JOIN datasets d ON d.id=o.dataset_id WHERE r.status='completed' ORDER BY r.evaluated_at DESC,r.id DESC""")
     sources=cursor.fetchall()
     for row in sources: row["snapshot_available"]=bool(source_snapshot(row))
     cursor.close(); conn.close()
-    return render_template("remediation_runs.html",sources=sources,llms=options,model_choices=model_choices(settings),expert_models={c['model']:c['name'] for c in model_choices(settings)},rag=rag_status(),common_conditions=common_conditions(settings))
+    return render_template("remediation_runs.html",sources=sources,llms=options,model_choices=model_choices(settings),expert_models={c['model']:c['name'] for c in model_choices(settings)},rag=rag_status(),common_conditions=common_conditions(settings),control_copy=control_copy(_))
 
 
 @remediation_bp.post("/<int:run_id>/compare")
@@ -372,9 +388,9 @@ def compare_with_original(run_id):
 @remediation_bp.get("/<int:run_id>")
 def run_detail(run_id):
     conn=get_connection(); cursor=conn.cursor(dictionary=True)
-    cursor.execute("""SELECT rr.*,COALESCE(r.display_name,r.page_title,r.url) source_name,r.url source_url,r.axe_violations original_axe,r.lighthouse_score original_lighthouse,r.wave_aim_score original_aim,t.name template_name FROM remediation_runs rr JOIN experiment_results r ON r.id=rr.source_result_id LEFT JOIN remediation_templates t ON t.id=rr.template_id WHERE rr.id=%s""",(run_id,)); run=cursor.fetchone()
+    cursor.execute("""SELECT rr.*,COALESCE(r.display_name,r.page_title,r.url) source_name,r.url source_url,r.axe_wcag_violations original_axe,r.axe_raw_path source_axe_raw_path,r.lighthouse_score original_lighthouse,r.wave_aim_score original_aim,t.name template_name FROM remediation_runs rr JOIN experiment_results r ON r.id=rr.source_result_id LEFT JOIN remediation_templates t ON t.id=rr.template_id WHERE rr.id=%s""",(run_id,)); run=cursor.fetchone()
     if not run: cursor.close(); conn.close(); return redirect(url_for("remediation.runs"))
-    cursor.execute("SELECT * FROM remediation_iterations WHERE run_id=%s ORDER BY iteration_number",(run_id,)); iterations=cursor.fetchall()
+    cursor.execute("SELECT * FROM remediation_iterations WHERE run_id=%s ORDER BY iteration_number",(run_id,)); iterations=[project_wcag(row) for row in cursor.fetchall()]
     cursor.execute("SELECT * FROM remediation_events WHERE run_id=%s ORDER BY id",(run_id,)); events=cursor.fetchall()
     model_roles={}; category_counts={"Syntactic":0,"Semantic":0,"Layout":0}; taxonomy=None
     for item in iterations:
@@ -399,7 +415,12 @@ def run_detail(run_id):
             if review.get("status") in {"advisory","blocker"} and review.get("category") in category_counts:
                 category_counts[review["category"]]+=max(1,len(review.get("findings") or []))
         if item.get("strategy",{}).get("taxonomy"):
-            taxonomy=item["strategy"]["taxonomy"]
+            taxonomy=dict(item["strategy"]["taxonomy"])
+            # Recompute display-only categories from saved evidence; the stored
+            # strategy, reviewer decisions and event log remain immutable.
+            if Path(run.get('source_axe_raw_path') or '').is_file() and Path(item.get('axe_raw_path') or '').is_file():
+                taxonomy['original']=axe_taxonomy(run['source_axe_raw_path'])
+                taxonomy['candidate']=axe_taxonomy(item['axe_raw_path'])
     participants=[{"model":model,"roles":", ".join(sorted(roles))} for model,roles in model_roles.items()]
     accepted_item=next((item for item in reversed(iterations) if item.get("decision")=="accept"),None)
     measurable=[item for item in iterations if item.get("axe_violations") is not None and item.get("lighthouse_score") is not None]
@@ -409,6 +430,7 @@ def run_detail(run_id):
     run['presentation_priority']=presentation_priority(run.get('accessibility_priority'),best.get('strategy',{}) if best else None)
     initial_strategy=iterations[0].get('strategy',{}) if iterations else {}
     run['presentation_name']=presentation_name(run.get('accessibility_priority'),initial_strategy)
+    run['model_presentation']=run_model_presentation(run)
     cursor.close(); conn.close()
     report_candidate_available=bool(best and best.get('output_path') and Path(best['output_path']).is_file())
     return render_template("remediation_detail.html",run=run,iterations=iterations,participants=participants,events=events,category_counts=category_counts,taxonomy=taxonomy,best_candidate=best,report_candidate_available=report_candidate_available)

@@ -1,8 +1,10 @@
 # Import, export and composition
 
-WARP supports sharing completed evaluation evidence so collaborators can combine observations without repeating browser acquisition and tool processing.
+A11yResearch supports sharing completed evaluation evidence so collaborators can combine observations without repeating browser acquisition and tool processing.
 
 ## Export an evaluation
+
+The exchange extension remains `.warp` after the software was renamed to A11yResearch. The package identifier `warp-experiment` and version `3` are unchanged, so earlier packages remain compatible.
 
 Use the evaluation's download action to obtain a `.warp` file. This is a ZIP package with an `experiment.json` payload using format `warp-experiment`, version `3`. It includes experiment metadata, environments, page-level data and supported artifacts encoded in the payload. Local dataset packages can additionally include bundled dataset files; Tranco metadata is included when present.
 
@@ -34,13 +36,13 @@ This reads the package without importing records or executing its HTML. Keep the
 
 ## Import
 
-Open **Import**, select a supported WARP package and submit it. The importer validates metadata, URLs, duplicates and artifacts, restores files to allowed destinations and records import provenance. Local IDs may differ from the source installation; original source links remain provenance, not an instruction to join against the destination's coincidentally equal IDs.
+Open **Import**, select a supported A11yResearch package and submit it. The importer validates metadata, URLs, duplicates and artifacts, restores files to allowed destinations and records import provenance. Local IDs may differ from the source installation; original source links remain provenance, not an instruction to join against the destination's coincidentally equal IDs.
 
-The `.warp` importer expects the package structure created by WARP's export action. A ZIP of HTML files belongs in the local HTML acquisition workflow. Supported legacy payloads are handled by the importer as well.
+The `.warp` importer expects the package structure created by A11yResearch's export action. A ZIP of HTML files belongs in the local HTML acquisition workflow. Supported legacy payloads are handled by the importer as well.
 
 ## Compose a collection
 
-Open **Combine evaluations**, select source results and create a new collection. WARP clones stored results and their available artifacts with source identifiers and composition provenance. It does not perform a fresh visit or add fresh evaluation charges for the copy.
+Open **Combine evaluations**, select source results and create a new collection. A11yResearch clones stored results and their available artifacts with source identifiers and composition provenance. It does not perform a fresh visit or add fresh evaluation charges for the copy.
 
 When source evaluations contain the same normalized URL, the selected record determines which capture is included. Stored acquisition dates, settings and provenance help distinguish observations collected under different conditions.
 

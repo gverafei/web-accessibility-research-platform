@@ -2,7 +2,7 @@
 
 Tranco is a ranking of popular domains designed for web research. Visit the [official Tranco website](https://tranco-list.eu/) to learn about its methodology and download current or archived lists.
 
-Tranco supplies the ranking frame, while WARP supplies a deterministic selection and acquisition procedure. A domain's rank is a popularity-group indicator, not its accessibility score.
+Tranco supplies the ranking frame, while A11yResearch supplies a deterministic selection and acquisition procedure. A domain's rank is a popularity-group indicator, not its accessibility score.
 
 ## UI workflow
 
@@ -16,9 +16,9 @@ Choose **Tranco** in New acquisition. The form obtains the latest standard top-m
 | Medium popularity | 50,001–250,000 |
 | Popularity tail | 250,001–1,000,000 |
 
-Choose independent whole-number counts for your study. WARP imposes no fixed per-stratum or total observation-count cap: the target in a group must not exceed the domains available in that interval of the pinned ranking. A zero count disables a stratum. The values initially shown in the form are editable starting values, not a prescribed study design.
+Choose independent whole-number counts for your study. A11yResearch imposes no fixed per-stratum or total observation-count cap: the target in a group must not exceed the domains available in that interval of the pinned ranking. A zero count disables a stratum. The values initially shown in the form are editable starting values, not a prescribed study design.
 
-For each enabled group, WARP requests an ordered reserve of at least 10 candidates or the target count, whichever is larger. It records only the **unused domains actually available** in that group. Selecting all domains in an interval is allowed, but leaves no reserve; reserving candidates never reduces the requested primary target. Large collections require correspondingly more processing time, memory and disk space. See [acquisition capacity](acquisition.md#collection-size-and-resource-planning).
+For each enabled group, A11yResearch requests an ordered reserve of at least 10 candidates or the target count, whichever is larger. It records only the **unused domains actually available** in that group. Selecting all domains in an interval is allowed, but leaves no reserve; reserving candidates never reduces the requested primary target. Large collections require correspondingly more processing time, memory and disk space. See [acquisition capacity](acquisition.md#collection-size-and-resource-planning).
 
 ## Reproducible ordering
 
@@ -36,13 +36,13 @@ Download the sampling manifest from the evaluation to inspect selected/reserve r
 
 ### When a stratum cannot reach its target
 
-WARP retries each unsuccessful website acquisition once. If it still fails, recovery uses the next unused candidate from the **same interval, pinned list and deterministic order**. When the initially recorded reserve runs out, WARP can extend it with still-unused domains from that same stratum. It never borrows domains from another stratum or silently switches ranking releases.
+A11yResearch retries each unsuccessful website acquisition once. If it still fails, recovery uses the next unused candidate from the **same interval, pinned list and deterministic order**. When the initially recorded reserve runs out, A11yResearch can extend it with still-unused domains from that same stratum. It never borrows domains from another stratum or silently switches ranking releases.
 
 If all eligible ranked candidates in that interval have already been tried, recovery ends for that group. Work in other groups continues. The worker eventually finalizes the evaluation with the successful observations retained and an **incomplete dataset** warning; `completed` is the processing lifecycle status, not a guarantee that all targets were achieved. The report keeps target and final counts separate, and failed URLs/error context remain available outside the valid measurement cohort.
 
 For example, selecting all 500 domains ranked 1–500 leaves no reserve. If only 300 succeed after the controlled retries, the final count is **300 out of a target of 500**, with 200 unresolved failures. The target is not silently reduced to 300, those failures are not counted as zero-issue pages, and rank 501 is not used as a replacement. A later researcher-requested retry may recover more pages, but cannot guarantee 500 successes. Redefining the interval or choosing a newer ranking requires an explicit new sampling design, not an automatic substitution.
 
-An evaluator/service interruption is different: WARP retains the candidate and requeues the work rather than consuming its website retry. A temporarily unavailable pinned ranking is likewise not evidence that the domain pool is exhausted. See [jobs and recovery](../technical/jobs.md).
+An evaluator/service interruption is different: A11yResearch retains the candidate and requeues the work rather than consuming its website retry. A temporarily unavailable pinned ranking is likewise not evidence that the domain pool is exhausted. See [jobs and recovery](../technical/jobs.md).
 
 ## Offline code example
 

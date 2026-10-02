@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Web Accessibility Research Platform",
+  "name": "A11yResearch: Web Accessibility Research Platform",
   "version": "1.0.0",
-  "description": "WARP accessibility acquisition, remediation, and evaluation initiated from the current page URL.",
+  "description": "A11yResearch accessibility acquisition, remediation, and evaluation initiated from the current page URL.",
   "permissions": ["activeTab", "tabs", "scripting", "storage", "sidePanel", "notifications", "alarms"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "background": {"service_worker": "service-worker.js"},
@@ -13,7 +13,7 @@
     "128": "icons/warp-icon-128.png"
   },
   "action": {
-    "default_title": "Open WARP accessibility controls",
+    "default_title": "Open A11yResearch accessibility controls",
     "default_icon": {
       "16": "icons/warp-icon-16.png",
       "32": "icons/warp-icon-32.png"

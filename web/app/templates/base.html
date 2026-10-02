@@ -2,7 +2,7 @@
 <html lang="{{ current_locale }}" data-theme="{{ ui_theme }}" data-theme-choice="{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}{{ _("Reproducible Web Accessibility") }}{% endblock %}</title>
+    <title>{% block title %}A11yResearch: Web Accessibility Research Platform{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <script>try{const root=document.documentElement,choice=root.dataset.themeChoice,media=matchMedia('(prefers-color-scheme: dark)'),apply=()=>root.dataset.theme=choice==='system'?(media.matches?'dark':'light'):choice;apply();if(choice==='system')media.addEventListener('change',apply);if(localStorage.getItem('sidebar-collapsed')==='true')root.classList.add('sidebar-precollapsed')}catch(_){}</script>
@@ -11,7 +11,7 @@
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
         rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='20260916-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='20260930-brand') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/remediation_layout.css', v='20260916-4') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/evaluation_history.css', v='20260924-2') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/model_catalog.css', v='20260929-3') }}">
@@ -21,7 +21,7 @@
 <body class="{% block body_class %}{% endblock %}">
 <div class="app-shell">
 <aside class="app-sidebar" id="appSidebar">
-    <div class="sidebar-head"><a class="sidebar-name sidebar-label" href="{{ url_for('experiments.index') }}">Web Accessibility<br>Research Platform</a><button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle navigation" title="Toggle navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button></div>
+    <div class="sidebar-head"><a class="sidebar-name sidebar-label" href="{{ url_for('experiments.index') }}" title="A11yResearch: Web Accessibility Research Platform">A11yResearch<span class="sidebar-description">Web Accessibility<br>Research Platform</span></a><button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle navigation" title="Toggle navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button></div>
     <nav class="sidebar-nav" aria-label="Main navigation">
         <a class="sidebar-link{% if request.endpoint == 'experiments.index' %} active{% endif %}" aria-label="{{ _('Dashboard') }}"{% if request.endpoint == 'experiments.index' %} aria-current="page"{% endif %} href="{{ url_for('experiments.index') }}"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Zm10 7h6V11h-6v9ZM4 20h6v-3H4v3Zm10-13h6V4h-6v3Z"/></svg><span class="sidebar-label">{{ _("Dashboard") }}</span></a>
         <a class="sidebar-link{% if request.endpoint == 'experiments.new_acquisition' %} active{% endif %}" aria-label="{{ _('New acquisition') }}"{% if request.endpoint == 'experiments.new_acquisition' %} aria-current="page"{% endif %} href="{{ url_for('experiments.new_acquisition') }}"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="sidebar-label">{{ _("New acquisition") }}</span></a>
@@ -87,6 +87,7 @@
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/chart_value_labels.js') }}"></script>
 
 <script 
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">

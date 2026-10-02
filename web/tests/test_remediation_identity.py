@@ -18,16 +18,16 @@ class RemediationIdentityTests(unittest.TestCase):
             'HTML regeneration', 'Markdown regeneration'])
         self.assertEqual(list(self.identity.preservation_colors.values()),
                          [color for tier, color in self.identity.tier_colors.items() if tier != 'local'])
-        for filename in ('remediation_runs.html', 'remediation_history.html', 'remediation_detail.html'):
+        for filename in ('remediation_runs.html', '_remediation_history_rows.html', 'remediation_detail.html'):
             self.assertIn("from '_remediation_identity.html' import", (self.templates / filename).read_text())
 
     def test_all_remediation_templates_compile(self):
         env=Environment(loader=FileSystemLoader(self.templates),autoescape=True)
-        for filename in ('remediation_runs.html','remediation_history.html','remediation_detail.html'):
+        for filename in ('remediation_runs.html','remediation_history.html','_remediation_history_rows.html','remediation_detail.html'):
             env.get_template(filename)
 
     def test_run_id_and_start_time_are_visible_in_list_and_detail(self):
-        history=(self.templates/'remediation_history.html').read_text()
+        history=(self.templates/'_remediation_history_rows.html').read_text()
         header=(self.templates/'_remediation_report_header.html').read_text()
         for template in (history,header):
             self.assertIn('#{{ run.id }}',template)
@@ -160,10 +160,11 @@ class RemediationIdentityTests(unittest.TestCase):
         self.assertIn('ollama/qwen3.5:4b', html)
 
     def test_direct_selection_has_one_label_in_list_and_report(self):
-        for filename in ('remediation_history.html','remediation_detail.html'):
+        for filename in ('_remediation_history_rows.html','remediation_detail.html'):
             template=(self.templates/filename).read_text()
             self.assertNotIn('_("User selected")',template)
-            self.assertIn('model_strategy_tier(run)|trim',template)
+            self.assertIn('run.model_presentation.tier',template)
+            self.assertIn('run.model_presentation.color',template)
             self.assertNotIn('selection_label',template)
 
     def test_model_strategy_uses_recorded_tier_not_hardcoded_provider_ranking(self):

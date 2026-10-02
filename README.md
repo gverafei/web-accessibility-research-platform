@@ -1,6 +1,6 @@
-# WARP — Web Accessibility Research Platform
+# A11yResearch: Web Accessibility Research Platform
 
-WARP helps researchers acquire and evaluate collections of web pages, remediate accessibility barriers with explicit AI controls, and compare original and repaired pages while retaining reproducible evidence.
+A11yResearch helps researchers acquire and evaluate collections of web pages, remediate accessibility barriers with explicit AI controls, and compare original and repaired pages while retaining reproducible evidence.
 
 **[Complete documentation](https://gverafei.github.io/web-accessibility-research-platform/)** · [Installation](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) · [Researcher guide](https://gverafei.github.io/web-accessibility-research-platform/guide/acquisition/) · [Technical architecture](https://gverafei.github.io/web-accessibility-research-platform/technical/architecture/)
 
@@ -29,7 +29,7 @@ docker compose up -d --build
 
 Open **http://localhost** and create a small evaluation under **New acquisition**. Start without WAVE or cloud calls, inspect the results, then configure a model if you want remediation.
 
-The single `docker-compose.yml` builds web, worker, evaluator and dataset-server from the checked-out source; it does not use prebuilt WARP images from Docker Hub. MySQL and Qdrant use their official images. Read the [installation guide](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) for ports, first-start diagnostics and safe shutdown.
+The single `docker-compose.yml` builds web, worker, evaluator and dataset-server from the checked-out source; it does not use prebuilt A11yResearch images from Docker Hub. MySQL and Qdrant use their official images. Read the [installation guide](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) for ports, first-start diagnostics and safe shutdown.
 
 > Local research deployment: the supplied application has no production multi-user authentication boundary. Restrict host/network access and do not expose it directly to the public Internet. Keep `.env`, provider keys and research captures private.
 
@@ -48,7 +48,7 @@ Ollama is optional and configured externally. MySQL/Qdrant use named volumes; mo
 
 ## Browser extension
 
-Load `browser_extension/` as an unpacked extension in a compatible Chromium browser. The documented prototype targets Chrome/Edge and expects WARP at localhost. It submits the active tab's URL, not its cookies/session/live DOM. See the [extension guide](https://gverafei.github.io/web-accessibility-research-platform/guide/extension/) for controls, permissions and capture scope.
+Load `browser_extension/` as an unpacked extension in a compatible Chromium browser. The documented prototype targets Chrome/Edge and expects A11yResearch at localhost. It submits the active tab's URL, not its cookies/session/live DOM. See the [extension guide](https://gverafei.github.io/web-accessibility-research-platform/guide/extension/) for controls, permissions and capture scope.
 
 ## Development and verification
 
@@ -73,7 +73,7 @@ python docs/tools/check_site.py
 mkdocs serve --dev-addr 127.0.0.1:8001
 ```
 
-Only documentation becomes a Pages artifact; the site does not run WARP or publish the database/captured pages.
+Only documentation becomes a Pages artifact; the site does not run A11yResearch or publish the database/captured pages.
 
 ## License and citation
 

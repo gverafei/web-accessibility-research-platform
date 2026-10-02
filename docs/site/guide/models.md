@@ -1,6 +1,6 @@
 # Models and reasoning
 
-WARP keeps the model catalogue editable so a researcher can adopt a new model without changing the application or extension source. Model discovery reads provider metadata; it does not generate content or replace models in existing experiments.
+A11yResearch keeps the model catalogue editable so a researcher can adopt a new model without changing the application or extension source. Model discovery reads provider metadata; it does not generate content or replace models in existing experiments.
 
 ## Fresh-install defaults
 
@@ -38,9 +38,9 @@ Each choice has its own unique ID. That permits the same model with different re
 
 ## Capabilities
 
-Catalogue metadata describes image input, temperature support, reasoning support, context length and output limits when available. Discovery records its source and time. WARP uses these fields to prepare requests compatible with the selected model.
+Catalogue metadata describes image input, temperature support, reasoning support, context length and output limits when available. Discovery records its source and time. A11yResearch uses these fields to prepare requests compatible with the selected model.
 
-“Light” maps to provider effort `low`. Reasoning settings do not select a separate model ID. Higher effort can change token consumption and duration even without a different listed per-token price. WARP records actual usage/charges instead of presenting a price estimate as a stable property of a slider position.
+“Light” maps to provider effort `low`. Reasoning settings do not select a separate model ID. Higher effort can change token consumption and duration even without a different listed per-token price. A11yResearch records actual usage/charges instead of presenting a price estimate as a stable property of a slider position.
 
 ## Frozen selection and failure
 

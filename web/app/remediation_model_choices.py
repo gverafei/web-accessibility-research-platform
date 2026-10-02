@@ -106,6 +106,30 @@ def frozen_model_configuration(choice):
     return snapshot
 
 
+def run_model_presentation(run):
+    """Display the run's frozen choice, not today's mutable catalogue."""
+    try:
+        frozen = json.loads(run.get('model_config_json') or '{}')
+    except (ValueError, TypeError):
+        frozen = {}
+    if not isinstance(frozen, dict) or frozen.get('model') != run.get('generator_model'):
+        frozen = {}
+    tier = frozen.get('tier') or run.get('model_cost_tier') or 'low'
+    if not isinstance(tier, str) or tier not in (*TIERS, 'local'):
+        tier = 'low'
+    if str(run.get('generator_model') or '').startswith('ollama/'):
+        tier = 'local'
+    colors = {'local':'#64748b', 'low':'#2f9e66', 'medium':'#2686c9',
+              'high':'#6558c8', 'xhigh':'#9b4fc2', 'max':'#c3486b'}
+    color = str(frozen.get('color') or '')
+    if not re.fullmatch(r'#[a-fA-F0-9]{6}', color):
+        color = colors.get(tier, '#18529d')
+    label = frozen.get('label')
+    effort = frozen.get('reasoning_effort')
+    return {'tier':tier, 'color':color, 'label':label if isinstance(label, str) else None,
+            'reasoning_effort':effort if isinstance(effort, str) and effort in EFFORTS else None}
+
+
 def discover_models(settings):
     """Read metadata only on explicit request; never update experiments."""
     endpoint = settings['openrouter_base_url'].rstrip('/') + '/models'

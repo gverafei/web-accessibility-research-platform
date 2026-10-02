@@ -28,6 +28,7 @@ from bs4 import BeautifulSoup
 from PIL import Image, ImageChops, ImageStat
 
 from database import get_connection
+from axe_metrics import POLICY as AXE_COUNTING_POLICY, candidate_metrics, persist_metrics
 from framework_knowledge import retrieve_framework_knowledge
 from regeneration_references import selected_framework, DESIGN_BASES
 from regeneration_components import component_instruction
@@ -41,10 +42,12 @@ from remediation_planner import component_candidates, planning_prompt, validate_
 from remediation_extraction import extraction_quality, markdown_representation, markdown_quality
 from remediation_baseline import baseline_prompt, baseline_candidate
 from remediation_content_contract import preserve_resources, hydrate_static_placeholders, original_page_wrapper, prepare_frozen_widget_replay, captured_widget_replay_warnings, select_captured_patch_source, grounded_lighthouse_context
+from frozen_carousel_replay import replay_manifest
 from remediation_rag import retrieval_evidence, adaptive_example_limit
 from remediation_rag import prompt_context as rag_prompt_context, retrieval_query as rag_retrieval_query, retrieve as rag_retrieve
 from remediation_taxonomy import axe_taxonomy
 from remediation_agent_runtime import AgentRuntime
+from remediation_call_evidence import RecordedModelCalls
 from remediation_tool_registry import ToolContract
 from settings import evaluator_runtime_config, get_settings
 
@@ -286,32 +289,43 @@ def preservation_instruction(priority):
 def absolutize_resources(html, base_url):
     """Resolve candidate resources against the acquired page's canonical base URL."""
     if not base_url: return html
+    from bs4 import BeautifulSoup
     def resolve(value):
         value=value.strip()
         if not value or value.startswith(("#","data:","mailto:","tel:","javascript:","blob:")): return value
         return urljoin(base_url,value)
-    html=re.sub(r'(?i)\b(src|href|action|poster|data-src|data-original)\s*=\s*(["\'])(.*?)\2',lambda m:f'{m.group(1)}={m.group(2)}{resolve(m.group(3))}{m.group(2)}',html)
-    def resolve_srcset(match):
-        value=match.group(3)
+    def resolve_srcset(value):
         if 'data:' in value.lower():
-            return match.group(0)
+            return value
         entries=[]
         for part in value.split(','):
             tokens=part.split()
             if tokens:
                 entries.append(f"{resolve(tokens[0])} {' '.join(tokens[1:])}".rstrip())
-        return f'{match.group(1)}={match.group(2)}{", ".join(entries)}{match.group(2)}'
-    html=re.sub(r'(?i)\b(srcset|data-srcset)\s*=\s*(["\'])(.*?)\2',resolve_srcset,html)
-    def activate_lazy_image(match):
-        tag=match.group(0); lazy=re.search(r'(?i)\bdata-(?:src|original)\s*=\s*(["\'])(.*?)\1',tag)
-        current=re.search(r'(?i)\bsrc\s*=\s*(["\'])(.*?)\1',tag)
-        if lazy and (not current or not current.group(2) or current.group(2).startswith("data:")):
-            if current: tag=tag[:current.start()]+f'src={current.group(1)}{lazy.group(2)}{current.group(1)}'+tag[current.end():]
-            else: tag=tag[:-1]+f' src="{lazy.group(2)}">'
-        return tag
-    html=re.sub(r'(?is)<img\b[^>]*>',activate_lazy_image,html)
-    html=re.sub(r'(?i)url\(([^)]+)\)',lambda m:f"url('{resolve(m.group(1).strip().strip(chr(34)+chr(39)))}')",html)
-    return html
+        return ', '.join(entries)
+    # Work on attribute values: rewriting quotes in serialized HTML corrupts
+    # inline CSS, and global replacement also alters application script text.
+    def resolve_css(css):
+        pattern = r'''(?i)url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)'" ][^)]*))\s*\)'''
+        def replacement(match):
+            value = next(value for value in match.groups() if value is not None).strip()
+            resolved = resolve(value).replace('\\', '\\\\').replace('"', '\\"')
+            return f'url("{resolved}")'
+        return re.sub(pattern, replacement, css)
+    soup = BeautifulSoup(html, 'html.parser')
+    for node in soup.find_all(True):
+        for attr in ('src','href','action','poster','data-src','data-original'):
+            if isinstance(node.get(attr), str): node[attr] = resolve(node[attr])
+        for attr in ('srcset','data-srcset'):
+            if isinstance(node.get(attr), str): node[attr] = resolve_srcset(node[attr])
+        if node.name == 'img':
+            lazy = node.get('data-src') or node.get('data-original')
+            if lazy and (not node.get('src') or node['src'].startswith('data:')):
+                node['src'] = lazy
+        if isinstance(node.get('style'), str): node['style'] = resolve_css(node['style'])
+        if node.name == 'style' and node.string is not None:
+            node.string.replace_with(resolve_css(str(node.string)))
+    return str(soup)
 
 
 def document_base_url(source, fallback):
@@ -663,6 +677,7 @@ def validate_candidate_evaluation(item):
         raise RuntimeError('Candidate evaluation failed: ' + str(item.get('error') or 'The evaluator returned a failed result without details.'))
     if (item.get('axe') or {}).get('violations') is None or (item.get('lighthouse') or {}).get('accessibility_score') is None:
         raise RuntimeError('Candidate evaluation failed: Axe or Lighthouse results are missing.')
+    candidate_metrics(item.get('axe') or {})
 
 
 def visual_similarity(original_path, candidate_path):
@@ -695,6 +710,8 @@ def build_agent_runtime(app, run, settings, run_id, step):
              lambda query,limit,previously_supplied: rag_retrieve(query,limit,previously_supplied))
     register(ToolContract('apply_constrained_patch','1.0','Apply validated selector-scoped operations',('document','plan'),'tuple',True,True),
              lambda document,plan: apply_repair_plan(document,plan))
+    register(ToolContract('prepare_frozen_widgets','2.0','Normalize recognized captured widgets for bounded replay',('html',),'tuple',True,True),
+             lambda html: prepare_frozen_widget_replay(html))
     register(ToolContract('evaluate_candidate','1.0','Run Axe and Lighthouse through the evaluator service',('request_payload',),'object',True),
              lambda request_payload: _evaluate_candidate(app,request_payload))
     register(ToolContract('measure_content_retention','1.0','Measure text, URL and media retention',('original','candidate','base_url'),'object',True),
@@ -752,6 +769,7 @@ def axe_failure_evidence(raw_path, limit=8):
     try: violations=json.loads(path.read_text(encoding="utf-8"))["violations"]
     except (OSError,ValueError,KeyError,TypeError): return []
     evidence=[]
+    violations = [entry for entry in violations if 'best-practice' not in entry.get('tags', [])]
     for violation in violations[:limit]:
         nodes=[]
         for node in violation.get("nodes",[])[:4]:
@@ -790,7 +808,7 @@ def backfill_accepted_remediation(app, run_id, source_base_url=None):
 
 def process_remediation(app, run_id):
     settings=get_settings(); conn=get_connection(); cursor=conn.cursor(dictionary=True)
-    cursor.execute("""SELECT rr.*,r.url source_url,r.captured_url,r.display_name,r.source_snapshot_path,r.response_source_path,r.screenshot_path source_screenshot_path,r.axe_raw_path source_axe_raw_path,r.lighthouse_raw_path source_lighthouse_raw_path,r.axe_violations source_axe,r.lighthouse_score source_lighthouse,r.wave_aim_score source_aim,r.experiment_id source_experiment_id,e.source_type,d.storage_key,o.relative_path,t.html_template,t.name template_name FROM remediation_runs rr JOIN experiment_results r ON r.id=rr.source_result_id JOIN experiments e ON e.id=r.experiment_id LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id LEFT JOIN datasets d ON d.id=o.dataset_id LEFT JOIN remediation_templates t ON t.id=rr.template_id WHERE rr.id=%s""",(run_id,)); run=cursor.fetchone()
+    cursor.execute("""SELECT rr.*,r.url source_url,r.captured_url,r.display_name,r.source_snapshot_path,r.response_source_path,r.screenshot_path source_screenshot_path,r.axe_raw_path source_axe_raw_path,r.lighthouse_raw_path source_lighthouse_raw_path,r.axe_wcag_violations source_axe,r.lighthouse_score source_lighthouse,r.wave_aim_score source_aim,r.experiment_id source_experiment_id,e.source_type,d.storage_key,o.relative_path,t.html_template,t.name template_name FROM remediation_runs rr JOIN experiment_results r ON r.id=rr.source_result_id JOIN experiments e ON e.id=r.experiment_id LEFT JOIN dataset_observations o ON o.id=r.dataset_observation_id LEFT JOIN datasets d ON d.id=o.dataset_id LEFT JOIN remediation_templates t ON t.id=rr.template_id WHERE rr.id=%s""",(run_id,)); run=cursor.fetchone()
     snapshot=_snapshot(run); started=time.monotonic()
     approach=approach_for(run.get("accessibility_priority"))
     agent_runtime=build_agent_runtime(app,run,settings,run_id,approach.step)
@@ -799,6 +817,8 @@ def process_remediation(app, run_id):
     _progress(cursor,conn,run_id,"acquire",5,"Loading the preserved acquired snapshot")
     best_measured_iteration=None
     try:
+        cursor.execute('UPDATE remediation_runs SET axe_counting_policy=%s WHERE id=%s', (AXE_COUNTING_POLICY, run_id))
+        run['axe_counting_policy'] = AXE_COUNTING_POLICY
         if run['generator_model'].startswith('openrouter/'):
             raise ValueError('Automatic model routing has been removed. Create a new run with an explicit model.')
         frozen_choice = json.loads(run.get('model_config_json') or 'null')
@@ -854,6 +874,7 @@ def process_remediation(app, run_id):
                    'Excluded absent nodes from the patch prompt; original Lighthouse report and score remain unchanged',
                    {'version':'lighthouse-patch-context-v1','omitted':unmatched_lighthouse})
         ensure_remediation_resource_policy(); output_dir=DATASET_ROOT/"remediations"/str(run_id); output_dir.mkdir(parents=True,exist_ok=True)
+        recorded_call = RecordedModelCalls(output_dir, agent_runtime, call_model)
         total_in=total_out=0; total_cost=0.0; accepted=None; previous_candidate=""; automated_achieved=False; pinned_effort=None
         executed_iterations=0
         pinned_effort = frozen_choice.get('reasoning_effort')
@@ -941,7 +962,7 @@ def process_remediation(app, run_id):
                     planner_prompt+='\nGlobal page contract: header components must be a prefix, main components the middle, footer components a suffix of the original order. Early skip links belong to header. Do not reorder content to satisfy landmarks; uncertain or interleaved regions may remain main. Plan one coherent page, not independent mini-sites.'
                 planner_messages=[{"role":"user","content":[{"type":"text","text":planner_prompt},*planner_visual] if planner_visual else planner_prompt}]
                 _event(cursor,conn,run_id,"Architecture planning specialist","planning",f"Planning {len(candidates)} grounded components and dependencies",{"model":planner_model,"approach":approach.name})
-                proposal,pi,po,pc,ps,pa=call_model(settings,planner_model,planner_prompt,True,.1,tier,allowed,planner_messages,reasoning_override=pinned_effort)
+                proposal,pi,po,pc,ps,pa=recorded_call(settings,planner_model,planner_prompt,True,.1,tier,allowed,planner_messages,reasoning_override=pinned_effort)
                 planner_response_path=output_dir/f'attempt-{number}-planner-response.txt'
                 planner_response_path.write_text(proposal,encoding='utf-8')
                 _event(cursor,conn,run_id,'Architecture planning specialist','planning_response','Planner response saved before contract validation',{'model':pa,'response_path':str(planner_response_path),'input_tokens':pi,'output_tokens':po})
@@ -1000,6 +1021,7 @@ Return one JSON object with an operations array and a rationale. Allowed operati
 - {{"action":"append_head_html" or "append_body_html","html":"markup"}}
 
 Measured findings are fallible localization evidence, not permission to game the evaluator. Check each finding against the actual element and surrounding task. Inspect the independent overview for additional barriers. Group related failures by root cause and coordinate HTML and targeted CSS repairs. Use the exact selectors from measured evidence whenever possible. Make the fewest local changes that fix the reported failures. Never replace html, head, or body; never remove content, links, forms, scripts, stylesheets, SVG contents, data, or behavior. Never conceal violations with role=presentation. Never assign role=main to body, an empty placeholder, or a container that excludes most page content. For contrast/focus failures, append narrowly scoped CSS overrides. For semantic names or alternatives, infer wording only from adjacent text, title, filename, or existing context; do not invent facts. Retrieved snippets are component knowledge, not page templates. Return JSON only."""
+                prompt+='\nEvery repair selector must address an existing element in the supplied current document context. Do not invent IDs or reuse IDs from a different browser state. If no justified executable repair is available, return an empty operations array; the unchanged candidate will be measured rather than treating rejected operations as a repair.'
             prompt+="\nVersioned intervention contract: "+execution_approach.name+". "+execution_approach.instruction
             generation_skills=agent_runtime.skills_for('generate',enabled=not single_shot)
             iteration_skills=list({skill.id:skill for skill in [*prompt_skills,*generation_skills]}.values())
@@ -1072,7 +1094,7 @@ Measured findings are fallible localization evidence, not permission to game the
                 dp=diagnosis_prompt(focused_context,current_axe_evidence,current_lighthouse_evidence,feedback,execution_approach,whole_regeneration)
                 dm=[{'role':'user','content':[{'type':'text','text':dp},*visual_reference] if visual_reference else dp}]
                 _progress(cursor,conn,run_id,'prompt',round(base+segment*.20),f'Diagnosing focused accessibility repairs for attempt {number}',number)
-                raw,di,do,dc,ds,actual_diagnostician=call_model(settings,requested_generator,dp,True,.05,cost_tier=tier,allowed_models=allowed,messages=dm,reasoning_override=pinned_effort,output_token_limit=1200)
+                raw,di,do,dc,ds,actual_diagnostician=recorded_call(settings,requested_generator,dp,True,.05,cost_tier=tier,allowed_models=allowed,messages=dm,reasoning_override=pinned_effort,output_token_limit=1200)
                 total_in+=di; total_out+=do; total_cost+=dc
                 cursor.execute('UPDATE remediation_runs SET total_input_tokens=%s,total_output_tokens=%s,total_cost_usd=%s,execution_seconds=%s WHERE id=%s',(total_in,total_out,total_cost,time.monotonic()-started,run_id));conn.commit()
                 diagnostic_path=output_dir/f'attempt-{number}-diagnosis-response.txt'
@@ -1113,7 +1135,7 @@ Measured findings are fallible localization evidence, not permission to game the
                         for key in partial_usage: partial_usage[key]+=details.get(key,0)
                         cursor.execute("UPDATE remediation_runs SET total_input_tokens=%s,total_output_tokens=%s,total_cost_usd=%s,execution_seconds=%s WHERE id=%s",(total_in+partial_usage["input_tokens"],total_out+partial_usage["output_tokens"],total_cost+partial_usage["cost_usd"],time.monotonic()-started,run_id)); conn.commit()
                 def area_model_call(*args,**kwargs):
-                    result=call_model(*args,**kwargs,reasoning_override=area_state.get('requested_effort',pinned_effort))
+                    result=recorded_call(*args,**kwargs,reasoning_override=area_state.get('requested_effort',pinned_effort))
                     return result
                 try:
                     generated,generation_usage,actual_generator=regenerate_areas(area_plan,inventory,settings,requested_generator,iteration_temperature,tier,allowed,area_model_call,reconstruction_inventory,retrieve_framework_knowledge,parse_json_response,visual_reference,area_state,area_event)
@@ -1130,7 +1152,7 @@ Measured findings are fallible localization evidence, not permission to game the
                 prompt="\n\n".join(item.pop("prompt") for item in generation_usage)
                 ti=sum(item["input_tokens"] for item in generation_usage); to=sum(item["output_tokens"] for item in generation_usage); cost=sum(item["cost_usd"] for item in generation_usage); gen_seconds=sum(item["seconds"] for item in generation_usage)
             else:
-                generated,ti,to,cost,gen_seconds,actual_generator=call_model(settings,requested_generator,prompt,json_mode=not reconstruct and not single_shot and not initial_regeneration,temperature=iteration_temperature,cost_tier=tier,allowed_models=allowed,messages=request_messages,reasoning_override=pinned_effort,output_token_limit=(32000 if initial_regeneration else 4000) if whole_regeneration else None)
+                generated,ti,to,cost,gen_seconds,actual_generator=recorded_call(settings,requested_generator,prompt,json_mode=not reconstruct and not single_shot and not initial_regeneration,temperature=iteration_temperature,cost_tier=tier,allowed_models=allowed,messages=request_messages,reasoning_override=pinned_effort,output_token_limit=(32000 if initial_regeneration else 4000) if whole_regeneration else None)
             # Record paid calls before parsing/evaluation can fail. Successful
             # iterations reconcile this ledger with reviewer/planner usage below.
             cursor.execute("UPDATE remediation_runs SET total_input_tokens=%s,total_output_tokens=%s,total_cost_usd=%s,execution_seconds=%s WHERE id=%s",(total_in+ti,total_out+to,total_cost+cost,time.monotonic()-started,run_id)); conn.commit()
@@ -1181,6 +1203,7 @@ Measured findings are fallible localization evidence, not permission to game the
                 plan,scope_rejections=constrain_plan(base_document,plan,APPROACHES[1] if whole_regeneration else approach,[item["selector"] for item in component_plan if item["intervention"]=="regenerate"],source_base)
                 candidate,patch_result=agent_runtime.tools.invoke('apply_constrained_patch',document=base_document,plan=plan)
                 patch_result["skipped"].extend(scope_rejections)
+                recorded_call.checkpoint()
             design_base_evidence=None
             if whole_regeneration:
                 from regeneration_references import ensure_design_base
@@ -1188,9 +1211,9 @@ Measured findings are fallible localization evidence, not permission to game the
             candidate,deterministic_repairs=apply_deterministic_repairs(candidate,current_axe_evidence,current_lighthouse_evidence) if evidence_mode in {"guided","localized"} and not single_shot and not initial_regeneration else (candidate,[])
             frozen_widget_repairs=[]
             if not reconstruct and not single_shot and not whole_regeneration:
-                candidate,frozen_widget_repairs=prepare_frozen_widget_replay(candidate)
+                candidate,frozen_widget_repairs=agent_runtime.tools.invoke('prepare_frozen_widgets',html=candidate)
                 if frozen_widget_repairs:
-                    _event(cursor,conn,run_id,'Frozen acquisition tool','widget_replay_normalization','Dehydrated proven captured widget copies before replaying original scripts',{'repairs':frozen_widget_repairs,'limitations':'Native option data retained; duplicate presentation text consolidated; original application tasks require testing'})
+                    _event(cursor,conn,run_id,'Frozen acquisition tool','widget_replay_normalization','Prepared recognized captured widgets for bounded replay with their frozen data',{'repairs':frozen_widget_repairs,'limitations':'Library-specific adapters; unknown widgets and application tasks require testing'})
             resource_repairs=[]
             if reconstruct:
                 candidate=embed_framework(candidate,owned_framework)
@@ -1243,7 +1266,8 @@ Measured findings are fallible localization evidence, not permission to game the
                     capture_replay_warnings=captured_widget_replay_warnings(rendered_source,evaluated_snapshot.read_text(encoding='utf-8',errors='replace'))
                     if capture_replay_warnings:
                         _event(cursor,conn,run_id,'Capture replay audit','widget_replay_warning','Captured widgets created additional native controls when original scripts replayed; inspect interactive behavior',{'warnings':capture_replay_warnings,'acceptance_gate':False})
-            wave=item.get("wave",{}); axe=item.get("axe",{}).get("violations"); lighthouse=item.get("lighthouse",{}).get("accessibility_score"); aim=wave.get("aim_score"); wave_credits=int(wave.get("credits_used") or 0); wave_cost=float(wave.get("cost_usd") or 0)
+            measured_axe = candidate_metrics(item.get('axe', {}))
+            wave=item.get("wave",{}); axe=measured_axe['axe_wcag_violations']; lighthouse=item.get("lighthouse",{}).get("accessibility_score"); aim=wave.get("aim_score"); wave_credits=int(wave.get("credits_used") or 0); wave_cost=float(wave.get("cost_usd") or 0)
             axe_evidence=axe_failure_evidence(item.get("axe",{}).get("raw_path"))
             lighthouse_evidence=lighthouse_failure_evidence(item.get("lighthouse",{}).get("raw_path"),8)
             current_axe_evidence=axe_evidence; current_lighthouse_evidence=lighthouse_evidence
@@ -1326,7 +1350,8 @@ Measured findings are fallible localization evidence, not permission to game the
             strategy["reconstruction_mode"]="fragmented" if area_plan else "whole_page" if reconstruct else "not_applicable"
             strategy["area_plan"]=[{"area":item["area"],"id_prefix":item["prefix"]} for item in area_plan]
             strategy["area_checkpoints"]=area_checkpoints
-            strategy['frozen_widget_replay']={'version':'bootstrap-select-exact-copy-v1','repairs':frozen_widget_repairs}
+            strategy['frozen_widget_replay']={'version':'captured-widget-adapters-v2','repairs':frozen_widget_repairs,
+                                             'runtime_manifest':replay_manifest(candidate)}
             strategy['capture_replay_warnings']=capture_replay_warnings
             strategy['model_configuration']=frozen_choice
             strategy['context_policy']={'version':'current-best-candidate-v1','history_replayed':False,
@@ -1348,6 +1373,7 @@ Measured findings are fallible localization evidence, not permission to game the
             strategy['framework_knowledge']['retrieval_method']='detected-component lookup in versioned local library; not semantic-vector retrieval'
             strategy['framework_knowledge']['units']=[{'component':unit['component'],'version':unit.get('knowledge_version'),'source':unit.get('source'),'examples':unit.get('examples',[])} for unit in component_knowledge]
             strategy['target_attainment']={'achieved':bool(metric_pass),'axe_maximum':run['max_axe'],'lighthouse_minimum':run['min_lighthouse'],'wave_aim_minimum':run.get('min_aim'),'result_availability':'retained independently of targets under automated review'}
+            strategy['axe_measurements'] = measured_axe
             if actual_generator.startswith('ollama/'):
                 strategy['local_llm']={**settings['_local_llm_config'],
                                        'transport':'ollama-native-chat-stream',
@@ -1391,8 +1417,13 @@ Measured findings are fallible localization evidence, not permission to game the
             strategy["rag"]["retrieval_quality"]=rag_quality
             strategy["extraction"]={"method":"frozen HTML plus rendered DOM inventory","reading_order_items":len(inventory["reading_order"]),"inventory_characters":len(json.dumps(inventory,ensure_ascii=False)),"prompt_inventory_limit":180000,"complete_document_text":True,"truncated":False}
             strategy['agentic_runtime']=agent_runtime.snapshot(iteration_skills,iteration_tool_start)
-            cursor.execute("""INSERT INTO remediation_iterations (run_id,iteration_number,prompt_text,feedback_text,output_path,output_url,decision,decision_reason,generator_provider,generator_model,reviewer_provider,reviewer_model,input_tokens,output_tokens,cost_usd,wave_credits_used,wave_cost_usd,execution_seconds,axe_violations,lighthouse_score,wave_aim_score,candidate_key,screenshot_path,dom_distance,original_dom_nodes,candidate_dom_nodes,dom_changes_json,specialist_reviews_json,agent_usage_json,strategy_json,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(run_id,number,prompt,feedback,str(path),url,decision,str(decision_data.get("reason") or "")[:8000],actual_generator.split("/",1)[0],actual_generator,actual_reviewer.split("/",1)[0],actual_reviewer,iteration_input,iteration_output,iteration_cost,wave_credits,wave_cost,gen_seconds+diagnosis_seconds+planner_seconds+float(item.get("execution_seconds") or 0),axe,lighthouse,aim,candidate_key,item.get("screenshot_path"),distance,original_nodes,candidate_nodes,json.dumps(dom_change_summary(source,candidate)),json.dumps([]),json.dumps(agent_usage),json.dumps(strategy),_now(settings)))
+            recorded_call.checkpoint()
+            strategy['model_call_evidence']={'schema_version':'model-call-evidence-v1',
+                'path':str(output_dir/'model-call-evidence.json'),
+                'includes_unevaluated_attempts':True}
+            cursor.execute("""INSERT INTO remediation_iterations (run_id,iteration_number,prompt_text,feedback_text,output_path,output_url,decision,decision_reason,generator_provider,generator_model,reviewer_provider,reviewer_model,input_tokens,output_tokens,cost_usd,wave_credits_used,wave_cost_usd,execution_seconds,axe_violations,lighthouse_score,wave_aim_score,candidate_key,screenshot_path,dom_distance,original_dom_nodes,candidate_dom_nodes,dom_changes_json,specialist_reviews_json,agent_usage_json,strategy_json,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(run_id,number,prompt,feedback,str(path),url,decision,str(decision_data.get("reason") or "")[:8000],actual_generator.split("/",1)[0],actual_generator,actual_reviewer.split("/",1)[0],actual_reviewer,iteration_input,iteration_output,iteration_cost,wave_credits,wave_cost,gen_seconds+diagnosis_seconds+planner_seconds+float(item.get("execution_seconds") or 0),measured_axe['axe_combined_violations'],lighthouse,aim,candidate_key,item.get("screenshot_path"),distance,original_nodes,candidate_nodes,json.dumps(dom_change_summary(source,candidate)),json.dumps([]),json.dumps(agent_usage),json.dumps(strategy),_now(settings)))
             iteration_id=cursor.lastrowid
+            persist_metrics(cursor, 'remediation_iterations', iteration_id, measured_axe, item.get('axe', {}).get('raw_path'))
             if axe is not None and lighthouse is not None and (best_measured_rank is None or rank<best_measured_rank):
                 best_measured_rank=rank; best_measured_iteration=iteration_id
             executed_iterations+=1
@@ -1426,6 +1457,7 @@ Measured findings are fallible localization evidence, not permission to game the
                 _progress(cursor,conn,run_id,"prompt",round(base+segment*.95),f"Candidate {number} needs refinement; carrying feedback into the next prompt",number)
         if agent_runtime.state != 'complete':
             agent_runtime.move('complete',reason='Iteration loop reached its terminal outcome')
+        recorded_call.checkpoint()
         # Thresholds are research targets, not a veto on an evaluated result.
         # Keep the selected candidate usable without claiming targets were met.
         final_status=completion_status(accepted,executed_iterations,run.get('review_policy') or 'automated',automated_achieved)

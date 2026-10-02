@@ -26,7 +26,7 @@ The backend stores progress and runs independently. Closing the panel does not c
 
 ## Can the extension capture my logged-in page exactly?
 
-Not in this build. It submits the URL; WARP performs its own visit without exporting tab cookies/session/live DOM. Authenticated or required interactive states may differ.
+Not in this build. It submits the URL; A11yResearch performs its own visit without exporting tab cookies/session/live DOM. Authenticated or required interactive states may differ.
 
 ## Are processing seconds the time on my clock?
 
@@ -40,7 +40,7 @@ It exchanges evaluation evidence and supported dataset/artifact metadata. It is 
 
 That depends on the sampling frame, design, eligibility/nonresponse and estimand. Ordinary report means describe the observed cohort. Population estimates need appropriate weights and uncertainty; no size alone guarantees equivalence.
 
-## Does GitHub Pages run WARP?
+## Does GitHub Pages run A11yResearch?
 
 No. It hosts this static documentation. Run the Docker application separately. Provider keys, database contents and captures are not uploaded as site assets.
 

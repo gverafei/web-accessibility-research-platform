@@ -18,7 +18,7 @@ The iteration trace distinguishes W3C material from complementary guidance and l
 
 ## Retrieval implementation
 
-WARP uses a local 384-dimensional feature-hashing representation and Qdrant cosine search, followed by lexical/concept checks. It does not call a paid embedding model. Exact mappings connect measured Axe rules to relevant ACT concepts.
+A11yResearch uses a local 384-dimensional feature-hashing representation and Qdrant cosine search, followed by lexical/concept checks. It does not call a paid embedding model. Exact mappings connect measured Axe rules to relevant ACT concepts.
 
 Retrieved context is bounded. The routine favors complete positive/negative pairs for a matched rule and excludes examples that exceed the context budget. If no relevant complete evidence is available, the trace records an empty retrieval.
 

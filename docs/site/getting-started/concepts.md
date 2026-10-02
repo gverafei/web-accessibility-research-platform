@@ -1,6 +1,6 @@
 # Concepts and terminology
 
-WARP separates acquiring a page, measuring it and generating a repaired candidate. These are related records, not interchangeable names for the same operation.
+A11yResearch separates acquiring a page, measuring it and generating a repaired candidate. These are related records, not interchangeable names for the same operation.
 
 | Term | Meaning |
 | --- | --- |

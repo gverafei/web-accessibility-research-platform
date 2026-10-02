@@ -170,11 +170,13 @@ class LocalLlmTests(unittest.TestCase):
         from flask import render_template
         from main import app
         from remediation_recipes import COMMON_CONDITIONS
+        from remediation_control_copy import control_copy
         with app.test_request_context('/remediation/new'):
             html = render_template('remediation_runs.html', sources=[], llms=[],
                 model_choices=model_choices(SETTINGS), expert_models={},
                 wave_available=False, wave_credits_per_iteration=2,
-                rag={'available': False}, common_conditions=COMMON_CONDITIONS)
+                rag={'available': False}, common_conditions=COMMON_CONDITIONS,
+                control_copy=control_copy())
         from bs4 import BeautifulSoup
         dom = BeautifulSoup(html, 'html.parser')
         self.assertIn('ollama/llama3.1:8b', html)

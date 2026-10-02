@@ -11,14 +11,14 @@ class RemediationDomDistanceTests(unittest.TestCase):
         for incomplete in ({}, {'axe':None,'lighthouse':None}, {'axe':{'violations':0}}):
             with self.assertRaisesRegex(RuntimeError, 'results are missing'):
                 validate_candidate_evaluation(incomplete)
-        validate_candidate_evaluation({'axe':{'violations':0},'lighthouse':{'accessibility_score':100}})
+        validate_candidate_evaluation({'axe':{'violations':0,'wcag_violations':0,'best_practice_issues':0},'lighthouse':{'accessibility_score':100}})
 
     def test_transient_no_fcp_is_retried_once_and_recorded(self):
         from unittest.mock import Mock,patch
         from remediation_jobs import _evaluate_candidate
         responses=[]
         for payload in ({'results':[{'status':'failed','error':'Lighthouse incomplete result (NO_FCP)'}]},
-                        {'results':[{'axe':{'violations':0},'lighthouse':{'accessibility_score':100}}]}):
+                        {'results':[{'axe':{'violations':0,'wcag_violations':0,'best_practice_issues':0},'lighthouse':{'accessibility_score':100}}]}):
             response=Mock();response.json.return_value=payload;response.raise_for_status.return_value=None
             responses.append(response)
         app=Mock();app.config={'EVALUATOR_URL':'http://evaluator'}
@@ -102,6 +102,23 @@ class RemediationDomDistanceTests(unittest.TestCase):
             'https://example.org/catalog/',
         )
         self.assertIn('srcset="https://example.org/catalog/images/a.jpg 1x, https://example.org/catalog/images/b.jpg 2x"', result)
+
+    def test_inline_carousel_background_keeps_quoted_attribute_intact(self):
+        from bs4 import BeautifulSoup
+        html = '''<div class="slide-image" tipo_media="" style='background-image: url("/banner.jpg"); background-size: contain;' aria-label="Banner"></div>'''
+        result = absolutize_resources(html, 'https://example.org/fei/')
+        slide = BeautifulSoup(result, 'html.parser').div
+        self.assertEqual(slide['style'], 'background-image: url("https://example.org/banner.jpg"); background-size: contain;')
+        self.assertEqual(set(slide.attrs), {'class','tipo_media','style','aria-label'})
+        self.assertEqual(absolutize_resources(result, 'https://example.org/fei/'), result)
+
+    def test_resource_rewriting_never_edits_javascript_strings(self):
+        from bs4 import BeautifulSoup
+        script = '''const html = `<img src="relative.jpg">`; const css = "url('relative.png')";'''
+        html = f'<script>{script}</script><style>.hero{{background:url("images/a(1).png")}}</style>'
+        output = BeautifulSoup(absolutize_resources(html, 'https://example.org/'), 'html.parser')
+        self.assertEqual(output.script.string, script)
+        self.assertIn('https://example.org/images/a(1).png', output.style.string)
 
     def test_oversized_screenshot_does_not_discard_measured_candidate(self):
         from unittest.mock import patch

@@ -4,6 +4,10 @@ The evaluator is a Node/Express service that runs browser-based accessibility to
 
 ## Interface
 
+Main research scores and remediation thresholds use WCAG issue instances with Best Practices excluded. The evaluator retains WCAG findings, Best Practices and their combined count separately. In the raw evaluator response, `axe.violations` is the combined count and `axe.wcag_violations` is the WCAG count. The application uses the latter for charts, tables, comparisons and targets. The report switch only shows an additional Best Practices column; it never changes the main metric.
+
+CSV exports identify the main WCAG count as `axe_issue_instances`, with separate `axe_best_practice_issues` and `axe_combined_issue_instances` columns. Portable `.warp` files preserve the underlying separated fields and original raw evidence. Historical acceptance decisions remain recorded as originally made; corrected display counts do not retroactively change run status.
+
 The evaluator endpoints are implemented in `evaluator/server.js`. With the supplied Compose configuration:
 
 | Method | Full URL from the host | Purpose |
@@ -33,7 +37,7 @@ The evaluator HTTP interface is intended for the local deployment. Normal acquis
 }
 ```
 
-Calling this endpoint visits pages and writes artifacts. For normal research work, submit through WARP so the persistent experiment record, progress and provenance are also managed.
+Calling this endpoint visits pages and writes artifacts. For normal research work, submit through A11yResearch so the persistent experiment record, progress and provenance are also managed.
 
 ## Execution
 

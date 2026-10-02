@@ -1,8 +1,9 @@
+import hashlib
 import json
-from pathlib import Path
 from urllib.parse import urlsplit
 
 from flask import Blueprint, Response, jsonify, request, send_file, url_for
+from flask_babel import force_locale, gettext
 
 from database import get_connection
 from result_portability import evaluation_signature, normalize_url
@@ -11,6 +12,8 @@ from browser_extension_config import PRIORITIES, extension_catalog, extension_co
 from remediation_model_choices import model_choice, frozen_model_configuration
 from remediation_recipes import automatic_recipe
 from settings import get_settings
+from browser_extension_results import TERMINAL, candidate_path, reusable_request, stored_measurements
+from remediation_control_copy import control_copy
 
 
 extension_api_bp = Blueprint("extension_api", __name__, url_prefix="/api/browser-extension")
@@ -31,7 +34,12 @@ def preflight(_path):
 
 @extension_api_bp.get("/configuration")
 def configuration():
-    return jsonify(extension_catalog(get_settings()))
+    catalog = extension_catalog(get_settings())
+    catalog['ui_copy'] = {}
+    for locale in ('en', 'es'):
+        with force_locale(locale):
+            catalog['ui_copy'][locale] = control_copy(gettext)
+    return jsonify(catalog)
 
 
 def create_run(cursor, result_id, url, config, settings):
@@ -86,6 +94,9 @@ def create_request():
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         return jsonify({"error": "Open a normal HTTP or HTTPS page first."}), 400
     normalized = normalize_url(raw_url)
+    force_rerun = payload.get('force_rerun', False)
+    if not isinstance(force_rerun, bool):
+        return jsonify({'error': 'force_rerun must be a JSON boolean.'}), 400
     settings = get_settings()
     try:
         config = extension_configuration(payload, settings)
@@ -94,43 +105,50 @@ def create_request():
     preservation = config["preservation_level"]
     choice = config['model_configuration']
     conn = get_connection(); cursor = conn.cursor(dictionary=True)
-    # Reuse a frozen acquisition, never a candidate made under other controls.
-    run_id = None
-    experiment_id = None
-    reused = bool(run_id)
-    if run_id:
-        cursor.execute("SELECT status FROM remediation_runs WHERE id=%s", (run_id,))
-        state = cursor.fetchone()['status']
-    else:
-        cursor.execute("""SELECT id FROM experiment_results
-            WHERE normalized_url=%s AND status='completed' AND source_snapshot_path IS NOT NULL
-            ORDER BY evaluated_at DESC,id DESC LIMIT 1""", (normalized,))
-        result = cursor.fetchone()
-    if not run_id and result:
-        run_id = create_run(cursor, result["id"], raw_url, config, settings)
-        state = "remediating"
-    elif not run_id:
-        settings = get_settings()
-        signature = evaluation_signature(
-            settings, False, False, None, None, "wcag22aa"
-        )
-        cursor.execute("""INSERT INTO experiments
-            (title,urls,include_semantic,include_wave,axe_standard,axe_include_best_practices,
-             reuse_cached_results,evaluation_signature,experiment_origin,language,status,created_at,
-             source_type,resource_policy)
-            VALUES (%s,%s,FALSE,FALSE,'wcag22aa',FALSE,TRUE,%s,'browser_extension','en','queued',
-                    %s,'url','external')""",
-            (f"Browser acquisition · {parsed.netloc}{parsed.path or '/'}"[:255], raw_url,
-             signature, now_local()))
-        experiment_id = cursor.lastrowid; state = "acquiring"
-    cursor.execute("""INSERT INTO browser_remediation_requests
-        (url,normalized_url,acquisition_experiment_id,remediation_run_id,model_cost_tier,
-         preservation_level,use_rag,use_wave,status,created_at,updated_at,configuration_json)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-        (raw_url, normalized, experiment_id, run_id, choice["tier"], preservation,
-         config["use_rag"], False, state, now_local(), now_local(), json.dumps(config)))
-    request_id = cursor.lastrowid; conn.commit(); cursor.close(); conn.close()
-    return jsonify({"id": request_id, "status": state, "reused": reused}), 202
+    try:
+        # Serialize submissions for one URL, including simultaneous panel clicks.
+        cursor.execute('SELECT GET_LOCK(%s,10) locked', ('extension:' + hashlib.sha256(normalized.encode()).hexdigest()[:48],))
+        if not (cursor.fetchone() or {}).get('locked'):
+            return jsonify({'error': 'Another request is being submitted. Please retry.'}), 409
+        run_id = None
+        experiment_id = None
+        result = None
+        if not force_rerun:
+            cursor.execute("""SELECT id FROM experiment_results
+                WHERE normalized_url=%s AND status='completed' AND source_snapshot_path IS NOT NULL
+                ORDER BY evaluated_at DESC,id DESC LIMIT 1""", (normalized,))
+            result = cursor.fetchone()
+            existing = reusable_request(cursor, normalized, result['id'] if result else None, config)
+            if existing:
+                return jsonify({'id': existing['id'], 'status': existing.get('run_status') or 'acquiring',
+                                'reused': True}), 200
+        if result:
+            run_id = create_run(cursor, result["id"], raw_url, config, settings)
+            state = "remediating"
+        else:
+            settings = get_settings()
+            signature = evaluation_signature(
+                settings, False, False, None, None, "wcag22aa"
+            )
+            cursor.execute("""INSERT INTO experiments
+                (title,urls,include_semantic,include_wave,axe_standard,axe_include_best_practices,
+                 reuse_cached_results,evaluation_signature,experiment_origin,language,status,created_at,
+                 source_type,resource_policy)
+                VALUES (%s,%s,FALSE,FALSE,'wcag22aa',FALSE,%s,%s,'browser_extension','en','queued',
+                        %s,'url','external')""",
+                (f"Browser acquisition · {parsed.netloc}{parsed.path or '/'}"[:255], raw_url, not force_rerun,
+                 signature, now_local()))
+            experiment_id = cursor.lastrowid; state = "acquiring"
+        cursor.execute("""INSERT INTO browser_remediation_requests
+            (url,normalized_url,acquisition_experiment_id,remediation_run_id,model_cost_tier,
+             preservation_level,use_rag,use_wave,status,created_at,updated_at,configuration_json)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+            (raw_url, normalized, experiment_id, run_id, choice["tier"], preservation,
+             config["use_rag"], False, state, now_local(), now_local(), json.dumps(config)))
+        request_id = cursor.lastrowid; conn.commit()
+        return jsonify({"id": request_id, "status": state, "reused": False}), 202
+    finally:
+        cursor.close(); conn.close()  # Releases the URL submission lock, including on errors.
 
 
 def request_payload(cursor, item):
@@ -182,13 +200,16 @@ def request_payload(cursor, item):
         result["candidate_url"] = url_for("extension_api.request_candidate", request_id=item["id"], _external=True)
         result["candidate_accepted"] = run['status'] == 'accepted'
         result["candidate_available"] = bool(candidate_iteration)
+    if run['status'] in TERMINAL:
+        result['measurements'] = stored_measurements(cursor, run, candidate_iteration)
+        result['report_url'] = url_for('remediation.run_detail', run_id=run['id'], _external=True)
     return result
 
 
 @extension_api_bp.get("/requests/<int:request_id>")
 def get_request(request_id):
     conn = get_connection(); cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM browser_remediation_requests WHERE id=%s", (request_id,))
+    cursor.execute("SELECT * FROM browser_remediation_requests WHERE id=%s FOR UPDATE", (request_id,))
     item = cursor.fetchone()
     if not item:
         cursor.close(); conn.close(); return jsonify({"error": "Request not found."}), 404
@@ -207,7 +228,7 @@ def latest_request():
         return jsonify({"error": "A valid HTTP or HTTPS URL is required."}), 400
     conn = get_connection(); cursor = conn.cursor(dictionary=True)
     cursor.execute("""SELECT * FROM browser_remediation_requests
-        WHERE normalized_url=%s ORDER BY id DESC LIMIT 1""", (normalize_url(raw_url),))
+        WHERE normalized_url=%s ORDER BY id DESC LIMIT 1 FOR UPDATE""", (normalize_url(raw_url),))
     item = cursor.fetchone()
     if not item:
         cursor.close(); conn.close(); return jsonify({"error": "Request not found."}), 404
@@ -232,8 +253,7 @@ def request_candidate(request_id):
         latest = cursor.fetchone(); iteration_id = latest.get("id") if latest else None
     cursor.execute("SELECT output_path FROM remediation_iterations WHERE id=%s AND run_id=%s", (iteration_id, item["remediation_run_id"]))
     iteration = cursor.fetchone(); cursor.close(); conn.close()
-    path = Path(iteration["output_path"]).resolve() if iteration and iteration.get("output_path") else None
-    allowed = Path("/datasets/remediations").resolve()
-    if not path or allowed not in path.parents or not path.is_file():
+    path = candidate_path(iteration.get('output_path') if iteration else None)
+    if not path:
         return Response(status=404)
     return send_file(path, mimetype="text/html", conditional=True)

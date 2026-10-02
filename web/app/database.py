@@ -592,6 +592,11 @@ def init_db():
             ensure_column(cursor, "remediation_iterations", "specialist_reviews_json", "JSON NULL")
             ensure_column(cursor, "remediation_iterations", "agent_usage_json", "JSON NULL")
             ensure_column(cursor, "remediation_iterations", "strategy_json", "JSON NULL")
+            ensure_column(cursor, "remediation_iterations", "axe_wcag_violations", "INT NULL")
+            ensure_column(cursor, "remediation_iterations", "axe_best_practice_issues", "INT NULL")
+            ensure_column(cursor, "remediation_iterations", "axe_metrics_json", "JSON NULL")
+            ensure_column(cursor, "remediation_iterations", "axe_raw_path", "TEXT NULL")
+            ensure_column(cursor, "remediation_runs", "axe_counting_policy", "VARCHAR(50) NULL")
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS remediation_events (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -692,6 +697,9 @@ def init_db():
                 "sort_order": "INT NOT NULL DEFAULT 0",
                 "source_remediation_run_id": "INT NULL",
                 "source_remediation_iteration_id": "INT NULL",
+                "axe_wcag_violations": "INT NULL",
+                "axe_best_practice_issues": "INT NULL",
+                "axe_metrics_json": "JSON NULL",
             }
             for column_name, definition in comparison_columns.items():
                 ensure_column(cursor, "comparison_members", column_name, definition)

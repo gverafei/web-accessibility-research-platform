@@ -1,6 +1,6 @@
 # Database, artifacts and backups
 
-WARP keeps structured research records in MySQL and large evidence files in mounted directories. The schema initialization/migration helpers are in `web/app/database.py`.
+A11yResearch keeps structured research records in MySQL and large evidence files in mounted directories. The schema initialization/migration helpers are in `web/app/database.py`.
 
 ## Core entities
 

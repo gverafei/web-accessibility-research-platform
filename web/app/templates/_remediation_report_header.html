@@ -14,6 +14,7 @@
   {% if run.status == 'accepted' %}<form method="post" action="{{ url_for('remediation.compare_with_original',run_id=run.id) }}"><button class="btn btn-primary" type="submit">{{ _('Compare with original') }}</button></form>{% endif %}
 </header>
 {% set has_candidate=report_candidate_available if report_candidate_available is defined else best %}
+{% if not run.axe_counting_policy %}<p class="text-muted small">{{ _("Axe scores exclude Best Practices. Historical acceptance statuses remain as originally recorded.") }}</p>{% endif %}
 {% if run.status == 'completed_with_warnings' and not run.error_message %}
 <section class="alert alert-warning" role="note" aria-label="{{ _('Completed with warnings') }}">
   <strong>{{ _('Completed with warnings') }}</strong>

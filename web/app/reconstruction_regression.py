@@ -25,6 +25,8 @@ def checkpoint_areas(state, candidate, raw_axe_path, plan, base_url=None):
     soup=BeautifulSoup(candidate,"html.parser")
     failures={task.get("key",task["area"]):0 for task in plan}; unknown=0
     for rule in violations:
+        if 'best-practice' in rule.get('tags', []):
+            continue
         for node in rule.get("nodes",[]):
             owners=set()
             for selector in node.get("target",[]):

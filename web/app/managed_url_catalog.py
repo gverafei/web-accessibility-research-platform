@@ -8,7 +8,7 @@ SORT_COLUMNS = {'url': 'url', 'name': 'COALESCE(display_name,captured_url,page_t
 RANKED = """WITH ranked AS (
     SELECT r.id,r.url,r.normalized_url,r.display_name,r.captured_url,r.page_title,
            r.screenshot_path,r.site_category,r.site_category_source,r.status,
-           r.axe_violations,r.lighthouse_score,r.evaluated_at,r.created_at,
+           r.axe_wcag_violations AS axe_violations,r.lighthouse_score,r.evaluated_at,r.created_at,
            e.id experiment_id,e.title experiment_title,
            COUNT(*) OVER (PARTITION BY COALESCE(r.normalized_url,CONCAT('id:',r.id))) occurrence_count,
            ROW_NUMBER() OVER (

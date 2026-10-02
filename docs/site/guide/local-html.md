@@ -1,6 +1,6 @@
 # Local HTML datasets
 
-Use this workflow to measure files you already possess, including controlled test pages or a reusable research corpus. It is not an import of another investigator's WARP evaluation; that uses the [portable exchange workflow](exchange.md).
+Use this workflow to measure files you already possess, including controlled test pages or a reusable research corpus. It is not an import of another investigator's A11yResearch evaluation; that uses the [portable exchange workflow](exchange.md).
 
 ## Accepted inputs
 

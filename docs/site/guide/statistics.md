@@ -1,6 +1,6 @@
 # Statistics and visualizations
 
-WARP provides descriptive analysis to help researchers inspect collections and compare runs. The software does not automatically turn a purposive or unequally allocated cohort into a representative estimate of the entire web.
+A11yResearch provides descriptive analysis to help researchers inspect collections and compare runs. The software does not automatically turn a purposive or unequally allocated cohort into a representative estimate of the entire web.
 
 ## Summaries and missing values
 
@@ -29,7 +29,7 @@ Stratum bars can show issue shares or mean Lighthouse scores. An issue share ref
 
 ## Cross-tool ranking
 
-For at least three complete observations, WARP converts tool results to within-study percentile ranks with averaged ranks for ties. Axe is oriented so fewer instances are better; Lighthouse (and WAVE AIM when included) are oriented so higher is better. The composite is the mean of the included percentile components.
+For at least three complete observations, A11yResearch converts tool results to within-study percentile ranks with averaged ranks for ties. Axe is oriented so fewer instances are better; Lighthouse (and WAVE AIM when included) are oriented so higher is better. The composite is the mean of the included percentile components.
 
 ```text
 Percentile = 100 × (m − favorable_rank) / (m − 1)

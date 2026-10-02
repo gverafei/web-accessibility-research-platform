@@ -14,7 +14,7 @@ Changing the intervention level does not change these targets. New submissions f
 
 ### Evaluator controls
 
-Select the Axe standard and whether Best Practices should be shown. WARP retains the relevant tool evidence and makes display choices separate from the source acquisition. Set dynamic-page timing and scrolling consistently across experiments you intend to compare.
+Select the Axe standard and whether the separate Best Practices column should be shown. Main Axe scores, charts, comparisons and remediation targets always exclude Best Practices. WCAG counts, Best Practices and the combined count are preserved separately. Set dynamic-page timing and scrolling consistently across experiments you intend to compare.
 
 WAVE is optional, requires its own key and is used for separate evaluations. It is not a paid criterion in the remediation loop.
 
@@ -24,7 +24,7 @@ Ollama is not included in the six-service Compose deployment. Run it on a reacha
 
 On Docker Desktop, a host service commonly uses `http://host.docker.internal:11434`. This depends on how Ollama is bound and your firewall; `localhost` inside the worker refers to the worker container, not your computer. Confirm reachability before submitting a local experiment.
 
-The local choice appears when both its address and model are configured. If Ollama is unavailable, WARP reports the failure rather than selecting a different model or cloud provider.
+The local choice appears when both its address and model are configured. If Ollama is unavailable, A11yResearch reports the failure rather than selecting a different model or cloud provider.
 
 ## Model catalogue
 

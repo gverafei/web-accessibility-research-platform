@@ -33,7 +33,9 @@ class CompletionTests(unittest.TestCase):
 
     def test_warning_result_is_delivered_without_claiming_threshold_acceptance(self):
         cursor=Mock()
-        cursor.fetchone.return_value={'id':216,'status':'completed_with_warnings','accepted_iteration_id':384,'current_phase':'complete','progress_percent':100,'progress_message':'Result retained; targets not reached'}
+        cursor.fetchone.side_effect=[{'id':216,'source_result_id':42,'max_axe':3,'min_lighthouse':94,'status':'completed_with_warnings','accepted_iteration_id':384,'current_phase':'complete','progress_percent':100,'progress_message':'Result retained; targets not reached'},
+                                    {'axe_violations':100,'lighthouse_score':80},
+                                    {'axe_violations':10,'lighthouse_score':98}]
         with app.test_request_context('/'):
             result=request_payload(cursor,{'id':99,'remediation_run_id':216})
         self.assertEqual(result['status'],'completed_with_warnings')

@@ -1,9 +1,43 @@
 import unittest
+from pathlib import Path
 
 from routes.comparisons import comparison_analysis, split_source_refs
 
 
 class ComparisonAnalysisTests(unittest.TestCase):
+    def test_member_pagination_preserves_all_rows_and_removes_notes_editor(self):
+        template = (Path(__file__).resolve().parents[1] / 'app/templates/comparison_detail.html').read_text()
+        self.assertIn('[5,10,20,25,50,100,250,500]', template)
+        self.assertIn('id="comparisonPagination"', template)
+        self.assertIn('id="comparisonFilter"', template)
+        self.assertIn('type="search"', template)
+        self.assertIn('placeholder="{{ _(\'Filter pages\') }}"', template)
+        self.assertIn('Groups are optional.") }}</p></div>\n<section class="card', template)
+        css = (Path(__file__).resolve().parents[1] / 'app/static/css/style.css').read_text()
+        self.assertIn('#comparisonFilter{font-size:.78rem;min-height:30px;padding-right:.65rem}', css)
+        self.assertIn('#comparisonPagination select{font-size:.78rem}', css)
+        self.assertIn('{% if size == 5 %} selected', template)
+        self.assertNotIn('{% if size == 25 %} selected', template)
+        between = template.split('id="comparisonPagination"', 1)[1].split('id="comparisonMembers"', 1)[0]
+        self.assertNotIn('Edits are saved', between)
+        self.assertGreater(template.index('Edits are saved'), template.index('id="comparisonMembers"'))
+        self.assertIn('{% for member in members %}', template)
+        self.assertIn("filename='js/comparison_pagination.js'", template)
+        self.assertNotIn("setting('notes'", template)
+        self.assertIn("member_ids:[...body.rows]", template)
+
+    def test_paired_tables_and_charts_use_wcag_not_combined(self):
+        original = self.row(1, 'Original', axe=1205, lighthouse=78, pair_key='site', is_baseline=True)
+        candidate = self.row(2, 'Remediated', axe=1183, lighthouse=96, pair_key='site')
+        original['axe_wcag_violations'] = 23
+        candidate['axe_wcag_violations'] = 1
+        analysis = comparison_analysis([original, candidate])
+        self.assertEqual(analysis['deltas'][0]['axe_improvement'], 22)
+        self.assertEqual(analysis['deltas'][0]['baseline_axe'], 23)
+        self.assertEqual(analysis['deltas'][0]['candidate_axe'], 1)
+        self.assertEqual(next(row for row in analysis['summaries'] if row['label']=='Remediated')['axe'], 1)
+        self.assertEqual(original['axe_violations'], 1205)
+
     def test_source_refs_separate_evaluations_and_remediations(self):
         results, remediations = split_source_refs([
             "result:12", "remediation:8", "result:12", "invalid", "remediation:nope",

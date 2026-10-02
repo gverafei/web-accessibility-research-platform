@@ -33,7 +33,7 @@ class ExperimentAnalysisTestCase(unittest.TestCase):
         ]
         with main.app.test_request_context("/"):
             comparison = experiments.build_experiment_analysis(rows)["webaim_comparison"]
-        self.assertEqual(comparison["axe_mean"], 28.0)
+        self.assertEqual(comparison["axe_mean"], 0.1)
         self.assertEqual(comparison["dom_mean"], 280.0)
         self.assertEqual(comparison["pages_with_wcag_failures_percent"], 10.0)
         self.assertEqual(comparison["observed_pages_with_wcag_failures_percent"], 50.0)

@@ -13,7 +13,7 @@ https://www.w3.org/
 
 Give the experiment a descriptive name. Leave WAVE off. For a genuinely new measurement, disable reuse of existing results; with reuse enabled, a compatible stored result can be copied instead of visiting the page again.
 
-Submit the form. WARP creates a queued evaluation and its worker acquires the pages. The web application remains usable while the browser work runs. Navigate to **Evaluations** to inspect progress or pause the job.
+Submit the form. A11yResearch creates a queued evaluation and its worker acquires the pages. The web application remains usable while the browser work runs. Navigate to **Evaluations** to inspect progress or pause the job.
 
 ## 2. Inspect the report
 
@@ -45,4 +45,4 @@ Use the comparison action to pair the candidate with its original. Export the or
 
 ## Next steps
 
-For a larger study, use [Tranco sampling](../guide/tranco.md), document your [sampling and curation protocol](../guide/datasets.md), and hold the model/targets/policy fixed across paired runs. The guide to [comparisons](../guide/comparisons.md) explains how WARP keeps those pairs aligned.
+For a larger study, use [Tranco sampling](../guide/tranco.md), document your [sampling and curation protocol](../guide/datasets.md), and hold the model/targets/policy fixed across paired runs. The guide to [comparisons](../guide/comparisons.md) explains how A11yResearch keeps those pairs aligned.

@@ -1,6 +1,6 @@
 # Software architecture
 
-WARP separates its researcher interface, persistent scheduler, browser evaluator and artifact-serving responsibilities. Models support generation and diagnosis within the remediation workflow; the worker coordinates processing and stores results.
+A11yResearch separates its researcher interface, persistent scheduler, browser evaluator and artifact-serving responsibilities. Models support generation and diagnosis within the remediation workflow; the worker coordinates processing and stores results.
 
 ```mermaid
 flowchart LR
