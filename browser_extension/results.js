@@ -19,7 +19,8 @@ const extensionResults = {
   },
   evidence(data) {
     return {requestId:data.id, measurements:data.measurements || null,
-      reportUrl:data.report_url || null};
+      reportUrl:data.report_url || null,
+      ...(data.configuration ? {config:data.configuration} : {})};
   },
   paint(item, locale, element) {
     const measurements = item?.measurements;

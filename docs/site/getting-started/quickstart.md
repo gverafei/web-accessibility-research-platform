@@ -33,7 +33,7 @@ For local repair, configure **Local LLM (Ollama)**, refresh its installed models
 
 ## 4. Submit one remediation
 
-Open **New remediation** and choose a completed source with stored HTML. Select an explicit model, choose **Iterative ATPGE**, and leave the intervention at **Minimal patches**. Review the shared research targets. Decide whether ACT grounding should be enabled for this experiment.
+Open **New remediation** and choose a completed source with stored HTML. Select an explicit model, choose **Iterative ATPGE**, and leave the intervention at **Minimal patches**. Review the shared research targets. Decide whether RAG-ACT grounding should be enabled for this experiment.
 
 Submit only one page first. Cloud repair is a paid operation. The configured cost/time controls bound continuation, not an exact prepayment limit; a completed provider call can put the recorded cost above the threshold.
 

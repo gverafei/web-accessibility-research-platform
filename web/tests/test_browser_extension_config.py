@@ -7,6 +7,15 @@ from routes.extension_api import create_run, request_payload
 
 
 class ExtensionControlsTests(unittest.TestCase):
+    def test_minimal_patches_default_in_web_extension_and_api(self):
+        from pathlib import Path
+        from bs4 import BeautifulSoup
+        root=Path(__file__).resolve().parents[2]
+        for file,ident in [('web/app/templates/remediation_runs.html','preservationRange'),
+                           ('browser_extension/sidepanel.html','preservationLevel')]:
+            slider=BeautifulSoup((root/file).read_text(),'html.parser').find(id=ident)
+            self.assertEqual(slider['value'],'0')
+        self.assertEqual(extension_configuration({'selected_model':'openai/gpt-6-luna'}, {})['preservation_level'],0)
     def test_web_and_extension_share_bilingual_intervention_copy(self):
         from flask import Flask
         from flask_babel import Babel, force_locale, gettext
@@ -46,9 +55,28 @@ class ExtensionControlsTests(unittest.TestCase):
         config = {'selected_model':'openai/gpt-6-luna','preservation_level':0,'use_rag':False}
         cursor = MagicMock(lastrowid=10)
         create_run(cursor,42,'https://example.org/',config,
-                   {'remediation_min_lighthouse':'80','remediation_max_axe':'50'})
+                   {'remediation_min_lighthouse':'80','remediation_max_axe':'50',
+                    'remediation_max_iterations':'5','remediation_max_cost_usd':'0.07',
+                    'remediation_max_execution_seconds':'410'})
         values = cursor.execute.call_args_list[0].args[1]
         self.assertEqual((values[8],values[9]),(94,3))
+        self.assertEqual((values[7],values[21],values[22]),(3,0.15,240))
+
+    def test_extension_freezes_effective_limits_before_acquisition(self):
+        settings = {'remediation_max_iterations':'5','remediation_max_cost_usd':'0.07',
+                    'remediation_max_execution_seconds':'410'}
+        for approach in extension_catalog(settings)['preservation']:
+            recipe = approach['recipe']
+            self.assertEqual((recipe['iterations'],recipe['cost'],recipe['seconds']),(5,0.07,410))
+        for level in range(5):
+            config = extension_configuration({'selected_model':'openai/gpt-6-luna',
+                                              'preservation_level':level},settings)
+            cursor = MagicMock(lastrowid=10)
+            create_run(cursor,42,'https://example.org/',config,{
+                'remediation_max_iterations':'2','remediation_max_cost_usd':'1',
+                'remediation_max_execution_seconds':'600'})
+            values = cursor.execute.call_args_list[0].args[1]
+            self.assertEqual((values[7],values[21],values[22]),(5,0.07,410))
 
     def test_catalog_is_shared_and_acceptance_does_not_change_with_slider(self):
         catalog = extension_catalog({})

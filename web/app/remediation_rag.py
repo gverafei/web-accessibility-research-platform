@@ -6,6 +6,7 @@ import re
 from collections import Counter
 
 import requests
+from rag_corpus import active_collection
 
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://qdrant:6333").rstrip("/")
@@ -85,13 +86,14 @@ def adaptive_example_limit(failures, baseline=4):
 
 def status():
     try:
-        response = requests.get(f"{QDRANT_URL}/collections/{COLLECTION}", timeout=2)
+        response = requests.get(f"{QDRANT_URL}/collections/{active_collection(COLLECTION)}", timeout=2)
         if response.status_code == 404:
-            return {"available": False, "count": 0, "message": "ACT knowledge has not been synchronized yet."}
+            return {"available": False, "count": 0, "message": "RAG-ACT corpus is not initialized. Synchronize the local examples before using retrieval; evaluation remains available."}
         response.raise_for_status()
         result = response.json().get("result") or {}
-        return {"available": True, "count": int(result.get("points_count") or 0), "message": "W3C ACT examples and source-attributed complementary guidance"}
-    except requests.RequestException:
+        count = int(result.get("points_count") or 0)
+        return {"available": count > 0, "count": count, "message": "RAG-ACT: W3C ACT examples and source-attributed complementary guidance" if count else "RAG-ACT corpus is empty. Synchronize the local examples before using retrieval; evaluation remains available."}
+    except (requests.RequestException, OSError, ValueError):
         return {"available": False, "count": 0, "message": "The local vector database is unavailable."}
 
 
@@ -103,9 +105,10 @@ def retrieve(query, limit=6, previously_supplied=()):
     # outcomes so the prompt contains patterns as well as counterexamples.
     payload = {"query": embed(query), "limit": min(48, requested * 4), "with_payload": True}
     try:
-        response = requests.post(f"{QDRANT_URL}/collections/{COLLECTION}/points/query", json=payload, timeout=8)
+        collection = active_collection(COLLECTION)
+        response = requests.post(f"{QDRANT_URL}/collections/{collection}/points/query", json=payload, timeout=8)
         response.raise_for_status()
-    except requests.RequestException:
+    except (requests.RequestException, OSError, ValueError):
         return []
     points = (response.json().get("result") or {}).get("points") or []
     vector_ranked = [{**(point.get("payload") or {}), "score": round(float(point.get("score") or 0), 4)} for point in points]
@@ -117,7 +120,7 @@ def retrieve(query, limit=6, previously_supplied=()):
         while True:
             scroll={"limit":1000,"with_payload":True,"with_vector":False}
             if offset is not None: scroll['offset']=offset
-            corpus_response=requests.post(f"{QDRANT_URL}/collections/{COLLECTION}/points/scroll",json=scroll,timeout=8)
+            corpus_response=requests.post(f"{QDRANT_URL}/collections/{collection}/points/scroll",json=scroll,timeout=8)
             corpus_response.raise_for_status()
             page=corpus_response.json().get('result') or {}
             corpus.extend(page.get('points') or [])

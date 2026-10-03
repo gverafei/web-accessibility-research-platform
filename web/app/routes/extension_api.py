@@ -12,7 +12,7 @@ from browser_extension_config import PRIORITIES, extension_catalog, extension_co
 from remediation_model_choices import model_choice, frozen_model_configuration
 from remediation_recipes import automatic_recipe
 from settings import get_settings
-from browser_extension_results import TERMINAL, candidate_path, reusable_request, stored_measurements
+from browser_extension_results import TERMINAL, candidate_path, reusable_request, reusable_run, stored_measurements
 from remediation_control_copy import control_copy
 
 
@@ -53,6 +53,18 @@ def create_run(cursor, result_id, url, config, settings):
     target_settings = ({'remediation_min_lighthouse': targets['lighthouse'],
                         'remediation_max_axe': targets['axe']} if targets else {})
     recipe = automatic_recipe(priority, execution_mode, settings=target_settings)
+    # Acquisition may finish after Configuration changes. New requests freeze
+    # effective budgets at submission; old requests retain their original recipe.
+    if config.get('research_limits'):
+        recipe.update({key: config['research_limits'][key]
+                       for key in ('iterations', 'cost', 'seconds')})
+    else:
+        # Pending requests submitted before shared limits keep their old budgets.
+        legacy_cost, legacy_seconds = {
+            15: (0.15, 240), 35: (0.20, 300), 55: (0.25, 360),
+            75: (0.40, 600), 90: (0.50, 600),
+        }[priority]
+        recipe.update(iterations=3, cost=legacy_cost, seconds=legacy_seconds)
     temperature, iterations, lighthouse, axe, review, cost, seconds, rag_k = (
         recipe[key] for key in ("temperature", "iterations", "lighthouse", "axe", "review", "cost", "seconds", "rag_top_k"))
     tier = choice["tier"]
@@ -122,6 +134,24 @@ def create_request():
             if existing:
                 return jsonify({'id': existing['id'], 'status': existing.get('run_status') or 'acquiring',
                                 'reused': True}), 200
+            saved_run = reusable_run(cursor, normalized, config)
+            if saved_run:
+                # Bind a web-created run for delivery; never enqueue another repair.
+                saved_config = {**config, 'model_configuration': json.loads(saved_run['model_config_json']),
+                                'use_rag': bool(saved_run['use_rag']),
+                                'research_targets': {'axe': saved_run['max_axe'],
+                                                     'lighthouse': saved_run['min_lighthouse']}}
+                if saved_run.get('local_llm_config_json'):
+                    saved_config['local_llm_configuration'] = json.loads(saved_run['local_llm_config_json'])
+                cursor.execute("""INSERT INTO browser_remediation_requests
+                    (url,normalized_url,remediation_run_id,model_cost_tier,preservation_level,
+                     use_rag,use_wave,status,created_at,updated_at,configuration_json)
+                    VALUES (%s,%s,%s,%s,%s,%s,FALSE,%s,%s,%s,%s)""",
+                    (raw_url,normalized,saved_run['id'],saved_run['model_cost_tier'],preservation,
+                     saved_config['use_rag'],saved_run['status'],now_local(),now_local(),json.dumps(saved_config)))
+                request_id = cursor.lastrowid
+                conn.commit()
+                return jsonify({'id': request_id, 'status': saved_run['status'], 'reused': True}), 200
         if result:
             run_id = create_run(cursor, result["id"], raw_url, config, settings)
             state = "remediating"
@@ -191,6 +221,8 @@ def request_payload(cursor, item):
               "progress": run.get("progress_percent") or 0,
               "message": run.get("progress_message") or "Waiting for the remediation worker.",
               "run_id": run["id"]}
+    from browser_extension_results import completion_configuration
+    result['configuration'] = completion_configuration(run)
     candidate_iteration = run.get("accepted_iteration_id")
     if not candidate_iteration and run["status"] in {"metrics_not_achieved", "review_not_achieved", "failed"}:
         cursor.execute("SELECT id FROM remediation_iterations WHERE run_id=%s AND output_path IS NOT NULL ORDER BY iteration_number DESC,id DESC LIMIT 1", (run["id"],))

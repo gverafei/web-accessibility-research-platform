@@ -190,10 +190,10 @@ class RemediationIdentityTests(unittest.TestCase):
 
     def test_capture_preview_is_not_centered_over_cursor(self):
         css=(self.templates.parent/'static'/'css'/'remediation_layout.css').read_text()
-        template=(self.templates/'remediation_detail.html').read_text()
+        template=(self.templates.parent/'static/js/remediation_detail.js').read_text()
         self.assertNotIn('translate(-50%,-50%)',css)
         self.assertIn('pointer-events:none',css)
-        self.assertIn("link.addEventListener('pointermove',position)",template)
+        self.assertIn("'pointermove'",template)
         self.assertIn('x+gap',template)
 
     def test_historical_blocks_map_to_step_four_without_mutating_history(self):

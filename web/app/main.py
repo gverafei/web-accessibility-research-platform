@@ -8,7 +8,9 @@ from routes.comparisons import comparisons_bp
 from routes.remediation import remediation_bp
 from routes.extension_api import extension_api_bp
 from routes.model_catalog import model_catalog_bp
+from routes.rag_maintenance import rag_maintenance_bp
 from settings import get_settings
+from navigation import breadcrumbs
 
 
 def select_locale():
@@ -32,7 +34,8 @@ def create_app():
             ui_theme = "light"
         if ui_theme not in {"light", "dark", "system"}:
             ui_theme = "light"
-        return {"current_locale": select_locale(), "ui_theme": ui_theme}
+        return {"current_locale": select_locale(), "ui_theme": ui_theme,
+                "breadcrumbs": breadcrumbs()}
 
     with app.app_context():
         init_db()
@@ -42,6 +45,7 @@ def create_app():
     app.register_blueprint(remediation_bp)
     app.register_blueprint(extension_api_bp)
     app.register_blueprint(model_catalog_bp)
+    app.register_blueprint(rag_maintenance_bp)
 
     @app.errorhandler(500)
     def internal_error(error):

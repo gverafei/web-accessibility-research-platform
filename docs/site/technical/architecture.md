@@ -23,7 +23,7 @@ flowchart LR
 | Service | Entry point | Responsibility |
 | --- | --- | --- |
 | `web` | `web/app/main.py` | Forms, reports, configuration, imports/exports and HTTP interfaces |
-| `worker` | `web/app/worker.py` → `jobs.run_worker` | Persistent evaluation, remediation and categorization work |
+| `worker` | `web/app/worker.py` → `jobs.run_worker` | Persistent evaluation, remediation, categorization and explicitly queued RAG-ACT maintenance |
 | `evaluator` | `evaluator/server.js` | Controlled browser/tool execution and raw evidence |
 | `dataset-server` | `dataset_server/server.py` | Serve stored HTML/candidates inside the network with resource policies |
 | `db` | MySQL 8 image | Jobs, results, settings, provenance and comparisons |

@@ -5,6 +5,22 @@ import classify_site_categories as categories
 
 
 class CategoryScopeTests(unittest.TestCase):
+    def test_gemma4_category_selection_dispatches_locally_without_cloud(self):
+        connection=MagicMock(); cursor=connection.cursor.return_value
+        cursor.fetchall.return_value=[{'id':7,'url':'https://example.org/','page_title':'University'}]
+        config={'model':'gemma4:latest','base_url':'http://host.docker.internal:11434/v1',
+                'reasoning_effort':'none','vision':True}
+        with (patch.object(categories,'get_connection',return_value=connection),
+              patch.object(categories,'get_settings',return_value={}),
+              patch.object(categories,'local_configuration',return_value=config),
+              patch.object(categories,'local_chat',return_value=('{"7":"Education"}',20,10)) as local,
+              patch.object(categories.requests,'post') as cloud):
+            result=categories.classify_managed_urls(one_batch=True,model='ollama/gemma4:latest')
+        self.assertEqual(result,(1,'ollama/gemma4:latest'))
+        self.assertEqual(local.call_args.args[0]['model'],'gemma4:latest')
+        self.assertTrue(local.call_args.kwargs['json_mode'])
+        cloud.assert_not_called()
+
     def run_batch(self, content, rows=None):
         connection=MagicMock(); cursor=connection.cursor.return_value
         cursor.fetchall.return_value=rows or [{'id':7,'url':'https://example.org/','page_title':'University','normalized_url':'https://example.org/'}]

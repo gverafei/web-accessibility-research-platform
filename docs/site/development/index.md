@@ -24,7 +24,13 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-The single Compose file mounts `web/app` into the web and worker containers. Evaluator changes require rebuilding its image. Python worker changes take effect after restarting that service; pause active work before a runtime update. Template changes use the mounted application files.
+The single Compose file mounts `web/app` into the web and worker containers.
+Evaluator changes require rebuilding its image. Python worker changes take
+effect after restarting that service; pause active work before a runtime update.
+The web service uses Gunicorn, so restart `web` after Python or cached-template
+changes even though the files are mounted. CSS/JavaScript may also need a browser
+reload or updated asset version. Recompile translations before serving changed
+messages (the normal web startup does this).
 
 For changes to image dependencies or Dockerfiles, rebuild the affected service. Browser extension changes require its separate browser reload action.
 

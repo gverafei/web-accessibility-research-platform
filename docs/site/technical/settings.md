@@ -8,6 +8,9 @@ The authoritative defaults are in `web/app/settings.py`; deployment bootstrap va
 | --- | --- | --- |
 | `remediation_min_lighthouse` | `94` | New-run minimum Lighthouse target |
 | `remediation_max_axe` | `3` | New-run maximum Axe-instance target |
+| `remediation_max_iterations` | `3` | Per-run iteration limit, 1–10; single-call modes use 1 |
+| `remediation_max_cost_usd` | `0.25` | Shared per-run cost limit in USD, 0.01–100 |
+| `remediation_max_execution_seconds` | `360` | Shared per-run time limit, 30–7,200 seconds |
 | `remediation_model_catalog_json` | Empty → bundled catalogue | Researcher-managed cloud choices |
 | `ollama_base_url` | Empty | External local service address |
 | `ollama_model` | Empty | Explicit installed local model |
@@ -18,9 +21,17 @@ The authoritative defaults are in `web/app/settings.py`; deployment bootstrap va
 | `wave_report_type` | `2` | Detailed WAVE evaluation mode |
 | `wave_eval_delay_ms` | `2000` | Configured WAVE delay |
 | `wave_cost_per_credit_usd` | `0.04` | Configured accounting reference, not a live price quote |
-| `internal_dataset_urls` | Environment value or empty | Optional default URL list |
+| `internal_dataset_urls` | Environment value or `https://example.org/` | Default URL list; blank saved lists use the fallback |
 
 The research-target form validates Lighthouse within 0–100 and nonnegative Axe counts. The catalogue uses its own validation and save endpoint. Local capabilities are discovered from the model rather than trusted from arbitrary form values.
+
+Resource limits are validated before any Configuration setting is saved;
+invalid integers, non-finite cost values and out-of-range limits reject the
+whole save. `automatic_recipe()` resolves shared resource limits centrally for both
+the web form and extension. New runs persist the effective limits; extension
+requests snapshot them before acquisition. Existing runs and legacy pending
+requests keep their original values. Cost/time are continuation thresholds,
+not strict caps on operations already in progress.
 
 ## Evaluator and display settings
 
@@ -55,7 +66,7 @@ Display flags govern report presentation; they are not proof that a previous res
 | `EVALUATOR_URL` | Internal evaluator service, normally `http://evaluator:3000` |
 | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Application database connection |
 | `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD` | MySQL initialization variables |
-| `MAX_DATASET_UPLOAD_BYTES` | HTTP upload limit, default 1,610,612,736 bytes |
+| `MAX_DATASET_UPLOAD_BYTES` | HTTP upload limit, default 3,221,225,472 bytes (3 GiB); override per deployment |
 | `DATASET_ROOT` | Python artifact/dataset root, default `/datasets` |
 | `QDRANT_URL` | Retrieval service, default `http://qdrant:6333` |
 | `RAG_COLLECTION` | Retrieval collection, default `wcag_act_examples` |
@@ -74,10 +85,12 @@ regeneration = automatic_recipe(75, settings=settings)
 assert (minimal["lighthouse"], minimal["axe"]) == (95, 2)
 assert (regeneration["lighthouse"], regeneration["axe"]) == (95, 2)
 assert minimal["iterations"] == regeneration["iterations"] == 3
-assert minimal["cost"] < regeneration["cost"]
+assert minimal["cost"] == regeneration["cost"] == 0.25
+assert minimal["seconds"] == regeneration["seconds"] == 360
 ```
 
-This verifies that intervention recipes can change continuation budgets while shared targets remain fixed. It does not make model calls or alter the database.
+This verifies that intervention changes temperature while targets and resource
+limits remain shared. It does not make model calls or alter the database.
 
 ## Secrets and updates
 

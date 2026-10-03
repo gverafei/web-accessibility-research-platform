@@ -33,7 +33,8 @@
             const scroll = table.closest('.table-responsive');
             const x = scroll.scrollLeft;
             const y = window.scrollY;
-            row.remove();
+            (form.closest('[data-history-entry]') || row).remove();
+            table.dispatchEvent(new CustomEvent('history:changed'));
             if (!table.querySelector('tbody tr')) {
                 const emptyBody = main.querySelector('.card .card-body');
                 if (emptyBody) table.closest('.card-body').replaceWith(emptyBody);

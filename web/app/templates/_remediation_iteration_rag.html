@@ -1,11 +1,11 @@
 {% set rag=item.strategy.rag if item.strategy and item.strategy.rag else none %}
 {% if rag and rag.retrieved %}
 <div class="mt-2 iteration-rag-evidence" role="note">
-  <span class="rag-chip">{{ _('RAG used') }} · {{ rag.retrieved|length }} {{ _('examples') }}</span>
+  <span class="rag-chip">{{ _('RAG-ACT used') }} · {{ rag.retrieved|length }} {{ _('examples') }}</span>
   <ul class="mb-0 mt-1">{% for evidence in rag.retrieved %}<li><a href="{{ evidence.rule_page }}" target="_blank" rel="noopener">{{ evidence.rule_name }}</a> · {{ evidence.expected }}{% if evidence.rule_id and evidence.rule_id.startswith('platform-axe-') %} · {{ _('Complementary guidance example — not an official ACT testcase') }}{% endif %}</li>{% endfor %}</ul>
 </div>
 {% elif rag and rag.enabled %}
-<p class="small text-muted mt-2 iteration-rag-evidence">{{ _('RAG not used — no examples supplied in this iteration.') }}</p>
+<p class="small text-muted mt-2 iteration-rag-evidence">{{ _('RAG-ACT not used — no examples supplied in this iteration.') }}</p>
 {% else %}
-<p class="small text-muted mt-2 iteration-rag-evidence">{{ _('RAG not used in this iteration.') }}</p>
+<p class="small text-muted mt-2 iteration-rag-evidence">{{ _('RAG-ACT not used in this iteration.') }}</p>
 {% endif %}

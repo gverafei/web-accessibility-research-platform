@@ -84,13 +84,13 @@ class AcquisitionCapacityTests(unittest.TestCase):
         with patch.object(routes, "fetch_latest_standard_list", return_value=(b"mock", "synthetic.csv", "TEST123")), \
                 patch.object(routes, "parse_tranco", return_value=([], {})):
             response = self.client.post("/run", data={"source_type": "tranco", "title": "Invalid target",
-                "tranco_seed": "test-seed", "tranco_count_rank_1_500": "501"})
+                "tranco_seed": "test-seed", "tranco_count_rank_1_1000": "501"})
         self.assertEqual(response.headers["Location"], "/acquisition/new")
         self.connection.cursor.assert_not_called()
 
     def test_form_has_counts_without_example_caps(self):
         with main.app.test_request_context("/acquisition/new"):
-            html = render_template("index.html", wave_available=False)
+            html = render_template("index.html", wave_available=False, tranco_strata=TRANCO_STRATA)
         page = BeautifulSoup(html, "html.parser")
         for label, _name, _lower, _upper in TRANCO_STRATA:
             field = page.select_one(f"#tranco_count_{label}")
@@ -105,7 +105,7 @@ class AcquisitionCapacityTests(unittest.TestCase):
 
     def test_exhausted_report_keeps_target_500_and_success_count_300(self):
         ranking = [(rank, f"site-{rank}.example") for rank in range(1, 501)]
-        candidates, strata = sample_tranco(ranking, "TEST123", "census", {"rank_1_500": 500}, 500)
+        candidates, strata = sample_tranco(ranking, "TEST123", "census", {"rank_1_1000": 500}, 500)
         for candidate in candidates:
             candidate["retry_count"] = 1
         rows = []

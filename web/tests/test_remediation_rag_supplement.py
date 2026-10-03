@@ -65,9 +65,9 @@ class SupplementTests(unittest.TestCase):
         env.globals['_'] = lambda text: text
         template = env.get_template('_remediation_iteration_rag.html')
         used = template.render(item={'strategy': {'rag': {'enabled': True, 'retrieved': [points()[0]['payload']]}}})
-        self.assertIn('RAG used', used)
+        self.assertIn('RAG-ACT used', used)
         self.assertIn('not an official ACT testcase', used)
         self.assertNotIn('<details', used)
         empty = template.render(item={'strategy': {'rag': {'enabled': True, 'retrieved': []}}})
         self.assertIn('no examples supplied', empty)
-        self.assertNotIn('RAG used', empty)
+        self.assertNotIn('RAG-ACT used', empty)

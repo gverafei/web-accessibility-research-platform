@@ -24,6 +24,13 @@ Events expose the orchestrator's progress, for example acquisition/preparation, 
 
 Actors identify orchestration roles. The application manages budgets, state transitions, candidate ranking and persistence, while models perform the configured diagnosis and generation tasks.
 
+Badges distinguish **LLM**, **Tool**, **Function**, **Control** and **Validation** activity. They identify
+how an event was produced, not another accessibility score. Runtime panels
+explain what skills/tools do; saved versions and digests remain available in
+the evidence. Prompts, model responses and evaluator feedback are separated
+per call. Pipeline stages show model charges only when model calls belong to
+that stage; deterministic preparation and evaluation are not LLM charges.
+
 ## Error and cost evidence
 
 Usage records include cloud responses that later fail output validation, so their tokens and charges remain visible in the run totals. Incomplete evaluator responses include their error details and identify the unavailable measurements.

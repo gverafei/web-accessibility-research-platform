@@ -78,6 +78,24 @@ class InternationalizationTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers["Location"], "/")
 
+    def test_theme_can_be_saved_without_navigation(self):
+        for theme in ("dark", "light", "system"):
+            response = self.client.post(f"/theme/{theme}")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json, {"theme": theme})
+            with self.client.session_transaction() as session:
+                self.assertEqual(session["ui_theme"], theme)
+
+    def test_theme_control_is_icon_only_and_not_a_dropdown(self):
+        response = self.client.get("/acquisition/new")
+        self.assertIn(b'id="themeCycle"', response.data)
+        self.assertIn(b'data-theme-icon="system"', response.data)
+        self.assertNotIn(b'aria-label="Color theme" data-bs-toggle', response.data)
+        self.assertNotIn(b'next=/acquisition/new">Light</a>', response.data)
+
+    def test_unknown_theme_still_defaults_to_light(self):
+        self.assertEqual(self.client.post("/theme/invalid").json, {"theme": "light"})
+
 
 if __name__ == "__main__":
     unittest.main()

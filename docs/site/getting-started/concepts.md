@@ -28,12 +28,28 @@ Live URL acquisition starts a controlled browser visit. The browser extension su
 
 ## Scores, counts and evidence
 
-An Axe issue count counts affected-node instances across reported rules. Lighthouse is a 0–100 tool score. Optional WAVE output has its own measurements and requirements. These tools need not visit exactly the same dynamic state.
+The primary Axe issue count sums affected-node instances across the selected
+WCAG-tagged rules, excluding Best Practices; one node can fail multiple rules.
+Best Practices and the combined count remain separate in the raw evidence.
+Lighthouse is a 0–100 tool score. Optional WAVE output has its own measurements
+and requirements. These tools need not visit exactly the same dynamic state.
 
 Raw reports explain what the summary means. An automated target-reaching candidate is useful experimental evidence, but not proof that all interactions work for every user. Preserve missing values, warnings and pair counts when analyzing results.
 
 ## Persistent work
 
+A compact breadcrumb trail above every application screen shows its position
+in the workflow. The house icon returns to Dashboard; linked parents return to
+the relevant evaluation, remediation list, comparison list or RAG-ACT browser.
+Loading and loaded evaluation reports have the same location. Example-detail
+navigation preserves search and filters. **RAG-ACT** has its own sidebar entry
+for corpus maintenance and browsing, separate from **Configuration**.
+
 Jobs and progress live in MySQL, not only in a browser page. Closing a report does not cancel the underlying work. Pausing an evaluation requests a safe scheduling boundary; an already-running evaluator call can still finish. URL categorization has its own persisted job and stop control.
 
 These distinctions are used throughout the [researcher guides](../guide/acquisition.md) and [technical documentation](../technical/architecture.md).
+
+**Help and documentation**, at the foot of every application screen, opens this
+guide in a new tab without replacing an unsaved form. The former About screen
+has been removed; old `/about` bookmarks redirect here. Software citation and
+attribution are maintained under [License and citation](../reference/citation.md).

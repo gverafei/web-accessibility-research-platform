@@ -69,7 +69,13 @@ For Axe `a`, Lighthouse `l`, configured maximum `A` and minimum `L`:
 Target distance = max(a − A, 0) + max(L − l, 0)
 ```
 
-Missing required measurements yield an unusable distance. The ranking is lexicographic: distance first, then minimum retained content, then text retention, then visual similarity for steps 1–3. Regeneration is not rewarded for copying the original screenshot. The regeneration path also records native-form/content preservation information for its selection/refinement decisions.
+Missing required measurements yield an unusable distance. Candidates are ordered
+first by the smallest distance, then by the highest **lowest retention percentage**
+among words, links, images and banners/media. Ties use text retention, then RGB
+similarity at levels 1–3. This protects the weakest content component rather than
+using the report's average content-retention summary. Levels 4–5 intentionally
+allow redesign, so they do not use resemblance to the original screenshot as a
+tie-break. Regeneration also records native-form/content preservation evidence.
 
 A worse iteration rolls back to the best evaluated candidate. Feedback refers to the retained page and explicitly summarizes rejected changes so the next iteration does not reason from stale rejected markup.
 

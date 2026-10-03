@@ -93,7 +93,7 @@ nav:
       - Manage URLs and categories: guide/manage-urls.md
       - Remediation: guide/remediation.md
       - Models and reasoning: guide/models.md
-      - Adaptive ACT retrieval: guide/rag.md
+      - Adaptive RAG-ACT retrieval: guide/rag.md
       - Iteration trace and activity log: guide/evidence.md
       - Paired comparisons: guide/comparisons.md
       - Import, export and composition: guide/exchange.md

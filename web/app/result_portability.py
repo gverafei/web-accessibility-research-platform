@@ -3,6 +3,8 @@ import hashlib
 import json
 import os
 import shutil
+import re
+import stat
 from datetime import date, datetime
 from decimal import Decimal
 from urllib.parse import urlsplit, urlunsplit
@@ -131,7 +133,7 @@ def encode_artifacts(result):
 
 
 def validate_portable_payload(payload):
-    if not isinstance(payload, dict) or payload.get("format") != "warp-experiment" or payload.get("version") != 3:
+    if not isinstance(payload, dict) or payload.get("format") != "warp-experiment" or payload.get("version") not in {3,4}:
         raise ValueError("unsupported format")
     if not isinstance(payload.get("experiment"), dict):
         raise ValueError("invalid experiment metadata")
@@ -155,13 +157,43 @@ def validate_portable_payload(payload):
         if not isinstance(artifacts, dict) or any(key not in ARTIFACT_COLUMNS for key in artifacts):
             raise ValueError("invalid artifacts")
         for artifact in artifacts.values():
-            if not isinstance(artifact, dict) or not isinstance(artifact.get("filename"), str) or not isinstance(artifact.get("base64"), str):
+            if not isinstance(artifact, dict) or not isinstance(artifact.get("filename"), str):
                 raise ValueError("invalid artifact")
-            base64.b64decode(artifact["base64"], validate=True)
+            if payload['version'] == 3:
+                if not isinstance(artifact.get('base64'), str):
+                    raise ValueError('invalid artifact')
+                base64.b64decode(artifact['base64'], validate=True)
+            elif (not isinstance(artifact.get('member'), str) or
+                  not artifact['member'].startswith('artifacts/') or
+                  '\\' in artifact['member'] or '..' in artifact['member'].split('/') or
+                  not re.fullmatch(r'[0-9a-f]{64}',str(artifact.get('sha256') or '')) or
+                  not isinstance(artifact.get('size'), int) or artifact['size'] < 0):
+                raise ValueError('invalid artifact member')
     return results
 
 
-def decode_artifacts(result, artifacts, destination_experiment_id):
+def validate_archive_artifacts(payload, archive, max_total_bytes=32*1024**3):
+    """Validate v4 references and sizes before any database mutation/extraction."""
+    if payload.get('version') != 4:
+        return
+    total, seen = 0, set()
+    for entry in payload['results']:
+        for artifact in entry.get('artifacts',{}).values():
+            name=artifact['member']
+            if name in seen:
+                raise ValueError('duplicate artifact reference')
+            seen.add(name)
+            item=archive.getinfo(name)
+            if item.is_dir() or stat.S_ISLNK(item.external_attr >> 16) or item.file_size != artifact['size']:
+                raise ValueError('invalid artifact size or type')
+            total += item.file_size
+            if total > max_total_bytes:
+                raise ValueError('uncompressed artifacts exceed the storage budget')
+    if {item.filename for item in archive.infolist() if item.filename.startswith('artifacts/')} != seen:
+        raise ValueError('unreferenced artifact members')
+
+
+def decode_artifacts(result, artifacts, destination_experiment_id, archive=None):
     destination = os.path.realpath(f"/results/raw/experiment_{destination_experiment_id}")
     os.makedirs(destination, exist_ok=True)
     for column in ARTIFACT_COLUMNS:
@@ -177,6 +209,16 @@ def decode_artifacts(result, artifacts, destination_experiment_id):
             target = f"{stem}_{counter}{extension}"
             counter += 1
         with open(target, "wb") as file:
-            file.write(base64.b64decode(artifact["base64"], validate=True))
+            if artifact.get('member'):
+                if archive is None:
+                    raise ValueError('artifact archive is required')
+                digest=hashlib.sha256()
+                with archive.open(artifact['member']) as source:
+                    while chunk := source.read(64*1024):
+                        file.write(chunk); digest.update(chunk)
+                if digest.hexdigest() != artifact['sha256']:
+                    raise ValueError('artifact SHA-256 mismatch')
+            else:
+                file.write(base64.b64decode(artifact["base64"], validate=True))
         result[column] = target
     return result

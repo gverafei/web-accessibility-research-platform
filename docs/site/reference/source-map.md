@@ -1,5 +1,10 @@
 # Source map
 
+Shared history layouts use `web/app/static/js/history_views.js` and
+`web/app/templates/_history_view_toggle.html`; their presentation lives in the
+canonical `web/app/static/css/theme.css`. Table and card modes reuse each record
+rather than creating independent copies of its state or actions.
+
 This map connects documentation topics to their implementation files. Paths are relative to the repository root.
 
 | Area | Primary implementation |
@@ -25,7 +30,8 @@ This map connects documentation topics to their implementation files. Paths are 
 | Source preservation and replay | `web/app/remediation_content_contract.py` |
 | Whole-document prompt and design references | `web/app/vera_prompt.py`, `web/app/vera_regeneration.py`, `web/app/regeneration_references.py` |
 | Markdown extraction | `web/app/remediation_extraction.py` |
-| ACT retrieval/synchronization | `web/app/remediation_rag.py`, `web/app/sync_act_rag.py`, `web/app/remediation_rag_supplement.py` |
+| ACT retrieval/synchronization and example browser | `web/app/remediation_rag.py`, `web/app/sync_act_rag.py`, `web/app/remediation_rag_supplement.py`, `web/app/rag_corpus.py`, `web/app/rag_sync_jobs.py`, `web/app/rag_examples.py`, `web/app/routes/rag_maintenance.py` |
+| Shared navigation and breadcrumbs | `web/app/navigation.py`, `web/app/templates/base.html`, `web/app/templates/_breadcrumbs.html`, `web/app/static/css/theme.css` |
 | Database/schema | `web/app/database.py` |
 | Extension API/configuration | `web/app/routes/extension_api.py`, `web/app/browser_extension_config.py` |
 | Extension client | `browser_extension/manifest.json`, `browser_extension/controls.js`, `browser_extension/sidepanel.js`, `browser_extension/service-worker.js` |

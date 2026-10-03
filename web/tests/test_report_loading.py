@@ -3,6 +3,7 @@ import sys
 import types
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from flask import render_template
 
@@ -20,6 +21,52 @@ main = importlib.import_module("main")
 
 
 class LoadingReportTestCase(unittest.TestCase):
+    def test_global_search_results_use_loading_for_evaluations_and_urls(self):
+        routes = importlib.import_module('routes.experiments')
+        conn = MagicMock(); cursor = conn.cursor.return_value
+        cursor.fetchall.side_effect = [
+            [{'id':131, 'title':'1,800 pages', 'status':'completed', 'created_at':'2026-09-24'}],
+            [{'experiment_id':131, 'url':'https://nike.com/', 'title':'1,800 pages'}],
+        ]
+        with patch.object(routes, 'get_connection', return_value=conn):
+            response = main.app.test_client().get('/experiments/search-suggestions?q=nike')
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data['experiments'][0]['href'], '/experiments/131/loading')
+        self.assertEqual(data['urls'][0]['href'], '/experiments/131/loading#url-results')
+        self.assertEqual(cursor.execute.call_args_list[0].args[1], ('nike', '%nike%', '%nike%', '%nike%', '%nike%'))
+        self.assertEqual(cursor.execute.call_args_list[1].args[1], ('nike', '%nike%'))
+        for call in cursor.execute.call_args_list:
+            self.assertIn('LIMIT 6', call.args[0])
+        conn.commit.assert_not_called()
+
+    def test_global_search_help_remains_visible_with_suggestions(self):
+        base = (APP_DIR / 'templates/base.html').read_text()
+        self.assertIn('id="globalSearchHelp"', base)
+        self.assertIn('aria-describedby="globalSearchHelp"', base)
+        self.assertIn('URLs/domains, status (completed, running)', base)
+        self.assertIn('origin (imported, composed)', base)
+        self.assertIn("filename='js/global_search.js'", base)
+        self.assertIn('aria-live="polite" aria-busy="false"', base)
+
+    def test_loading_page_is_metadata_only_and_keeps_url_evidence_destination(self):
+        routes = importlib.import_module('routes.experiments')
+        conn = MagicMock(); cursor = conn.cursor.return_value
+        cursor.fetchone.return_value = {'id':131, 'title':'1,800 pages', 'created_at':'2026-09-24',
+            'source_type':'tranco','axe_standard':'wcag22aa','axe_include_best_practices':False,
+            'include_wave':False,'reuse_cached_results':True}
+        with patch.object(routes, 'get_connection', return_value=conn):
+            response = main.app.test_client().get('/experiments/131/loading')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(cursor.execute.call_count, 1)
+        query = cursor.execute.call_args.args[0]
+        self.assertNotIn('experiment_results', query)
+        self.assertNotIn('urls,', query)
+        self.assertIn('Loading report', response.get_data(as_text=True))
+        self.assertIn('window.location.hash==="#url-results"', response.get_data(as_text=True))
+        self.assertIn('"/experiments/131"+section', response.get_data(as_text=True))
+        conn.commit.assert_not_called()
+
     def test_tranco_bars_use_means_in_native_units(self):
         template = (APP_DIR / 'templates' / 'report.html').read_text()
         self.assertIn('"Mean Axe issues/page")|tojson }},"axe_mean","#18529d");', template)
@@ -81,8 +128,8 @@ class LoadingReportTestCase(unittest.TestCase):
         self.assertIsNotNone(table)
         self.assertFalse(table.select('tbody strong'))
         self.assertIsNotNone(table.select_one('.evaluation-cost small'))
-        self.assertIsNotNone(table.select_one('tr[data-row-open]'))
-        self.assertEqual(len(table.select('thead th')),6)
+        self.assertIsNone(table.select_one('tr[data-row-open]'))
+        self.assertEqual(len(table.select('thead th')),5)
         self.assertEqual([cell.get_text(strip=True) for cell in table.select('thead th')[:5]],
                          ['{{ _("Evaluation") }}','{{ _("Progress") }}','{{ _("Acquisition") }}','{{ _("Tools") }}','{{ _("Cost and time") }}'])
         self.assertIsNone(table.select_one('.experiment-title-edit'))
@@ -143,12 +190,12 @@ class LoadingReportTestCase(unittest.TestCase):
         self.assertIn('.dashboard-metrics .research-metric>strong{font-size:1.42rem;overflow-wrap:anywhere}',styles)
 
     def test_evaluation_and_comparison_headers_share_identity_pattern(self):
-        report=(APP_DIR/'templates'/'report.html').read_text()
+        report=(APP_DIR/'templates'/'_evaluation_report_header.html').read_text()
         comparison=(APP_DIR/'templates'/'comparison_detail.html').read_text()
         remediation=(APP_DIR/'templates'/'_remediation_report_header.html').read_text()
         styles=(APP_DIR/'static'/'css'/'style.css').read_text()
-        self.assertIn('{{ _("Evaluation") }} #{{ experiment.id }}',report)
-        self.assertIn('class="report-hero-meta">{{ experiment.created_at }}',report)
+        self.assertIn("report_heading(_('Evaluation') ~ ' #' ~ experiment.id",report)
+        self.assertIn("<small>{{ _('Started') }} {{ experiment.created_at }}",report)
         self.assertNotIn('{{ _("Reproducible web accessibility evaluation") }}',report)
         self.assertNotIn('{{ _("Navigate") }}',report)
         self.assertIn('class="comparison-hero-meta">{{ study.created_at }}',comparison)
@@ -161,12 +208,12 @@ class LoadingReportTestCase(unittest.TestCase):
 
     def test_evaluation_pause_actions_have_spacing_and_visible_names(self):
         listing=(APP_DIR/'templates'/'experiments.html').read_text()
-        report=(APP_DIR/'templates'/'report.html').read_text()
+        report=(APP_DIR/'templates'/'_evaluation_report_header.html').read_text()
         history_styles=(APP_DIR/'static'/'css'/'evaluation_history.css').read_text()
         self.assertIn('class="evaluation-delete-form"',listing)
         self.assertIn('.evaluation-delete-form{margin-left:.35rem}',history_styles)
-        self.assertIn("<span>{{ _('Pause') }}</span>",report)
-        self.assertIn("<span>{{ _('Resume') }}</span>",report)
+        self.assertIn("{{ _('Pause') }}</button>",report)
+        self.assertIn("{{ _('Resume') }}</button>",report)
         self.assertNotIn('experiment-action-pause icon-only-action',report)
         self.assertNotIn('experiment-action-resume icon-only-action',report)
 
@@ -263,13 +310,14 @@ class LoadingReportTestCase(unittest.TestCase):
         self.assertIn("clear_experiments_phrase", configuration)
         self.assertNotIn('name="axe_standard"', index)
 
-    def test_about_link_is_discreetly_placed_in_footer(self):
+    def test_help_link_replaces_about_in_footer(self):
         base = (APP_DIR / "templates" / "base.html").read_text(encoding="utf-8")
-        about = (APP_DIR / "templates" / "about.html").read_text(encoding="utf-8")
 
         self.assertIn('<footer class="app-footer">', base)
-        self.assertIn("Guillermo Vera-Amaro", about)
-        self.assertIn("gvera@uv.mx", about)
+        self.assertIn('config.DOCUMENTATION_URL', base)
+        self.assertIn('Help and documentation', base)
+        self.assertNotIn('experiments.about', base)
+        self.assertFalse((APP_DIR / 'templates' / 'about.html').exists())
 
 if __name__ == "__main__":
     unittest.main()

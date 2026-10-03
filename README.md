@@ -8,7 +8,7 @@ A11yResearch helps researchers acquire and evaluate collections of web pages, re
 
 - Public-URL acquisition, seeded Tranco sampling and local HTML datasets.
 - Axe and Lighthouse evaluation, optional WAVE, screenshots and retained HTML/raw reports.
-- Agentic remediation with five explicit intervention policies, adaptive ACT retrieval, bounded refinement and rollback.
+- Agentic remediation with five explicit intervention policies, adaptive RAG-ACT retrieval, shared configurable per-run limits, bounded refinement and rollback.
 - A researcher-managed model catalogue shared by the web interface and browser extension, with frozen choices and no silent model/provider substitution.
 - Iteration traces, activity logs, paired comparisons and recorded usage/charges.
 - Portable `.warp` evaluation exchange and composition without unnecessary reevaluation.
@@ -38,7 +38,7 @@ The single `docker-compose.yml` builds web, worker, evaluator and dataset-server
 | Service | Responsibility |
 | --- | --- |
 | Web · Flask | Interface, reports, configuration and exchange |
-| Worker · Python | Persistent acquisition, remediation and category jobs |
+| Worker · Python | Persistent acquisition, remediation, category jobs and explicit RAG-ACT maintenance |
 | Evaluator · Node/Chromium | Browser capture, Axe, Lighthouse and optional WAVE |
 | Dataset server | Internal serving of stored HTML and candidates |
 | MySQL | Records, settings, provenance and comparisons |

@@ -27,12 +27,14 @@ def extension_configuration(payload, settings):
     # Old numeric model levels cannot identify today's catalogue reliably.
     # Require an explicit choice instead of silently changing experiments.
     choice = model_choice(str(payload.get("selected_model") or ""), settings)
-    level = int(payload.get("preservation_level", 2))
+    level = int(payload.get("preservation_level", 0))
     if level not in range(5):
         raise ValueError("Choose a preservation level from 0 to 4.")
     targets = common_conditions(settings)
+    recipe = automatic_recipe(PRIORITIES[level], settings=settings)
     configuration = {"selected_model": choice["id"], "model_configuration": frozen_model_configuration(choice), "preservation_level": level,
                      "research_targets": {key: targets[key] for key in ('lighthouse', 'axe')},
+                     "research_limits": {key: recipe[key] for key in ('iterations', 'cost', 'seconds')},
                      "use_rag": bool(payload.get("use_rag")), "use_wave": False}
     if choice['model'].startswith('ollama/'):
         from local_llm import local_configuration

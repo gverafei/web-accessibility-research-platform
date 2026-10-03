@@ -85,11 +85,14 @@
                         <div class="mb-3">
                             <span class="form-label d-block">{{ _("Sites to evaluate by popularity group") }}</span>
                             <div class="definition-grid">
-                                <article class="definition-card"><label for="tranco_count_rank_1_500"><strong>{{ _("Global top 500") }}</strong><small class="d-block text-muted">{{ _("Ranks 1–500") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_1_500" name="tranco_count_rank_1_500" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_501_5000"><strong>{{ _("Very high popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 501–5,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_501_5000" name="tranco_count_rank_501_5000" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_5001_50000"><strong>{{ _("High popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 5,001–50,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_5001_50000" name="tranco_count_rank_5001_50000" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_50001_250000"><strong>{{ _("Medium popularity") }}</strong><small class="d-block text-muted">{{ _("Ranks 50,001–250,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_50001_250000" name="tranco_count_rank_50001_250000" value="10"></article>
-                                <article class="definition-card"><label for="tranco_count_rank_250001_1000000"><strong>{{ _("Popularity tail") }}</strong><small class="d-block text-muted">{{ _("Ranks 250,001–1,000,000") }}</small></label><input class="form-control mt-2" type="number" min="0" step="1" id="tranco_count_rank_250001_1000000" name="tranco_count_rank_250001_1000000" value="10"></article>
+                                {% for key, name, lower, upper in tranco_strata %}
+                                <article class="definition-card">
+                                  <label for="tranco_label_{{ key }}" class="form-label">{{ _("Group label") }}</label>
+                                  <input class="form-control" id="tranco_label_{{ key }}" name="tranco_label_{{ key }}" maxlength="120" value="{{ _(name) }}" required>
+                                  <small class="d-block text-muted mt-2">{{ _("Ranks") }} {{ '{:,}'.format(lower) }}–{{ '{:,}'.format(upper) }}</small>
+                                  <label for="tranco_count_{{ key }}" class="form-label mt-2">{{ _("Sites to evaluate") }}</label>
+                                  <input class="form-control" type="number" min="0" step="1" id="tranco_count_{{ key }}" name="tranco_count_{{ key }}" value="10">
+                                </article>{% endfor %}
                             </div>
                             <div class="form-text">{{ _("Choose any whole-number target within each group's available domains; enter 0 to exclude a group. A11yResearch uses unused domains from the same group as reserves. If that group is exhausted, the target remains unmet; other groups are not used to fill it.") }}</div>
                         </div>
@@ -178,6 +181,7 @@ function updateSourceType() {
     urlSourceFields.hidden = local || tranco;
     localSourceFields.hidden = !local;
     trancoSourceFields.hidden = !tranco;
+    trancoSourceFields.querySelectorAll('input').forEach(input => { input.disabled = !tranco; });
     if (waveCheckbox) {
         waveCheckbox.disabled = local;
         if (local) waveCheckbox.checked = false;

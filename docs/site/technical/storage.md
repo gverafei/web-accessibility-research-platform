@@ -38,7 +38,15 @@ Schema compatibility fields and historical tables may remain for reading existin
 └── remediations/              (separate generated candidates)
 ```
 
-Paths are an overview; use the database artifact columns as authoritative rather than guessing a filename from a URL. Result portability only copies/encodes supported files inside `/results/raw` and preserves separate source provenance.
+Paths are an overview; use the database artifact columns as authoritative rather
+than guessing a filename from a URL. Version-4 `.warp` exports stream supported
+evidence files inside `/results/raw` as binary ZIP members, with size/hash
+references instead of embedding their contents in JSON. Local dataset files are
+packaged separately; source provenance remains distinct.
+
+RAG-ACT maintenance state and the active-snapshot pointer live in
+`/data/act-rag`, while the indexed examples and vectors live in `qdrant_data`.
+Preserve both if the exact retrieval snapshot is needed for restoration.
 
 ## Immutability and identity
 

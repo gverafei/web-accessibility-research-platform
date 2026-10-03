@@ -12,11 +12,14 @@
     let visible = 0;
     current.forEach(row => {
       row.hidden = Boolean(term && !row.textContent.toLocaleLowerCase().includes(term));
+      const entry = row.closest?.('[data-history-entry]');
+      if (entry) entry.hidden = row.hidden;
       if (!row.hidden) visible++;
     });
     count.textContent = term ? `${visible} / ${current.length}` : '';
   }
   input.addEventListener('input', filter);
+  table.addEventListener('history:changed', filter);
   async function refresh() {
     const active = rows().filter(row => ['queued', 'running'].includes(row.dataset.runStatus));
     if (!active.length) return;
@@ -29,11 +32,16 @@
           url.searchParams.set('live_ids', batch.map(row => row.dataset.runId).join(','));
           const response = await fetch(url, {cache:'no-store'});
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const page = new DOMParser().parseFromString(`<table><tbody>${await response.text()}</tbody></table>`, 'text/html');
+          const page = new DOMParser().parseFromString(`<table>${await response.text()}</table>`, 'text/html');
           const updated = [...page.querySelectorAll('tr[data-run-id]')];
           for (const row of batch) {
             const replacement = updated.find(item => item.dataset.runId === row.dataset.runId);
-            if (replacement) row.replaceWith(replacement);
+            if (replacement) {
+              const entry = row.closest?.('[data-history-entry]');
+              const next = replacement.closest?.('[data-history-entry]');
+              if (entry && next) entry.replaceWith(next);
+              else row.replaceWith(replacement);
+            }
           }
         }
         notice.hidden = true;

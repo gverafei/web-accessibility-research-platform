@@ -566,6 +566,10 @@ def run_worker(app, poll_seconds=2):
     while True:
         try:
             with app.app_context():
+                from rag_sync_jobs import process_pending
+                if process_pending():
+                    time.sleep(poll_seconds)
+                    continue
                 conn = get_connection()
                 cursor = conn.cursor(dictionary=True)
                 cursor.execute("SELECT id FROM remediation_runs WHERE status IN ('queued','running') ORDER BY created_at ASC LIMIT 1")

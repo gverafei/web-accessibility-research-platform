@@ -5,7 +5,7 @@ from remediation_model_choices import PROVIDER_DEFAULT_MODELS
 
 
 def _default_internal_dataset():
-    return os.getenv("INTERNAL_DATASET_URLS", "").strip()
+    return os.getenv("INTERNAL_DATASET_URLS", "").strip() or "https://example.org/"
 
 
 READONLY_MODEL_DEFAULTS = {
@@ -21,6 +21,9 @@ READONLY_MODEL_DEFAULTS = {
 SETTING_DEFAULTS = {
     "remediation_min_lighthouse": "94",
     "remediation_max_axe": "3",
+    "remediation_max_iterations": "3",
+    "remediation_max_cost_usd": "0.25",
+    "remediation_max_execution_seconds": "360",
     "remediation_model_catalog_json": "",
     "ollama_base_url": "",
     "ollama_model": "",
@@ -78,6 +81,7 @@ def get_settings():
     cursor.execute("SELECT setting_key, setting_value FROM app_settings")
     stored_values = {row["setting_key"]: row["setting_value"] for row in cursor.fetchall()}
     values.update({key: value for key, value in stored_values.items() if key in SETTING_DEFAULTS})
+    values['internal_dataset_urls'] = values.get('internal_dataset_urls', '').strip() or _default_internal_dataset()
     cursor.close()
     conn.close()
     return values
@@ -89,6 +93,8 @@ def save_settings(values):
     for key, value in values.items():
         if key not in SETTING_DEFAULTS:
             continue
+        if key == 'internal_dataset_urls':
+            value = str(value or '').strip() or _default_internal_dataset()
         cursor.execute(
             """
             INSERT INTO app_settings (setting_key, setting_value)

@@ -51,3 +51,5 @@ Catalogue updates apply to new runs. Existing runs retain their original model a
 ## Local models
 
 Configure an installed Ollama model under General settings. Local choices are managed separately from OpenRouter discovery. A context-capacity error appears in the run report with the selected local model's details. See [Configuration](configuration.md) and [Troubleshooting](../reference/troubleshooting.md).
+
+With an empty server field, **Refresh installed models** or **Test Ollama connection** uses the suggested Docker host address and puts it visibly in the field. This only discovers models: choose one and save Configuration to enable it in remediation and categorization. Clearing both fields disables the local model. Neither connection button generates content or saves a model automatically.

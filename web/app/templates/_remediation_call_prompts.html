@@ -1,0 +1,17 @@
+<details class="strategy-details"><summary>{{ _("Prompts, model responses and evaluator feedback") }}</summary>
+  {% for call in item.model_calls %}
+  <section class="model-call-evidence mb-3">
+    <h3 class="h6">{{ _("LLM call") }} {{ call.call_number }} · {{ call.actual_model or call.requested_model }} · {{ _(call.stage|replace('_',' ')|capitalize) }}</h3>
+    <p class="small text-muted">{{ _("Transport status") }}: {{ call.status }}{% if call.cost_usd is defined %} · ${{ '%.6f'|format(call.cost_usd|float) }}{% endif %}</p>
+    <details><summary>{{ _("Prompt sent to the model") }}</summary>
+      {% if call.messages %}{% for message in call.messages %}<h4 class="h6">{{ message.role }}</h4>
+      {% if message.content is string %}<pre>{{ message.content }}</pre>{% else %}{% for block in message.content %}{% if block.type == 'text' %}<pre>{{ block.text }}</pre>{% elif block.type == 'image_url' %}<p class="small text-muted">{{ _("Captured image supplied; encoded image omitted from this text view.") }}</p>{% endif %}{% endfor %}{% endif %}
+      {% endfor %}{% else %}<pre>{{ call.prompt }}</pre>{% endif %}
+    </details>
+    <details><summary>{{ _("Response returned by the model") }}</summary><pre>{{ call.response if call.response is defined else _('No response was recorded.') }}</pre></details>
+  </section>
+  {% else %}<p class="small text-muted">{{ _("Per-call evidence is unavailable for this iteration. The following is the stored iteration prompt, not a reconstruction of individual calls.") }}</p><h3 class="h6">{{ _("Stored iteration prompt") }}</h3><pre>{{ item.prompt_text or _('Not recorded') }}</pre>{% endfor %}
+  <h3 class="h6">{{ _("Evaluator and coordinator feedback after this iteration") }}</h3>
+  <p class="small text-muted">{{ _("This is the stored evaluation/review feedback and resulting decision. It may combine measured tool findings and configured specialist assessments. If refinement continues, it informs the next prompt.") }}</p>
+  <pre>{{ item.feedback_text or _('Not recorded') }}</pre>
+</details>

@@ -9,7 +9,6 @@
 .url-category-automation .category-progress small{position:absolute;top:11px;left:0;margin:0}
 .url-catalog-frame{position:relative;min-height:564px}
 #urlCatalogLoading{position:absolute;top:48px;right:12px;z-index:10;background:var(--bs-body-bg,#fff);border:1px solid #dce5ed;border-radius:6px;padding:8px 12px;box-shadow:0 2px 8px #0001}
-#urlCatalogTable{table-layout:fixed;min-width:1650px;width:100%}
 #urlCatalogTable tbody tr{height:104px}
 #urlCatalogTable td{white-space:normal;overflow-wrap:anywhere}
 #urlCatalogTable .measurement-url{min-width:0;max-width:none}
@@ -37,7 +36,7 @@
   <div class="url-catalog-frame">
   <div id="urlCatalogLoading" class="text-muted" role="status" aria-live="polite"><span class="spinner-border spinner-border-sm text-primary me-2" aria-hidden="true"></span>{{ _("Loading acquired pages…") }}</div>
   <div class="table-responsive research-table-wrap measurement-table-wrap"><table class="table table-sm research-table measurement-table mb-0 sortable-table" id="urlCatalogTable">
-  <colgroup><col style="width:42px"><col style="width:240px"><col style="width:280px"><col style="width:110px"><col style="width:110px"><col style="width:210px"><col style="width:450px"><col style="width:208px"></colgroup>
+  <colgroup><col style="width:42px"><col style="width:16%"><col style="width:16%"><col style="width:8%"><col style="width:10%"><col style="width:15%"><col><col style="width:13%"></colgroup>
   <thead><tr><th>#</th>{% set columns = [(_("Page"),"url","asc"),(_("Editable name"),"name","asc"),(_("Axe issues"),"axe","asc"),("Lighthouse","lighthouse","desc"),(_("Category"),"category","asc"),(_("Evaluation"),"evaluation","asc"),(_("Originally evaluated"),"date","desc")] %}{% for label,key,direction in columns %}<th><button type="button" class="sort-button" data-column="{{ key }}" data-direction="{{ direction }}">{{ label }} <span>↕</span></button></th>{% endfor %}</tr></thead><tbody>
   <tr><td colspan="8" class="text-center py-5"><span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span> {{ _("Loading acquired pages…") }}</td></tr>
   </tbody></table></div>

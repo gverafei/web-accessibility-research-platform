@@ -1,18 +1,17 @@
 {% from '_remediation_identity.html' import preservation_colors with context %}
-<header class="remediation-report-heading" style="--approach-color:{{ preservation_colors.get(run.presentation_priority,'#18529d') }}">
-  <div class="remediation-report-heading-main">
-    <span class="remediation-report-kicker">ATPGE · {{ _('Remediation report') }} #{{ run.id }}</span>
-    <h1>{{ run.source_name or run.source_url }}</h1>
-    <p class="remediation-report-run-name"><span>{{ run.title }}</span><small>{{ _('Started') }} {{ run.created_at }}</small></p>
-    <div class="remediation-report-tags">
+{% from '_report_heading.html' import report_heading %}
+{% set metadata %}<span>{{ run.title }}</span><small>{{ _('Started') }} {{ run.created_at }}</small>{% endset %}
+{% set tags %}
       <span class="remediation-report-approach">{{ _(run.presentation_name) if run.presentation_name else _('Intervention approach') }}</span>
       <span>{{ run.transformation_format|upper }}</span>
       <span>{{ _('Temperature') }} {{ '%.2f'|format(run.temperature|float) }}</span>
       {% if run.execution_mode in ['regenerate_only','regenerate_refine'] %}<span>{{ _('Whole-page regeneration — single call') if run.execution_mode == 'regenerate_only' else _('Whole-page regeneration + localized refinement') }}</span>{% endif %}
-    </div>
-  </div>
+{% endset %}
+{% set actions %}
   {% if run.status == 'accepted' %}<form method="post" action="{{ url_for('remediation.compare_with_original',run_id=run.id) }}"><button class="btn btn-primary" type="submit">{{ _('Compare with original') }}</button></form>{% endif %}
-</header>
+{% endset %}
+{% set kicker %}ATPGE · {{ _('Remediation report') }} #{{ run.id }}{% endset %}
+{{ report_heading(kicker, run.source_name or run.source_url, metadata, actions, tags, preservation_colors.get(run.presentation_priority,'#18529d')) }}
 {% set has_candidate=report_candidate_available if report_candidate_available is defined else best %}
 {% if not run.axe_counting_policy %}<p class="text-muted small">{{ _("Axe scores exclude Best Practices. Historical acceptance statuses remain as originally recorded.") }}</p>{% endif %}
 {% if run.status == 'completed_with_warnings' and not run.error_message %}

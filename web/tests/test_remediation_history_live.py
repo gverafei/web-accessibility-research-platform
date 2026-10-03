@@ -45,6 +45,13 @@ class LiveHistoryTests(unittest.TestCase):
 
     def test_running_rows_show_real_progress_not_false_success(self):
         dom = self.fetch(run())
+        group = dom.select_one('tbody[data-history-entry]')
+        self.assertEqual(len(group.select('tr')), 2)
+        self.assertEqual(len(group.select('tr:first-child > td')), 5)
+        self.assertEqual(group.select_one('.history-actions-row td')['colspan'], '5')
+        self.assertFalse(group.select('[data-row-open]'))
+        for button in group.select('.history-action'):
+            self.assertEqual(button.select_one('span').get_text(), button['aria-label'])
         self.assertEqual(dom.select_one('tr')['data-run-status'], 'running')
         self.assertIn('56%', dom.get_text())
         self.assertIn('Evaluating candidate 2', dom.get_text())

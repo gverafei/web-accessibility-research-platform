@@ -17,7 +17,8 @@ class ResearchRequest(Request):
 
 
 class Config:
-    MAX_CONTENT_LENGTH = int(os.getenv("MAX_DATASET_UPLOAD_BYTES", "1610612736"))
+    DOCUMENTATION_URL = "https://gverafei.github.io/web-accessibility-research-platform/"
+    MAX_CONTENT_LENGTH = int(os.getenv("MAX_DATASET_UPLOAD_BYTES", "3221225472"))
     # Large URL fields and multi-file corpora share the request byte budget;
     # they must not inherit Flask's 500 KB field / 1,000-part defaults.
     MAX_FORM_MEMORY_SIZE = MAX_CONTENT_LENGTH

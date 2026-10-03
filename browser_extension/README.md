@@ -17,7 +17,10 @@ catalogue edit cannot change it. An explicit model failure never selects a
 different model or falls back from Ollama to a cloud provider.
 
 The **Use stored results** switch is on by default. A retained remediation with
-the same frozen source and configuration is recovered without new model calls;
+the same normalized URL and two sliders (model/reasoning and intervention) is
+recovered without new model calls, including results created from the backend.
+RAG, targets and catalogue presentation do not invalidate it. Completion keeps
+the saved run's real RAG setting and targets, not the current controls;
 an equivalent active request is followed. Disable the switch to repeat both
 acquisition and remediation, with possible model charges. Completion shows
 original and retained-final Axe/Lighthouse measurements, frozen targets and a
@@ -42,3 +45,8 @@ inspection view, not a remote modification or security sandbox; scripts that
 depend on runtime state or browser security policies may behave differently.
 Reloading the original website restores its own document and JavaScript context.
 Reload the unpacked extension after updating these files.
+
+General components share the web application's light/dark skin. Remediation
+sliders retain their own styling. After editing `web/app/static/css/theme.css`,
+run `python web/tools/sync_theme_assets.py` to refresh the packaged local copy;
+the extension does not fetch this stylesheet from localhost at runtime.

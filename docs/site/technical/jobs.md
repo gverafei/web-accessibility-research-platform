@@ -4,7 +4,12 @@ The web handlers enqueue persistent records. `run_worker()` in `web/app/jobs.py`
 
 ## Scheduling order
 
-The current single worker checks queued/running remediation runs, then queued/running evaluations, then the active URL-categorization job. Each category uses its stored creation/order information. A large or slow job can delay other work.
+The single worker first checks explicitly queued RAG-ACT maintenance. It can
+start synchronization only when no remediation is queued or running; the shared
+maintenance lock prevents research work from using a partly updated corpus.
+Otherwise, it checks remediation runs, then evaluations, then the active
+URL-categorization job. Research jobs use their stored creation/order information.
+A large or slow job can delay other work. Opening RAG-ACT never queues maintenance.
 
 The supplied scheduler uses a single worker. Multiple workers sharing the same queue can process overlapping requests, so deployment uses one worker instance. [Troubleshooting](../reference/troubleshooting.md#evaluation-remains-queued) covers queued-job diagnostics.
 
@@ -31,7 +36,7 @@ In `web/app/jobs.py`, `pending_evaluation_urls()` identifies remaining work from
 
 Page-level failures preserve their error context. For a Tranco study, retry and replacement use stored candidate roles/reserves in the same stratum. Technical failure classification is not an accessibility-score filter.
 
-`advance_tranco_recovery()` in `web/app/jobs.py` schedules one controlled retry per failed candidate, then deterministic same-stratum replacements. It can extend an initial reserve while unseen domains remain in the pinned interval. Once that pool is exhausted, it returns without scheduling another recovery cycle. The worker continues other work and finalizes the evaluation, retaining failed rows and an incomplete-dataset warning. The report distinguishes the processing status (`completed`) from achieved and target counts. A full-stratum request has no reserve to cover unrecoverable domains. See the [500-target / 300-success example](../guide/tranco.md#when-a-stratum-cannot-reach-its-target).
+`advance_tranco_recovery()` in `web/app/jobs.py` schedules one controlled retry per failed candidate, then deterministic same-stratum replacements. It can extend an initial reserve while unseen domains remain in the pinned interval. Once that pool is exhausted, it returns without scheduling another recovery cycle. The worker continues other work and finalizes the evaluation, retaining failed rows and an incomplete-dataset warning. The report distinguishes the processing status (`completed`) from achieved and target counts. A full-stratum request has no reserve to cover unrecoverable domains. See the [full-stratum example](../guide/tranco.md#when-a-stratum-cannot-reach-its-target).
 
 Interrupted attempts include measured timing when available. Their duration records are separate from completed-page processing totals.
 

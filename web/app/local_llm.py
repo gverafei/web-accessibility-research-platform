@@ -23,25 +23,32 @@ def ollama_endpoint(endpoint):
 
 def installed_local_models(endpoint):
     base = ollama_endpoint(endpoint)
-    response = requests.get(base + '/models', timeout=5)
+    response = requests.get(base[:-3] + '/api/tags', timeout=5)
     response.raise_for_status()
-    models = response.json().get('data') or []
-    if len(models) > 32:
-        raise ValueError('Too many installed models to inspect; use a dedicated Ollama server.')
+    models = response.json().get('models') or []
+    if not isinstance(models, list):
+        raise ValueError('Ollama returned an invalid installed-model list.')
     choices = []
     deadline = time.monotonic() + 12
     for item in models:
         remaining = deadline - time.monotonic()
-        if remaining <= 0:
-            raise ValueError('Timed out inspecting installed model capabilities.')
-        model = str(item.get('id') or '')
+        model = str(item.get('name') or item.get('model') or '') if isinstance(item, dict) else ''
         if not model or model.endswith('-cloud'):
             continue
-        details = requests.post(base[:-3] + '/api/show', json={'model': model}, timeout=min(2, remaining))
-        details.raise_for_status()
-        capabilities = details.json().get('capabilities') or []
+        capabilities = []
+        verified = False
+        if remaining > 0:
+            try:
+                details = requests.post(base[:-3] + '/api/show', json={'model': model}, timeout=min(2, remaining))
+                details.raise_for_status()
+                capabilities = details.json().get('capabilities') or []
+                verified = isinstance(capabilities, list)
+            except (requests.RequestException, ValueError, AttributeError):
+                pass  # One unavailable model must not hide the installed list.
+        if not verified:
+            capabilities = []
         choices.append({'id': model, 'name': model, 'vision': 'vision' in capabilities,
-                        'capabilities': capabilities})
+                        'capabilities': capabilities, 'capabilities_verified': verified})
     return sorted(choices, key=lambda item: item['id'])
 
 

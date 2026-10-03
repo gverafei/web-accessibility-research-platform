@@ -31,6 +31,9 @@ Route handlers are grouped in `web/app/routes/experiments.py` (acquisition, repo
 | POST | `http://localhost/urls/auto-categorize/stop` | Stop at a safe batch boundary |
 | GET/POST | `http://localhost/configuration/models` | Read/save catalogue JSON |
 | GET | `http://localhost/configuration/models/discover` | Explicit OpenRouter metadata discovery |
+| GET | `http://localhost/rag-act` | RAG-ACT workspace: maintenance controls and read-only saved-example browser |
+| GET | `http://localhost/rag-act/status` | Read corpus counts, recorded date, maintenance progress and active-remediation count; does not synchronize |
+| POST | `http://localhost/rag-act/synchronize` | Queue explicit maintenance: JSON `mode` is `initialize` or `update`; updates require boolean `confirmed: true`. HTTP 202 queued, 409 conflicting/active remediation, 503 unavailable service/storage |
 | GET/POST | `http://localhost/remediation/new` | Form / queue one source remediation |
 | GET | `http://localhost/remediation/<id>` | Run report with evidence |
 | GET | `http://localhost/api/browser-extension/configuration` | Extension model/policy catalogue |
@@ -40,6 +43,11 @@ Route handlers are grouped in `web/app/routes/experiments.py` (acquisition, repo
 | GET | `http://localhost/api/browser-extension/requests/<id>/candidate` | Candidate HTML when available |
 
 The extension progress handlers connect a completed acquisition with its remediation run and return the request's current progress. Their implementation is in `web/app/routes/extension_api.py`.
+
+Extension submission snapshots Configuration's effective targets and resource
+limits before acquisition. Delayed completion uses that snapshot rather than
+later settings. Limits are per run; stored-result reuse preserves the original
+run's limits and does not trigger a new execution just because budgets changed.
 
 ## Queue a URL evaluation
 
@@ -113,9 +121,21 @@ curl --fail --header 'Content-Type: application/json' \
   http://localhost/api/browser-extension/requests
 ```
 
-New requests return HTTP 202 with `id`, initial status and `reused: false`. Compatible stored or in-progress requests return HTTP 200 with their existing `id` and `reused: true`; no new run is created. Reuse is the default. Add the JSON boolean `"force_rerun": true` to request a fresh acquisition (without evaluation-cache reuse) and a new remediation. Matching uses the same stored source and the full frozen extension configuration.
+New requests return HTTP 202 with `id`, initial status and `reused: false`. Compatible stored or in-progress requests return HTTP 200 with `reused: true`; no new run is created. Reuse is the default and matches the normalized URL, actual model/reasoning and intervention slider. RAG, targets, catalogue presentation and a newer source acquisition do not invalidate a retained result. Recovering a backend run creates only a delivery request linked to that run. Progress includes the recovered run's `configuration`, not the controls submitted to find it. Add the JSON boolean `"force_rerun": true` to request a fresh acquisition (without evaluation-cache reuse) and a new remediation. An omitted `preservation_level` defaults to 0 (Minimal patches).
 
 Use that ID to poll progress until processing finishes. Terminal responses include `report_url` and `measurements`: `original` and `final` each contain `axe` and `lighthouse`; `targets` contains their frozen thresholds; `iteration_id` identifies the served retained candidate. Missing measurements are JSON `null`. Linked acquisition records provide source provenance and the original capture date. Implementation: `web/app/routes/extension_api.py` and `web/app/browser_extension_results.py`.
+
+## Inspect saved RAG-ACT examples
+
+`GET /rag-act` renders the workspace with a read-only local corpus browser.
+Query parameters: `q` (rule/title/IDs/requirements), `source` (`official` or
+`complementary`), `outcome` (`passed` or `failed`), `size` (5/10/20/25/50/100/250/500)
+and `page`. Counts describe saved examples, not the entire upstream catalogue.
+`GET /rag-act/examples/<UUID>` shows stored HTML as escaped text
+and recorded provenance, without executing scripts or loading example resources.
+Links carry the active `collection` to detect snapshot changes (HTTP 409); the
+route cannot browse an arbitrary Qdrant collection. Unavailable inspection is
+HTTP 503; absent examples are HTTP 404. Neither GET requests maintenance or LLMs.
 
 ## Catalogue JSON
 

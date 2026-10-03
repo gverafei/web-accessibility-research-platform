@@ -1,0 +1,33 @@
+{% from '_report_heading.html' import report_heading %}
+{% set metadata %}
+  <small>{{ _('Started') }} {{ experiment.created_at }}</small>
+  {% if report_loading %}<span>{{ _('Preparing the stored results and charts.') }}</span>{% endif %}
+  {% if pending %}<span>{{ _('Stored results are safe. Resume whenever you are ready.') if experiment.status == 'paused' else _('The experiment continues in the background. You can safely close this window or visit another section.') }}</span>{% endif %}
+{% endset %}
+{% set actions %}
+  {% if report_loading %}
+  {% elif pending %}
+  <div class="experiment-actions">
+    {% if experiment.status == 'paused' %}
+    <form method="post" action="{{ url_for('experiments.resume_experiment', experiment_id=experiment.id) }}"><button class="btn btn-primary" type="submit">{{ _('Resume') }}</button></form>
+    {% else %}
+    <form method="post" action="{{ url_for('experiments.pause_experiment', experiment_id=experiment.id) }}" data-confirm="{{ _('Pause this experiment? The URL currently being evaluated may finish, and all stored progress will be preserved.') }}"><button class="btn btn-primary" type="submit">{{ _('Pause') }}</button></form>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="report-action-group"><span>{{ _('Export') }}</span><div>
+    <a href="{{ url_for('experiments.download_experiment_csv', experiment_id=experiment.id) }}" class="btn btn-primary" download><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>{{ _('Download CSV') }}</a>
+    <a href="{{ url_for('experiments.download_experiment_json', experiment_id=experiment.id) }}" class="btn btn-primary warp-export" download><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>{{ _('Export data') }}</a>
+  </div></div>
+  {% endif %}
+{% endset %}
+{% set tags %}
+  {% set sources={'tranco':'Tranco','url':_('URLs'),'local_html':_('Local HTML')} %}
+  {% set standards={'wcag20a':'WCAG 2.0 A','wcag20aa':'WCAG 2.0 AA','wcag21a':'WCAG 2.1 A','wcag21aa':'WCAG 2.1 AA','wcag22a':'WCAG 2.2 A','wcag22aa':'WCAG 2.2 AA'} %}
+  <span>{{ sources.get(experiment.source_type, experiment.source_type or _('Not recorded')) }}</span>
+  <span>{{ standards.get(experiment.axe_standard, experiment.axe_standard or _('Not recorded')) }}</span>
+  <span>{{ _('Best Practices') }}: {{ _('Enabled') if experiment.axe_include_best_practices else _('Disabled') }}</span>
+  <span>WAVE: {{ _('Enabled') if experiment.include_wave else _('Disabled') }}</span>
+  <span>{{ _('Stored-result reuse') }}: {{ _('Enabled') if experiment.reuse_cached_results else _('Disabled') }}</span>
+{% endset %}
+{{ report_heading(_('Evaluation') ~ ' #' ~ experiment.id, experiment.title, metadata, actions, tags) }}

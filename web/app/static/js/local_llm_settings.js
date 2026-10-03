@@ -7,15 +7,19 @@
   if (!server || !model || !refresh || !status) return;
   const placeholder = model.options[0].text;
   let pending = null;
-  const load = async () => {
+  const load = async (useSuggestedAddress = false) => {
     pending?.abort();
-    const address = server.value.trim();
+    const address = server.value.trim() || (useSuggestedAddress ? server.placeholder : '');
     if (!address) {
+      pending = null;
       model.replaceChildren(new Option(placeholder, ''));
       status.textContent = '';
       refresh.disabled = false;
       return;
     }
+    // A placeholder looks configured but is not submitted. An explicit probe
+    // may use that suggested address, visibly, without persisting settings.
+    if (!server.value.trim()) server.value = address;
     const selected = model.value;
     const controller = new AbortController();
     pending = controller;
@@ -31,11 +35,11 @@
       if (!response.ok) throw new Error(data.error || refresh.dataset.error);
       if (server.value.trim() !== address) return;
       model.replaceChildren(new Option(placeholder, ''));
-      for (const item of data.models) model.add(new Option(item.name + ' · ' + (item.vision ? refresh.dataset.visionLabel : refresh.dataset.textLabel), item.id));
+      for (const item of data.models) model.add(new Option(item.name + ' · ' + (item.capabilities_verified === false ? refresh.dataset.unverifiedLabel : (item.vision ? refresh.dataset.visionLabel : refresh.dataset.textLabel)), item.id));
       if (data.models.some(item => item.id === selected)) model.value = selected;
-      status.textContent = data.models.length ? '' : refresh.dataset.empty;
+      status.textContent = data.models.length ? refresh.dataset.success : refresh.dataset.empty;
     } catch (error) {
-      if (pending === controller) status.textContent = refresh.dataset.error;
+      if (pending === controller) status.textContent = error.name === 'AbortError' ? refresh.dataset.error : error.message;
     } finally {
       clearTimeout(timer);
       if (pending === controller) {
@@ -44,6 +48,7 @@
       }
     }
   };
-  server.addEventListener('change', load);
-  refresh.addEventListener('click', load);
+  server.addEventListener('change', () => load());
+  refresh.addEventListener('click', () => load(true));
+  document.getElementById('testOllamaConnection')?.addEventListener('click', () => load(true));
 })();

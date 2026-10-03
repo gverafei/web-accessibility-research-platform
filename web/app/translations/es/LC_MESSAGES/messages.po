@@ -327,6 +327,9 @@ msgstr "Idioma"
 msgid "Color theme"
 msgstr "Tema de color"
 
+msgid "Could not save color theme. Please try again."
+msgstr "No se pudo guardar el tema de color. Inténtalo de nuevo."
+
 #: app/templates/base.html:52 app/templates/configuration.html:8
 msgid "Light"
 msgstr "Claro"
@@ -348,8 +351,8 @@ msgid "Start typing to search experiment names, URLs, or status."
 msgstr "Empieza a escribir para buscar nombres, URL o estados."
 
 #: app/templates/base.html:76
-msgid "About this research software"
-msgstr "Acerca de este software de investigación"
+msgid "Help and documentation"
+msgstr "Ayuda y documentación"
 
 #: app/templates/base.html:87 app/templates/experiments.html:88
 msgid "No experiments match your search."
@@ -358,6 +361,21 @@ msgstr "Ningún experimento coincide con la búsqueda."
 #: app/templates/base.html:87
 msgid "Search suggestions are temporarily unavailable."
 msgstr "Las sugerencias de búsqueda no están disponibles temporalmente."
+
+msgid "Searching…"
+msgstr "Buscando…"
+
+msgid "Evaluation #%(id)s cannot be deleted while it is queued or running. Wait for it to finish, or pause it from Evaluations and wait for the current page to finish before deleting it."
+msgstr "No se puede borrar la evaluación #%(id)s mientras está en cola o ejecutándose. Espera a que termine, o ponla en pausa desde Evaluaciones y espera a que finalice la página en curso antes de borrarla."
+
+msgid "Evaluation #%(id)s cannot be deleted: %(count)s remediation run(s) use its stored pages (%(runs)s). Find these IDs in Remediation runs. Keep this evaluation if those runs are needed; otherwise delete the dependent runs first. Runs used in comparisons must first be removed from their comparisons. Nothing was deleted."
+msgstr "No se puede borrar la evaluación #%(id)s: %(count)s remediaciones usan sus páginas guardadas (%(runs)s). Busca estos IDs en Remediaciones. Conserva la evaluación si necesitas esas corridas; de lo contrario, borra primero las remediaciones dependientes. Si se usan en comparaciones, retíralas primero de esas comparaciones. No se borró nada."
+
+msgid "Evaluation #%(id)s could not be deleted because the database rejected the operation. The transaction was rolled back. Refresh the list before trying again; if the problem persists, ask the administrator to check the web service logs for this evaluation ID. No generated files were removed."
+msgstr "No se pudo borrar la evaluación #%(id)s porque la base de datos rechazó la operación. Se revirtieron los cambios de la transacción. Actualiza la lista antes de intentarlo de nuevo; si persiste, pide al administrador que revise los registros del servicio web para este ID. No se eliminaron archivos generados."
+
+msgid "Search evaluation names, URLs/domains, status (completed, running), or origin (imported, composed). Click a result to open its report; Enter lists matching evaluations."
+msgstr "Busca nombres de evaluaciones, URL/dominios, estado (completed, running) u origen (imported, composed). Haz clic en un resultado para abrir su reporte; Enter muestra las evaluaciones coincidentes."
 
 #: app/templates/compose.html:4
 msgid "Manage experiment URLs"
@@ -4957,3 +4975,615 @@ msgstr "Filtrar páginas"
 
 msgid "%(count)s target slot(s) remain unmet after controlled retries and same-stratum recovery. The requested targets are unchanged; successful pages are retained and no other group is used to fill these slots."
 msgstr "Quedan %(count)s lugares del objetivo sin completar después de los reintentos controlados y la recuperación dentro del mismo estrato. Los objetivos solicitados no cambian; las páginas válidas se conservan y no se usa otro grupo para llenar esos lugares."
+
+msgid "Started"
+msgstr "Inicio"
+
+msgid "Resume"
+msgstr "Reanudar"
+
+msgid "Pause"
+msgstr "Pausar"
+
+msgid "Content retention"
+msgstr "Retención de contenido"
+
+msgid "Source text retained"
+msgstr "Texto original conservado"
+
+msgid "Link destinations retained"
+msgstr "Destinos de enlaces conservados"
+
+msgid "Original images retained"
+msgstr "Imágenes originales conservadas"
+
+msgid "Rendered banners and media retained"
+msgstr "Banners y medios renderizados conservados"
+
+msgid "Words in source"
+msgstr "Palabras del original"
+
+msgid "Words in candidate"
+msgstr "Palabras del candidato"
+
+msgid "Examples of missing source words"
+msgstr "Ejemplos de palabras originales ausentes"
+
+msgid "DOM divergence"
+msgstr "Divergencia DOM"
+
+msgid "Required maximum"
+msgstr "Máximo requerido"
+
+msgid "Total cost"
+msgstr "Coste total"
+
+msgid "share of the original gap to 100 recovered"
+msgstr "proporción recuperada de la diferencia original hasta 100"
+
+msgid "Text retention counts matching words, including repetitions. Links and images measure retained resource destinations independently; 100 percent resource retention does not mean every word was retained."
+msgstr "La retención de texto cuenta las palabras coincidentes, incluidas sus repeticiones. Enlaces e imágenes miden por separado los destinos conservados; conservar el 100 por ciento de los recursos no significa conservar todas las palabras."
+
+msgid "DOM divergence compares structural token sequences, not text completeness. Neither metric certifies equivalent behavior or usability."
+msgstr "La divergencia DOM compara secuencias estructurales, no la integridad del texto. Ninguna métrica certifica un comportamiento o una usabilidad equivalentes."
+
+msgid "Preservation references are 90 percent of source text and 85 percent of source links and images. They are reported as evidence and do not change Automated metrics acceptance."
+msgstr "Las referencias de conservación son el 90 por ciento del texto y el 85 por ciento de enlaces e imágenes originales. Se informan como evidencia y no modifican la aceptación por métricas automáticas."
+
+msgid "Prompts, model responses and evaluator feedback"
+msgstr "Prompts, respuestas del modelo y feedback de evaluación"
+
+msgid "LLM call"
+msgstr "Llamada LLM"
+
+msgid "Transport status"
+msgstr "Estado de la solicitud"
+
+msgid "Prompt sent to the model"
+msgstr "Prompt enviado al modelo"
+
+msgid "Captured image supplied; encoded image omitted from this text view."
+msgstr "Se proporcionó la captura; su codificación se omite en esta vista de texto."
+
+msgid "Response returned by the model"
+msgstr "Respuesta devuelta por el modelo"
+
+msgid "No response was recorded."
+msgstr "No se registró una respuesta."
+
+msgid "Per-call evidence is unavailable for this iteration. The following is the stored iteration prompt, not a reconstruction of individual calls."
+msgstr "Esta iteración no tiene evidencia por llamada. Lo siguiente es el prompt guardado de la iteración, no una reconstrucción de llamadas individuales."
+
+msgid "Stored iteration prompt"
+msgstr "Prompt guardado de la iteración"
+
+msgid "Evaluator and coordinator feedback after this iteration"
+msgstr "Feedback de evaluación y coordinación tras esta iteración"
+
+msgid "This is the stored evaluation/review feedback and resulting decision. It may combine measured tool findings and configured specialist assessments. If refinement continues, it informs the next prompt."
+msgstr "Este es el feedback guardado de evaluación/revisión y la decisión resultante. Puede combinar hallazgos medidos y revisiones de especialistas configurados. Si continúa el refinamiento, se incorpora al siguiente prompt."
+
+msgid "Procedures followed"
+msgstr "Procedimientos seguidos"
+
+msgid "Software tools executed"
+msgstr "Herramientas de software ejecutadas"
+
+msgid "Skills are versioned procedures; tools are typed software functions. Neither name alone implies an LLM call."
+msgstr "Las skills son procedimientos versionados; las herramientas son funciones de software con contratos de tipos. Su nombre por sí solo no implica una llamada LLM."
+
+msgid "Technical provenance: versions and digests"
+msgstr "Procedencia técnica: versiones y hashes"
+
+msgid "Strategy used and why"
+msgstr "Estrategia utilizada y motivos"
+
+msgid "Recorded intervention"
+msgstr "Intervención registrada"
+
+msgid "Selector-scoped DOM patches preserve the acquired page"
+msgstr "Parches DOM delimitados por selectores conservan la página adquirida"
+
+msgid "operations applied"
+msgstr "operaciones aplicadas"
+
+msgid "Design base"
+msgstr "Base de diseño"
+
+msgid "Original page; no imposed framework"
+msgstr "Página original; sin framework impuesto"
+
+msgid "The recorded design base applies to whole-page regeneration."
+msgstr "La base de diseño registrada se aplica a la regeneración completa."
+
+msgid "Localized repairs preserve the source framework. Framework examples are guidance, not a selected page template."
+msgstr "Las reparaciones locales conservan el framework original. Sus ejemplos son orientación, no una plantilla de página elegida."
+
+msgid "Component guidance supplied"
+msgstr "Orientación de componentes proporcionada"
+
+msgid "Generation"
+msgstr "Generación"
+
+msgid "DOM divergence measured after generation"
+msgstr "Divergencia DOM medida después de generar"
+
+msgid "Retrieved RAG-ACT evidence"
+msgstr "Evidencia RAG-ACT recuperada"
+
+msgid "Time and cost by pipeline stage"
+msgstr "Tiempo y coste por etapa"
+
+msgid "LLM calls"
+msgstr "Llamadas LLM"
+
+msgid "Model cost"
+msgstr "Coste del modelo"
+
+msgid "No LLM call"
+msgstr "Sin llamada LLM"
+
+msgid "External API cost"
+msgstr "Coste de API externa"
+
+msgid "Software tool"
+msgstr "Herramienta de software"
+
+msgid "External evaluator"
+msgstr "Evaluador externo"
+
+msgid "Software coordinator"
+msgstr "Coordinador de software"
+
+msgid "Software validator"
+msgstr "Validador de software"
+
+msgid "LLM stage"
+msgstr "Etapa LLM"
+
+msgid "LLM response"
+msgstr "Respuesta LLM"
+
+msgid "Software activity"
+msgstr "Actividad de software"
+
+msgid "RAG-ACT"
+msgstr "RAG-ACT"
+
+msgid "Adaptive RAG-ACT grounding"
+msgstr "Evidencia adaptativa RAG-ACT"
+
+msgid "RAG-ACT grounding"
+msgstr "Evidencia RAG-ACT"
+
+msgid "RAG-ACT used"
+msgstr "RAG-ACT utilizado"
+
+msgid "RAG-ACT not used — no examples supplied in this iteration."
+msgstr "RAG-ACT no utilizado: no se proporcionaron ejemplos en esta iteración."
+
+msgid "RAG-ACT not used in this iteration."
+msgstr "RAG-ACT no utilizado en esta iteración."
+
+msgid "RAG-ACT retrieval coverage"
+msgstr "Cobertura de recuperación RAG-ACT"
+
+msgid "No examples were supplied in this iteration; enabled RAG-ACT does not imply used RAG-ACT."
+msgstr "No se proporcionaron ejemplos en esta iteración; habilitar RAG-ACT no implica utilizarlo."
+
+msgid "Ollama connection verified. No generation was performed."
+msgstr "Conexión con Ollama verificada. No se generó contenido."
+
+msgid "Capabilities not verified"
+msgstr "Capacidades no verificadas"
+
+msgid "Compare with original"
+msgstr "Comparar con el original"
+
+msgid "examples"
+msgstr "ejemplos"
+
+msgid "Group label"
+msgstr "Nombre del grupo"
+
+msgid "Ranks"
+msgstr "Rangos"
+
+msgid "Sites to evaluate"
+msgstr "Sitios por evaluar"
+
+msgid "Agentic activity log"
+msgstr "Registro de actividad agéntica"
+
+msgid "events"
+msgstr "eventos"
+
+msgid "RAG-ACT corpus is not initialized. Synchronize the local examples before using retrieval; evaluation remains available."
+msgstr "El corpus RAG-ACT no está inicializado. Sincroniza los ejemplos antes de recuperar evidencia; la evaluación sigue disponible."
+
+msgid "RAG-ACT corpus is empty. Synchronize the local examples before using retrieval; evaluation remains available."
+msgstr "El corpus RAG-ACT está vacío. Sincroniza los ejemplos antes de recuperar evidencia; la evaluación sigue disponible."
+
+msgid "RAG-ACT: W3C ACT examples and source-attributed complementary guidance"
+msgstr "RAG-ACT: ejemplos ACT del W3C y orientación complementaria con fuente identificada"
+
+msgid "Average of %(count)s measures"
+msgstr "Promedio de %(count)s medidas"
+
+msgid "Words"
+msgstr "Palabras"
+
+msgid "Banners and media"
+msgstr "Banners y medios"
+
+msgid "Content"
+msgstr "Contenido"
+
+msgid "Candidate"
+msgstr "Candidato"
+
+msgid "Retained"
+msgstr "Conservado"
+
+msgid "Original banners and media found in the candidate"
+msgstr "Banners y medios originales encontrados en el candidato"
+
+msgid "Best Practices"
+msgstr "Buenas prácticas"
+
+msgid "URLs"
+msgstr "URLs"
+
+msgid "HTML structure"
+msgstr "Estructura HTML"
+
+msgid "Visual similarity (RGB)"
+msgstr "Similitud visual (RGB)"
+
+msgid "Counts HTML tags and selected semantic attributes, not words, model tokens or pixels."
+msgstr "Cuenta etiquetas HTML y determinados atributos semánticos, no palabras, tokens del modelo ni píxeles."
+
+msgid "Color similarity between resized upper-page screenshots; higher values mean more similar colors, not better accessibility."
+msgstr "Similitud de colores entre capturas reducidas de la parte superior de la página; valores mayores indican colores más parecidos, no mejor accesibilidad."
+
+msgid "Tool"
+msgstr "Herramienta"
+
+msgid "Control"
+msgstr "Control"
+
+msgid "Validation"
+msgstr "Validación"
+
+msgid "Function"
+msgstr "Función"
+
+msgid "LLM"
+msgstr "LLM"
+
+msgid "Loads the frozen acquisition."
+msgstr "Carga la adquisición congelada."
+
+msgid "Requests candidate generation and records its progress."
+msgstr "Solicita la generación del candidato y registra su avance."
+
+msgid "Runs Axe, Lighthouse and the configured optional evaluators."
+msgstr "Ejecuta Axe, Lighthouse y los evaluadores opcionales configurados."
+
+msgid "Searches the local RAG-ACT example corpus."
+msgstr "Busca ejemplos en el corpus local de RAG-ACT."
+
+msgid "Stops additional work under the frozen budget."
+msgstr "Detiene el trabajo adicional según el presupuesto congelado."
+
+msgid "Records a pipeline operation."
+msgstr "Registra una operación del proceso."
+
+msgid "Number of opening and closing tags in the sequence used for DOM divergence. Selected semantic attributes affect the comparison, not the count."
+msgstr "Número de etiquetas de apertura y cierre en la secuencia usada para la divergencia DOM. Los atributos semánticos seleccionados afectan la comparación, no el conteo."
+
+msgid "RAG-ACT knowledge"
+msgstr "Conocimiento RAG-ACT"
+
+msgid "Initialize knowledge"
+msgstr "Inicializar conocimiento"
+
+msgid "Update knowledge"
+msgstr "Actualizar conocimiento"
+
+msgid "Available"
+msgstr "Disponible"
+
+msgid "Not initialized"
+msgstr "Sin inicializar"
+
+msgid "Vector database unavailable"
+msgstr "Base de datos vectorial no disponible"
+
+msgid "Waiting for the worker"
+msgstr "Esperando al worker"
+
+msgid "Starting synchronization"
+msgstr "Iniciando sincronización"
+
+msgid "Downloading ACT examples"
+msgstr "Descargando ejemplos ACT"
+
+msgid "Preparing examples"
+msgstr "Preparando ejemplos"
+
+msgid "Indexing examples"
+msgstr "Indexando ejemplos"
+
+msgid "Verifying the new corpus"
+msgstr "Verificando el corpus nuevo"
+
+msgid "Synchronization completed"
+msgstr "Sincronización completada"
+
+msgid "Synchronization failed"
+msgstr "Falló la sincronización"
+
+msgid "Could not load synchronization status. Try again."
+msgstr "No se pudo cargar el estado de sincronización. Inténtalo de nuevo."
+
+msgid "Wait for queued or running remediations to finish before synchronizing."
+msgstr "Espera a que terminen las remediaciones pendientes o en ejecución antes de sincronizar."
+
+msgid "Update the local RAG-ACT corpus? Future runs will use the new examples. Previous corpus snapshots and saved run evidence will be preserved. No LLM calls are made."
+msgstr "¿Actualizar el corpus RAG-ACT local? Las corridas futuras usarán los nuevos ejemplos. Se conservarán los corpus anteriores y las evidencias guardadas. No se realizan llamadas LLM."
+
+msgid "Synchronization was interrupted. Start it again explicitly."
+msgstr "La sincronización se interrumpió. Iníciala de nuevo explícitamente."
+
+msgid "Synchronization failed. The previous corpus was preserved. See worker logs."
+msgstr "Falló la sincronización. Se conservó el corpus anterior. Consulta los registros del worker."
+
+msgid "Initialize or update the examples used by adaptive retrieval. This is separate from enabling RAG-ACT in a remediation. No LLM or paid embedding calls are made."
+msgstr "Inicializa o actualiza los ejemplos usados por la recuperación adaptativa. Es independiente de activar RAG-ACT en una remediación. No se realizan llamadas LLM ni embeddings de pago."
+
+msgid "Corpus status"
+msgstr "Estado del corpus"
+
+msgid "Official ACT examples"
+msgstr "Ejemplos ACT oficiales"
+
+msgid "Platform-authored examples"
+msgstr "Ejemplos creados por la plataforma"
+
+msgid "Last synchronization"
+msgstr "Última sincronización"
+
+msgid "Refresh status"
+msgstr "Actualizar estado"
+
+msgid "Corpus synchronization progress"
+msgstr "Progreso de sincronización del corpus"
+
+msgid "Synchronization is already running."
+msgstr "La sincronización ya está en ejecución."
+
+msgid "Choose Initialize or Update."
+msgstr "Selecciona Inicializar o Actualizar."
+
+msgid "Confirm the corpus update first."
+msgstr "Confirma primero la actualización del corpus."
+
+msgid "Synchronization is already queued."
+msgstr "La sincronización ya está pendiente."
+
+msgid "The corpus already contains examples. Use Update knowledge."
+msgstr "El corpus ya contiene ejemplos. Usa Actualizar conocimiento."
+
+msgid "Send a JSON maintenance request."
+msgstr "Envía una solicitud de mantenimiento en JSON."
+
+msgid "Could not request synchronization. Check the vector database and shared storage."
+msgstr "No se pudo solicitar la sincronización. Revisa la base de datos vectorial y el almacenamiento compartido."
+
+msgid "Initialize in Configuration"
+msgstr "Inicializar en Configuración"
+
+msgid "Confirm action"
+msgstr "Confirmar acción"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Continue"
+msgstr "Continuar"
+
+msgid "Resource limits per run"
+msgstr "Límites de recursos por corrida"
+
+msgid "Cost and time limits apply to each new run, across all intervention levels."
+msgstr "Los límites de coste y tiempo se aplican a cada nueva corrida, en todos los niveles de intervención."
+
+msgid "These limits apply to new runs. Cost and time stop continuation between operations; an operation already in progress may exceed them."
+msgstr "Estos límites se aplican a nuevas corridas. El coste y el tiempo detienen la continuación entre operaciones; una operación en curso puede superarlos."
+
+msgid "Maximum iterations"
+msgstr "Máximo de iteraciones"
+
+msgid "1–10. Single-call modes always use one iteration."
+msgstr "1–10. Los modos de una sola llamada siempre usan una iteración."
+
+msgid "Cost limit (USD)"
+msgstr "Límite de coste (USD)"
+
+msgid "0.01–100. Default: US$0.25 per run."
+msgstr "0.01–100. Predeterminado: US$0.25 por corrida."
+
+msgid "Time limit (seconds)"
+msgstr "Límite de tiempo (segundos)"
+
+msgid "30–7200. Default: 360 seconds per run."
+msgstr "30–7200. Predeterminado: 360 segundos por corrida."
+
+msgid "Invalid remediation settings. Check the target and resource-limit ranges."
+msgstr "Configuración de remediación inválida. Revisa los rangos de objetivos y límites de recursos."
+
+msgid "Saved RAG-ACT examples"
+msgstr "Ejemplos RAG-ACT guardados"
+
+msgid "Browse saved examples"
+msgstr "Explorar ejemplos guardados"
+
+msgid "Opens in a new tab"
+msgstr "Se abre en una pestaña nueva"
+
+msgid "Inspect the indexed corpus without synchronizing it or making model calls."
+msgstr "Consulta el corpus indexado sin sincronizarlo ni realizar llamadas a modelos."
+
+msgid "The active corpus changed. Reload the example browser."
+msgstr "El corpus activo cambió. Vuelve a cargar el explorador de ejemplos."
+
+msgid "Could not load saved examples. Check the vector database and try again."
+msgstr "No se pudieron cargar los ejemplos guardados. Revisa la base de datos vectorial e intenta de nuevo."
+
+msgid "Reload examples"
+msgstr "Volver a cargar ejemplos"
+
+msgid "Back to examples"
+msgstr "Volver a los ejemplos"
+
+msgid "Rule ID"
+msgstr "ID de regla"
+
+msgid "Test case ID"
+msgstr "ID del caso de prueba"
+
+msgid "Expected outcome"
+msgstr "Resultado esperado"
+
+msgid "Requirements"
+msgstr "Requisitos"
+
+msgid "Retrieved at"
+msgstr "Fecha de obtención"
+
+msgid "License"
+msgstr "Licencia"
+
+msgid "Snapshot SHA-256"
+msgstr "SHA-256 del snapshot"
+
+msgid "Example version"
+msgstr "Versión del ejemplo"
+
+msgid "Original example"
+msgstr "Ejemplo original"
+
+msgid "Rule documentation"
+msgstr "Documentación de la regla"
+
+msgid "Source index"
+msgstr "Índice de origen"
+
+msgid "Stored HTML"
+msgstr "HTML guardado"
+
+msgid "Shown as text only. Scripts and external resources are not executed or loaded."
+msgstr "Se muestra solo como texto. No se ejecutan scripts ni se cargan recursos externos."
+
+msgid "%(total)s saved examples: %(official)s official ACT cases covering %(rules)s rules, and %(complementary)s platform-authored examples."
+msgstr "%(total)s ejemplos guardados: %(official)s casos ACT oficiales de %(rules)s reglas y %(complementary)s ejemplos creados por la plataforma."
+
+msgid "Only approved passed/failed ACT cases are indexed, not the entire upstream catalogue. Platform-authored examples are counted separately."
+msgstr "Solo se indexan casos ACT aprobados con resultado passed/failed, no todo el catálogo de origen. Los ejemplos creados por la plataforma se cuentan por separado."
+
+msgid "At synchronization: %(total)s upstream cases, %(approved)s approved, %(eligible)s eligible passed/failed cases."
+msgstr "Al sincronizar: %(total)s casos de origen, %(approved)s aprobados y %(eligible)s casos passed/failed elegibles."
+
+msgid "Corpus provenance"
+msgstr "Procedencia del corpus"
+
+msgid "W3C ACT Rules catalogue"
+msgstr "Catálogo de reglas ACT de W3C"
+
+msgid "Collection"
+msgstr "Colección"
+
+msgid "All sources"
+msgstr "Todas las fuentes"
+
+msgid "All outcomes"
+msgstr "Todos los resultados"
+
+msgid "passed"
+msgstr "Superado"
+
+msgid "Apply filters"
+msgstr "Aplicar filtros"
+
+msgid "Search rule names, titles, rule/test case IDs or WCAG requirements. Filters do not change the stored corpus."
+msgstr "Busca nombres de reglas, títulos, IDs de reglas/casos o requisitos WCAG. Los filtros no modifican el corpus guardado."
+
+msgid "Search examples"
+msgstr "Buscar ejemplos"
+
+msgid "Saved examples pagination"
+msgstr "Paginación de ejemplos guardados"
+
+msgid "Indexed examples matching the current filters"
+msgstr "Ejemplos indexados que coinciden con los filtros actuales"
+
+msgid "Rule"
+msgstr "Regla"
+
+msgid "Example"
+msgstr "Ejemplo"
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "View example"
+msgstr "Ver ejemplo"
+
+msgid "No saved examples match these filters."
+msgstr "Ningún ejemplo guardado coincide con estos filtros."
+
+msgid "HTML SHA-256"
+msgstr "SHA-256 del HTML"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Breadcrumbs"
+msgstr "Ruta de navegación"
+
+msgid "Evaluation #%(id)s"
+msgstr "Evaluación #%(id)s"
+
+msgid "Remediation #%(id)s"
+msgstr "Remediación #%(id)s"
+
+msgid "Comparison #%(id)s"
+msgstr "Comparación #%(id)s"
+
+msgid "Templates"
+msgstr "Plantillas"
+
+msgid "Initialize in RAG-ACT"
+msgstr "Inicializar en RAG-ACT"
+
+msgid "Passed"
+msgstr "Superado"
+
+msgid "Loading examples…"
+msgstr "Cargando ejemplos…"
+
+msgid "Could not update the example list. Previous results remain visible; try again."
+msgstr "No se pudo actualizar la lista. Se conservan los resultados anteriores; vuelve a intentarlo."
+
+msgid "List view"
+msgstr "Vista del listado"
+
+msgid "Table"
+msgstr "Tabla"
+
+msgid "Cards"
+msgstr "Tarjetas"
+
+msgid "Only approved passed/failed ACT cases are indexed to provide examples of accessibility barriers and correct implementations; unapproved and inapplicable cases are excluded."
+msgstr "Solo se indexan casos ACT aprobados con resultado passed/failed para aportar ejemplos de barreras de accesibilidad e implementaciones correctas; se excluyen los casos no aprobados y los no aplicables."

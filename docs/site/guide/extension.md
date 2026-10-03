@@ -22,7 +22,7 @@ An explicit model snapshot and research targets are frozen at request submission
 
 ## What happens after submission
 
-**Use stored results** is enabled by default. A11yResearch reuses an available completed frozen acquisition for the normalized URL. When that same source and frozen configuration already have a retained remediation, it retrieves that candidate without another generation or evaluation. Matching includes the model/reasoning configuration, intervention level, ACT retrieval, research targets and local-provider configuration where applicable. An equivalent request still in progress is followed rather than duplicated. Changing these controls creates a new remediation of the saved source.
+**Use stored results** is enabled by default. Matching uses the normalized URL and the two sliders: the actual model/reasoning choice and intervention level. RAG-ACT, targets and catalogue presentation changes do not prevent recovery. Retained results from normal backend runs are also available, even if a newer acquisition exists. An equivalent request still in progress is followed rather than duplicated. Recovery makes no generation or evaluation call and keeps the original source, timestamps, targets and recorded RAG setting; the completion panel describes that saved run. Failed runs, missing candidates and zero-shot runs are not reused as iterative repairs. Both interfaces start at **Minimal patches**.
 
 If no acquisition exists, A11yResearch queues a one-page acquisition before remediation. To capture the current remote page again and repeat remediation, disable **Use stored results** before submitting. This may incur model charges. Existing sources, results and their original timestamps remain unchanged.
 

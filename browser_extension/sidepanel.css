@@ -25,7 +25,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .dots i{width:6px;height:6px;background:color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:50%}
 .slider-card p{color:var(--muted);font-size:12px;margin:4px 0}
 .slider-card small{display:block;color:var(--muted);font-size:11px;border-top:1px solid var(--line);padding-top:4px}
-.toggle{display:flex;gap:8px;margin:2px 0}
+.toggle{display:flex;align-items:center;gap:8px;margin:2px 0;font-size:13px}
 .toggle input{accent-color:#d47c18}
 .toggle input[role=switch]{appearance:none;-webkit-appearance:none;width:30px;height:17px;flex:0 0 30px;border:1px solid var(--muted);border-radius:99px;background:var(--muted);margin:2px 0;position:relative;cursor:pointer}
 .toggle input[role=switch]::after{content:'';position:absolute;width:11px;height:11px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .15s}

@@ -40,3 +40,16 @@ Sampling tests cover allocation, deterministic ordering, replacements and nonres
 ## Changes needing a migration plan
 
 Database/schema changes, export format changes, new worker concurrency and changed candidate acceptance are not cosmetic updates. Specify backward compatibility, recoverability, evidence versioning and tests before deploying them to an active installation.
+
+## Shared interface styling
+
+Reuse the shared controls and semantic colors across screens. The component
+skin in `web/app/static/css/theme.css` loads after page styles. Run
+`python web/tools/sync_theme_assets.py` after editing it: the extension packages
+an identical local copy rather than loading styles from the backend.
+
+Light uses soft fills and outlined components; dark shares those roles with
+adjusted contrast. Remediation model and intervention slider cards are exempt:
+keep their own palette, range widgets and typography in both interfaces.
+Avoid redefining their inherited tokens. Check focus, disabled/hover states,
+responsive layouts and both themes when changing a shared component.

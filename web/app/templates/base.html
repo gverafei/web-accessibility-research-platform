@@ -5,23 +5,24 @@
     <title>{% block title %}A11yResearch: Web Accessibility Research Platform{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <script>try{const root=document.documentElement,choice=root.dataset.themeChoice,media=matchMedia('(prefers-color-scheme: dark)'),apply=()=>root.dataset.theme=choice==='system'?(media.matches?'dark':'light'):choice;apply();if(choice==='system')media.addEventListener('change',apply);if(localStorage.getItem('sidebar-collapsed')==='true')root.classList.add('sidebar-precollapsed')}catch(_){}</script>
+    <script>try{const root=document.documentElement,media=matchMedia('(prefers-color-scheme: dark)'),apply=()=>root.dataset.theme=root.dataset.themeChoice==='system'?(media.matches?'dark':'light'):root.dataset.themeChoice;apply();media.addEventListener('change',apply);if(localStorage.getItem('sidebar-collapsed')==='true')root.classList.add('sidebar-precollapsed')}catch(_){}</script>
 
     <link 
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
         rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='20260930-brand') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/remediation_layout.css', v='20260916-4') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='20261002-shared-hover') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/remediation_layout.css', v='20261002-neutral-metrics') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/evaluation_history.css', v='20260924-2') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/model_catalog.css', v='20260929-3') }}">
     {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css', v='20261003-help') }}">
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
 <div class="app-shell">
 <aside class="app-sidebar" id="appSidebar">
-    <div class="sidebar-head"><a class="sidebar-name sidebar-label" href="{{ url_for('experiments.index') }}" title="A11yResearch: Web Accessibility Research Platform">A11yResearch<span class="sidebar-description">Web Accessibility<br>Research Platform</span></a><button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle navigation" title="Toggle navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button></div>
+    <div class="sidebar-head"><a class="sidebar-name sidebar-label" href="{{ url_for('experiments.index') }}" title="A11yResearch: Web Accessibility Research Platform">A11yResearch<span class="sidebar-description">Web Accessibility Research Platform</span></a><button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle navigation" title="Toggle navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button></div>
     <nav class="sidebar-nav" aria-label="Main navigation">
         <a class="sidebar-link{% if request.endpoint == 'experiments.index' %} active{% endif %}" aria-label="{{ _('Dashboard') }}"{% if request.endpoint == 'experiments.index' %} aria-current="page"{% endif %} href="{{ url_for('experiments.index') }}"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Zm10 7h6V11h-6v9ZM4 20h6v-3H4v3Zm10-13h6V4h-6v3Z"/></svg><span class="sidebar-label">{{ _("Dashboard") }}</span></a>
         <a class="sidebar-link{% if request.endpoint == 'experiments.new_acquisition' %} active{% endif %}" aria-label="{{ _('New acquisition') }}"{% if request.endpoint == 'experiments.new_acquisition' %} aria-current="page"{% endif %} href="{{ url_for('experiments.new_acquisition') }}"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="sidebar-label">{{ _("New acquisition") }}</span></a>
@@ -32,6 +33,7 @@
         <a class="sidebar-link{% if request.blueprint == 'comparisons' %} active{% endif %}" aria-label="{{ _('Comparisons') }}"{% if request.blueprint == 'comparisons' %} aria-current="page"{% endif %} href="{{ url_for('comparisons.comparisons') }}"><svg viewBox="0 0 24 24"><path d="M5 5v14M19 5v14M5 8h7M12 16h7M9 5l3 3-3 3M15 13l-3 3 3 3"/></svg><span class="sidebar-label">{{ _("Comparisons") }}</span></a>
         <a class="sidebar-link{% if request.endpoint == 'experiments.manage_urls' %} active{% endif %}" aria-label="{{ _('Manage URLs') }}"{% if request.endpoint == 'experiments.manage_urls' %} aria-current="page"{% endif %} href="{{ url_for('experiments.manage_urls') }}"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h8"/><path d="m16 15 4 4m0-4-4 4"/></svg><span class="sidebar-label">{{ _("Manage URLs") }}</span></a>
         <a class="sidebar-link{% if request.endpoint == 'experiments.import_experiment_json' %} active{% endif %}" aria-label="{{ _('Import') }}"{% if request.endpoint == 'experiments.import_experiment_json' %} aria-current="page"{% endif %} href="{{ url_for('experiments.import_experiment_json') }}"><svg viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg><span class="sidebar-label">{{ _("Import") }}</span></a>
+        <a class="sidebar-link{% if request.blueprint == 'rag_maintenance' %} active{% endif %}" aria-label="{{ _('RAG-ACT') }}"{% if request.blueprint == 'rag_maintenance' %} aria-current="page"{% endif %} href="{{ url_for('rag_maintenance.examples') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v15M3 4h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3Z"/></svg><span class="sidebar-label">{{ _("RAG-ACT") }}</span></a>
         <a class="sidebar-link{% if request.endpoint == 'experiments.configuration' %} active{% endif %}"{% if request.endpoint == 'experiments.configuration' %} aria-current="page"{% endif %} href="{{ url_for('experiments.configuration') }}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg><span class="sidebar-label">{{ _("Configuration") }}</span></a>
     </nav>
 </aside>
@@ -50,25 +52,24 @@
                     <li><a class="dropdown-item{% if current_locale == 'es' %} active{% endif %}" lang="es" href="{{ url_for('experiments.set_language', language='es', next=request.full_path) }}">Español</a></li>
                 </ul>
             </div>
-            <div class="nav-item dropdown">
-                <button class="nav-utility dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ _('Color theme') }}">
-                    {% if ui_theme == 'dark' %}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"></path></svg>
-                    {% elif ui_theme == 'system' %}<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
-                    {% else %}<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>{% endif %}
-                    <span class="visually-hidden">{{ _('Color theme') }}</span>
+            <div class="nav-item">
+                <button class="nav-utility theme-cycle" id="themeCycle" type="button" aria-label="{{ _('Color theme') }}"
+                        data-label="{{ _('Color theme') }}" data-label-light="{{ _('Light') }}" data-label-dark="{{ _('Dark') }}" data-label-system="{{ _('Follow operating system') }}"
+                        data-url-light="{{ url_for('experiments.set_theme', theme='light') }}" data-url-dark="{{ url_for('experiments.set_theme', theme='dark') }}" data-url-system="{{ url_for('experiments.set_theme', theme='system') }}"
+                        data-error="{{ _('Could not save color theme. Please try again.') }}">
+                    <svg data-theme-icon="dark"{% if ui_theme != 'dark' %} hidden{% endif %} viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"></path></svg>
+                    <svg data-theme-icon="system"{% if ui_theme != 'system' %} hidden{% endif %} viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+                    <svg data-theme-icon="light"{% if ui_theme != 'light' %} hidden{% endif %} viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item{% if ui_theme == 'light' %} active{% endif %}" href="{{ url_for('experiments.set_theme', theme='light', next=request.full_path) }}">{{ _('Light') }}</a></li>
-                    <li><a class="dropdown-item{% if ui_theme == 'dark' %} active{% endif %}" href="{{ url_for('experiments.set_theme', theme='dark', next=request.full_path) }}">{{ _('Dark') }}</a></li>
-                    <li><a class="dropdown-item{% if ui_theme == 'system' %} active{% endif %}" href="{{ url_for('experiments.set_theme', theme='system', next=request.full_path) }}">{{ _('Follow operating system') }}</a></li>
-                </ul>
+                <span class="visually-hidden" id="themeCycleStatus" role="status" aria-live="polite"></span>
             </div>
         </div>
 </header>
-<div class="search-overlay" id="searchOverlay" hidden><button class="search-backdrop" type="button" aria-label="{{ _('Close') }}"></button><section class="search-dialog" role="dialog" aria-modal="true" aria-label="{{ _('Search experiments and URLs') }}"><div class="search-dialog-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="searchDialogInput" type="search" placeholder="{{ _('Search experiments and URLs') }}" autocomplete="off"><kbd>Esc</kbd></div><div class="search-suggestions" id="searchSuggestions"><p>{{ _('Start typing to search experiment names, URLs, or status.') }}</p></div></section></div>
+<div class="search-overlay" id="searchOverlay" data-url="{{ url_for('experiments.experiment_search_suggestions') }}" data-loading="{{ _('Searching…') }}" data-empty="{{ _('No experiments match your search.') }}" data-error="{{ _('Search suggestions are temporarily unavailable.') }}" hidden><button class="search-backdrop" type="button" aria-label="{{ _('Close') }}"></button><section class="search-dialog" role="dialog" aria-modal="true" aria-label="{{ _('Search experiments and URLs') }}"><div class="search-dialog-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="searchDialogInput" type="search" placeholder="{{ _('Search experiments and URLs') }}" aria-label="{{ _('Search experiments and URLs') }}" aria-describedby="globalSearchHelp" autocomplete="off"><kbd>Esc</kbd></div><p class="search-help" id="globalSearchHelp">{{ _('Search evaluation names, URLs/domains, status (completed, running), or origin (imported, composed). Click a result to open its report; Enter lists matching evaluations.') }}</p><div class="search-suggestions" id="searchSuggestions" aria-live="polite" aria-busy="false"></div></section></div>
 <dialog class="system-dialog" id="systemDialog" aria-labelledby="systemDialogTitle" aria-describedby="systemDialogMessage"><form method="dialog"><div class="system-dialog-icon" aria-hidden="true">!</div><div><h2 id="systemDialogTitle">{{ _("Confirm action") }}</h2><p id="systemDialogMessage"></p></div><div class="system-dialog-actions"><button class="btn btn-light" id="systemDialogCancel" value="cancel" type="submit">{{ _("Cancel") }}</button><button class="btn btn-primary" id="systemDialogConfirm" value="confirm" type="submit">{{ _("Continue") }}</button></div></form></dialog>
 
 <main class="container-fluid app-main py-4 px-3 px-lg-4">
+    {% include '_breadcrumbs.html' %}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -83,11 +84,12 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer class="app-footer"><div class="container-fluid px-3 px-lg-4"><a href="{{ url_for('experiments.about') }}">{{ _("About this research software") }}</a></div></footer>
+<footer class="app-footer"><div class="container-fluid px-3 px-lg-4"><a href="{{ config.DOCUMENTATION_URL }}" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .5c0 1.7-2.5 1.7-2.5 3.5M12 16v1"/></svg> {{ _("Help and documentation") }}</a></div></footer>
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script src="{{ url_for('static', filename='js/chart_value_labels.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart_value_labels.js', v='20261002-clear-labels') }}"></script>
+<script src="{{ url_for('static', filename='js/theme_cycle.js', v='20261002') }}"></script>
 
 <script 
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
@@ -187,6 +189,6 @@
 <script src="{{ url_for('static', filename='js/number_format.js', v='20260920-1') }}"></script>
 <script>const shell=document.querySelector('.app-shell');const sidebarToggle=document.getElementById('sidebarToggle');const mobileSidebarToggle=document.getElementById('mobileSidebarToggle');if(document.documentElement.classList.contains('sidebar-precollapsed'))shell.classList.add('sidebar-collapsed');requestAnimationFrame(()=>shell.classList.add('sidebar-ready'));sidebarToggle?.addEventListener('click',()=>{shell.classList.toggle('sidebar-collapsed');document.documentElement.classList.toggle('sidebar-precollapsed',shell.classList.contains('sidebar-collapsed'));localStorage.setItem('sidebar-collapsed',shell.classList.contains('sidebar-collapsed'))});mobileSidebarToggle?.addEventListener('click',()=>shell.classList.toggle('sidebar-mobile-open'));document.addEventListener('click',event=>{if(shell.classList.contains('sidebar-mobile-open')&&!event.target.closest('.app-sidebar')&&!event.target.closest('#mobileSidebarToggle'))shell.classList.remove('sidebar-mobile-open')});</script>
 <script>document.querySelectorAll('.warp-export').forEach(link=>{let resetTimer,startedAt=0;const reset=()=>{clearTimeout(resetTimer);link.classList.remove('disabled');link.removeAttribute('aria-disabled');link.removeAttribute('aria-busy');link.removeAttribute('aria-label');link.style.width='';link.querySelector('.export-spinner')?.remove();const icon=link.querySelector('svg');if(icon)icon.hidden=false};link.addEventListener('click',event=>{if(link.getAttribute('aria-busy')==='true'){event.preventDefault();return}startedAt=Date.now();link.style.width=`${link.getBoundingClientRect().width}px`;link.classList.add('disabled');link.setAttribute('aria-disabled','true');link.setAttribute('aria-busy','true');link.setAttribute('aria-label',{{ _("Preparing export…")|tojson }});const icon=link.querySelector('svg');if(icon)icon.hidden=true;const spinner=document.createElement('span');spinner.className='spinner-border spinner-border-sm export-spinner';spinner.setAttribute('aria-hidden','true');link.prepend(spinner);resetTimer=setTimeout(reset,45000)});window.addEventListener('pageshow',reset);window.addEventListener('focus',()=>{if(startedAt&&Date.now()-startedAt>1500)reset()})});</script>
-<script>(()=>{const form=document.getElementById('globalSearch'),trigger=document.getElementById('globalSearchInput'),overlay=document.getElementById('searchOverlay'),dialogInput=document.getElementById('searchDialogInput'),results=document.getElementById('searchSuggestions'),backdrop=overlay.querySelector('.search-backdrop');let timer;const escapeHtml=value=>{const node=document.createElement('span');node.textContent=value??'';return node.innerHTML};const close=()=>{overlay.hidden=true;trigger.value=dialogInput.value};const render=data=>{const items=[...data.experiments.map(item=>`<a class="search-result" href="${item.href}"><span class="search-result-icon">#${item.id}</span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.status)} · ${escapeHtml(item.date)}</small></span></a>`),...data.urls.map(item=>`<a class="search-result" href="${item.href}"><span class="search-result-icon">URL</span><span><strong>${escapeHtml(item.url)}</strong><small>#${item.experiment_id} · ${escapeHtml(item.title)}</small></span></a>`)];results.innerHTML=items.length?items.join(''):`<p>{{ _('No experiments match your search.') }}</p>`};const search=()=>{clearTimeout(timer);timer=setTimeout(async()=>{try{const response=await fetch(`{{ url_for('experiments.experiment_search_suggestions') }}?q=${encodeURIComponent(dialogInput.value.trim())}`);render(await response.json())}catch(_){results.innerHTML=`<p>{{ _('Search suggestions are temporarily unavailable.') }}</p>`}},160)};const open=()=>{overlay.hidden=false;dialogInput.value=trigger.value;requestAnimationFrame(()=>{dialogInput.focus();dialogInput.select();search()})};trigger.addEventListener('focus',open);trigger.addEventListener('click',event=>{event.preventDefault();open()});dialogInput.addEventListener('input',search);dialogInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();window.location=`${form.action}?q=${encodeURIComponent(dialogInput.value.trim())}`}if(event.key==='Escape')close()});backdrop.addEventListener('click',close);document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();open()}else if(event.key==='Escape'&&!overlay.hidden)close()})})();</script>
+<script src="{{ url_for('static', filename='js/global_search.js', v='20261002-loading') }}"></script>
 </body>
 </html>

@@ -27,7 +27,9 @@
                         {maximumFractionDigits: 2});
                     const width = ctx.measureText(text).width + 8, height = 18;
                     const stacked = meta.vScale?.options.stacked;
-                    if (thickness < (horizontal ? height + 2 : width + 2)) return;
+                    // Outside labels need room between labels, not inside the bar.
+                    // Narrow grouped/Tranco bars may still have ample category space.
+                    if (thickness < (horizontal ? height + 2 : stacked ? width + 2 : 12)) return;
                     if (stacked && (value === 0 || length < (horizontal ? width + 2 : height + 2))) return;
                     let x = bar.x, y = bar.y;
                     if (stacked) {
@@ -45,8 +47,12 @@
                     if (box.left < area.left || box.right > area.right || box.top < area.top || box.bottom > area.bottom) return;
                     if (occupied.some(b => box.left < b.right+2 && box.right > b.left-2 && box.top < b.bottom+2 && box.bottom > b.top-2)) return;
                     occupied.push(box);
-                    ctx.fillStyle = dark ? '#17212b' : '#ffffff';
-                    ctx.fillRect(box.left, box.top, width, height);
+                    // Light bars already use translucent fills: draw directly
+                    // over them. Keep the dark-theme contrast backing unchanged.
+                    if (dark) {
+                        ctx.fillStyle = '#17212b';
+                        ctx.fillRect(box.left, box.top, width, height);
+                    }
                     ctx.fillStyle = dark ? '#f1f5f9' : '#17212b';
                     ctx.fillText(text, x, y);
                 });

@@ -21,9 +21,9 @@ class TrancoSamplingTests(unittest.TestCase):
     def test_expansion_preserves_existing_urls_and_adds_balanced_slots(self):
         ranking = [
             (rank, f"site{rank}.example")
-            for rank in (1, 2, 3, 4, 501, 502, 503, 504, 5001, 5002, 5003, 5004,
-                         50001, 50002, 50003, 50004,
-                         250001, 250002, 250003, 250004)
+            for rank in (1, 2, 3, 4, 1001, 1002, 1003, 1004, 10001, 10002, 10003, 10004,
+                         100001, 100002, 100003, 100004,
+                         500001, 500002, 500003, 500004)
         ]
         counts = {label: 1 for label, _name, _lower, _upper in TRANCO_STRATA}
         candidates, strata = sample_tranco(ranking, "94XL2", "seed", counts, counts)
@@ -75,8 +75,8 @@ class TrancoSamplingTests(unittest.TestCase):
     def test_sampling_is_deterministic_and_stratified(self):
         ranking = []
         for lower, upper in (
-            (1, 500), (501, 5_000), (5_001, 50_000),
-            (50_001, 250_000), (250_001, 1_000_000),
+            (1, 1000), (1001, 10_000), (10_001, 100_000),
+            (100_001, 500_000), (500_001, 1_000_000),
         ):
             for rank in range(lower, min(lower + 5, upper + 1)):
                 ranking.append((rank, f"site-{rank}.example"))
@@ -86,7 +86,7 @@ class TrancoSamplingTests(unittest.TestCase):
         self.assertEqual(len(first), 20)
         self.assertEqual(sum(item["role"] == "selected" for item in first), 10)
         self.assertEqual([item["selected_count"] for item in strata], [2] * 5)
-        self.assertEqual(strata[0]["display_name"], "Global top 500")
+        self.assertEqual(strata[0]["display_name"], "Global top 1,000")
 
     def test_failed_site_uses_next_reserve_in_same_stratum(self):
         candidates = [
@@ -102,11 +102,11 @@ class TrancoSamplingTests(unittest.TestCase):
     def test_exhausted_reserves_extend_the_same_deterministic_sequence(self):
         ranking = [(rank, f"site-{rank}.example") for rank in range(1, 21)]
         candidates, _ = sample_tranco(
-            ranking, "94XL2", "study", {"rank_1_500": 2}, {"rank_1_500": 1}
+            ranking, "94XL2", "study", {"rank_1_1000": 2}, {"rank_1_1000": 1}
         )
         existing = {item["domain"] for item in candidates}
         added = extend_ordered_reserves(
-            ranking, "94XL2", "study", candidates, {"rank_1_500"}, batch_size=5
+            ranking, "94XL2", "study", candidates, {"rank_1_1000"}, batch_size=5
         )
         self.assertEqual(len(added), 5)
         self.assertFalse(existing.intersection(item["domain"] for item in added))
@@ -114,23 +114,23 @@ class TrancoSamplingTests(unittest.TestCase):
 
     def test_sampling_allows_independent_group_sizes_and_disabled_groups(self):
         ranking = []
-        for lower in (1, 501, 5_001, 50_001, 250_001):
+        for lower in (1, 1001, 10_001, 100_001, 500_001):
             ranking.extend(
                 (rank, f"site-{rank}.example") for rank in range(lower, lower + 8)
             )
         counts = {
-            "rank_1_500": 3,
-            "rank_501_5000": 0,
-            "rank_5001_50000": 2,
-            "rank_50001_250000": 0,
-            "rank_250001_1000000": 1,
+            "rank_1_1000": 3,
+            "rank_1001_10000": 0,
+            "rank_10001_100000": 2,
+            "rank_100001_500000": 0,
+            "rank_500001_1000000": 1,
         }
         reserves = {label: (2 if count else 0) for label, count in counts.items()}
         candidates, strata = sample_tranco(ranking, "94XL2", "custom", counts, reserves)
         self.assertEqual(sum(item["role"] == "selected" for item in candidates), 6)
         self.assertEqual([item["selected_count"] for item in strata], [3, 0, 2, 0, 1])
         self.assertFalse(any(
-            item["stratum"] in {"rank_501_5000", "rank_50001_250000"}
+            item["stratum"] in {"rank_1001_10000", "rank_100001_500000"}
             for item in candidates
         ))
 
@@ -162,7 +162,7 @@ class TrancoSamplingTests(unittest.TestCase):
 
     def test_entire_top_500_is_allowed_and_leaves_no_reserves(self):
         ranking = [(rank, f"site-{rank}.example") for rank in range(1, 501)]
-        counts = {"rank_1_500": 500}
+        counts = {"rank_1_1000": 500}
         candidates, strata = sample_tranco(ranking, "94XL2", "study-seed", counts, counts)
         self.assertEqual(len(candidates), 500)
         self.assertTrue(all(item["role"] == "selected" for item in candidates))
@@ -188,18 +188,18 @@ class TrancoSamplingTests(unittest.TestCase):
     def test_target_cannot_exceed_actual_available_domains(self):
         ranking = [(1, "one.example"), (2, "two.example")]
         with self.assertRaisesRegex(TrancoImportError, "only 2 domains"):
-            sample_tranco(ranking, "94XL2", "study-seed", {"rank_1_500": 3}, 0)
+            sample_tranco(ranking, "94XL2", "study-seed", {"rank_1_1000": 3}, 0)
 
     def test_counts_require_nonnegative_whole_numbers(self):
         for count in (-1, 1.5, True, "2"):
             with self.subTest(count=count), self.assertRaisesRegex(TrancoImportError, "whole numbers"):
-                sample_tranco([], "94XL2", "study-seed", {"rank_1_500": count}, 0)
+                sample_tranco([], "94XL2", "study-seed", {"rank_1_1000": count}, 0)
         with self.assertRaisesRegex(TrancoImportError, "nonnegative"):
-            sample_tranco([], "94XL2", "study-seed", {"rank_1_500": 1}, -1)
+            sample_tranco([], "94XL2", "study-seed", {"rank_1_1000": 1}, -1)
 
     def test_expansion_can_exceed_old_top_cap_and_preserves_existing_urls(self):
         ranking = [(rank, f"site-{rank}.example") for rank in range(1, 501)]
-        candidates, strata = sample_tranco(ranking, "94XL2", "study", {"rank_1_500": 100}, 0)
+        candidates, strata = sample_tranco(ranking, "94XL2", "study", {"rank_1_1000": 100}, 0)
         # Expansion applies to enabled groups of this one-stratum collection.
         strata = [strata[0]]
         current = [item["url"] for item in candidates if item["role"] == "selected"]

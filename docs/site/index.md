@@ -74,3 +74,7 @@ Acquisition and ordinary Axe/Lighthouse evaluation do **not** call an LLM. Model
 - **Administrator:** [settings](technical/settings.md), [storage](technical/storage.md), and [security](technical/security.md).
 
 This site describes the source on the repository's main branch. The editable model catalogue and saved run configurations let researchers adapt experiments to available providers while retaining the settings used for each result.
+
+Documentation reviewed against the implementation on **3 October 2026**.
+Use **Help and documentation** at the foot of the application to return here;
+the site's search covers both researcher guides and technical references.

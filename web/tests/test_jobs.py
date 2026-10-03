@@ -16,7 +16,7 @@ class EvaluationRequestTests(unittest.TestCase):
     def full_top_stratum(self, retries):
         from tranco_sampling import sample_tranco
         ranking = [(rank, f"site-{rank}.example") for rank in range(1, 501)]
-        candidates, strata = sample_tranco(ranking, "TEST123", "census", {"rank_1_500": 500}, 500)
+        candidates, strata = sample_tranco(ranking, "TEST123", "census", {"rank_1_1000": 500}, 500)
         for item in candidates:
             item["retry_count"] = retries
         failures = [{"id": i + 1, "url": item["url"], "error_message": "DNS failure"}

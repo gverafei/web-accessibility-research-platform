@@ -14,17 +14,28 @@ import requests
 
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 TRANCO_STRATA = (
-    ("rank_1_500", "Global top 500", 1, 500),
-    ("rank_501_5000", "Very high popularity", 501, 5_000),
-    ("rank_5001_50000", "High popularity", 5_001, 50_000),
-    ("rank_50001_250000", "Medium popularity", 50_001, 250_000),
-    ("rank_250001_1000000", "Popularity tail", 250_001, 1_000_000),
+    ("rank_1_1000", "Global top 1,000", 1, 1_000),
+    ("rank_1001_10000", "Very high popularity", 1_001, 10_000),
+    ("rank_10001_100000", "High popularity", 10_001, 100_000),
+    ("rank_100001_500000", "Medium popularity", 100_001, 500_000),
+    ("rank_500001_1000000", "Popularity tail", 500_001, 1_000_000),
 )
 LIST_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{3,100}$")
 
 
 class TrancoImportError(ValueError):
     pass
+
+
+def form_strata(form):
+    """Freeze editable display labels without changing rank membership or IDs."""
+    definitions = []
+    for label, name, lower, upper in TRANCO_STRATA:
+        display = str(form.get(f"tranco_label_{label}", name)).strip()
+        if not display or len(display) > 120:
+            raise TrancoImportError("Use a nonempty Tranco group name of at most 120 characters.")
+        definitions.append((label, display, lower, upper))
+    return tuple(definitions)
 
 
 TRANCO_ORIGIN = "https://tranco-list.eu"

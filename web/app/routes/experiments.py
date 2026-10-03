@@ -51,6 +51,7 @@ from result_portability import (
     json_value,
     normalize_url,
     validate_portable_payload,
+    validate_archive_artifacts,
 )
 from settings import (
     SETTING_DEFAULTS,
@@ -155,11 +156,13 @@ def set_language(language):
     return redirect(next_url)
 
 
-@experiments_bp.route("/theme/<theme>", methods=["GET"])
+@experiments_bp.route("/theme/<theme>", methods=["GET", "POST"])
 def set_theme(theme):
     if theme not in {"light", "dark", "system"}:
         theme = "light"
     session["ui_theme"] = theme
+    if request.method == "POST":
+        return jsonify(theme=theme)
     next_url = request.args.get("next", "")
     parsed = urlsplit(next_url)
     if parsed.scheme or parsed.netloc or not next_url.startswith("/"):
@@ -239,6 +242,7 @@ def new_acquisition():
     return render_template(
         "index.html",
         wave_available=bool(settings["wave_api_key"]),
+        tranco_strata=TRANCO_STRATA,
     )
 
 
@@ -266,7 +270,7 @@ def configuration():
         try:
             common_conditions(values)
         except ValueError:
-            flash(_("Remediation targets must be whole numbers: Lighthouse from 0 to 100 and Axe from 0 to 2147483647."), "danger")
+            flash(_("Invalid remediation settings. Check the target and resource-limit ranges."), "danger")
             return redirect(url_for('experiments.configuration'))
         try:
             ZoneInfo(values["app_timezone"])
@@ -279,7 +283,7 @@ def configuration():
             capabilities = []
             if config:
                 selected = next((item for item in installed_local_models(config['base_url']) if item['id'] == config['model']), None)
-                if not selected:
+                if not selected or selected.get('capabilities_verified') is False:
                     raise ValueError('Select an installed local model.')
                 capabilities = selected['capabilities']
             values['ollama_capabilities_json'] = json.dumps(capabilities)
@@ -317,17 +321,17 @@ def configuration():
 
 @experiments_bp.post('/configuration/test-ollama')
 def test_ollama():
-    from local_llm import local_configuration, installed_local_models
+    from local_llm import installed_local_models
     try:
-        config = local_configuration(get_settings())
-        if not config:
-            raise ValueError('Configure and save the Ollama server and model first.')
-        installed = {item['id'] for item in installed_local_models(config['base_url'])}
-        if config['model'] not in installed:
+        saved = get_settings()
+        address = request.form.get('ollama_base_url', saved.get('ollama_base_url'))
+        model = request.form.get('ollama_model', saved.get('ollama_model'))
+        installed = {item['id'] for item in installed_local_models(address)}
+        if model and model not in installed:
             raise ValueError('The configured model is not installed on this Ollama server.')
-        flash(_('Ollama connection verified; the configured model is available. No generation was performed.'), 'success')
+        flash(_('Ollama connection verified. No generation was performed; save configuration to keep your selection.'), 'success')
     except (ValueError, KeyError, requests.RequestException):
-        flash(_('Could not verify Ollama. Check the saved server address, installed model and worker connectivity.'), 'danger')
+        flash(_('Could not verify Ollama. Check the server address, installed model and worker connectivity.'), 'danger')
     return redirect(url_for('experiments.configuration'))
 
 
@@ -337,7 +341,9 @@ def ollama_models():
     try:
         payload = request.get_json(silent=True) or {}
         return jsonify({'models': installed_local_models(payload.get('base_url'))})
-    except (ValueError, requests.RequestException):
+    except ValueError as error:
+        return jsonify({'error': _(str(error))}), 400
+    except requests.RequestException:
         return jsonify({'error': _('Could not load installed models. Check the Ollama server address and connectivity.')}), 400
 
 
@@ -403,7 +409,8 @@ def clear_experiments():
 
 @experiments_bp.route("/about", methods=["GET"])
 def about():
-    return render_template("about.html")
+    # Old bookmarks lead to the maintained guide, not a duplicate About page.
+    return redirect(current_app.config['DOCUMENTATION_URL'])
 
 
 @experiments_bp.route("/experiments", methods=["GET"])
@@ -717,7 +724,7 @@ def experiment_search_suggestions():
             {
                 "id": item["id"], "title": item["title"],
                 "status": item["status"], "date": str(item["created_at"]),
-                "href": url_for("experiments.experiment_report", experiment_id=item["id"]),
+                "href": url_for("experiments.experiment_report_loading", experiment_id=item["id"]),
             }
             for item in experiments_found
         ],
@@ -725,7 +732,7 @@ def experiment_search_suggestions():
             {
                 "experiment_id": item["experiment_id"], "url": item["url"],
                 "title": item["title"],
-                "href": url_for("experiments.experiment_report", experiment_id=item["experiment_id"]) + "#url-results",
+                "href": url_for("experiments.experiment_report_loading", experiment_id=item["experiment_id"]) + "#url-results",
             }
             for item in urls_found
         ],
@@ -1083,17 +1090,12 @@ def download_experiment_json(experiment_id):
         observations = cursor.fetchall()
     cursor.close()
     conn.close()
-    portable_results = []
-    for result in results:
-        data = {key: json_value(value) for key, value in result.items() if key not in ARTIFACT_COLUMNS}
-        portable_results.append({"data": data, "artifacts": encode_artifacts(result)})
     payload = {
         "format": "warp-experiment",
-        "version": 3,
+        "version": 4,
         "exported_at": now_local().isoformat(),
         "experiment": {key: json_value(value) for key, value in experiment.items()},
         "environment": [{key: json_value(value) for key, value in row.items()} for row in environment],
-        "results": portable_results,
     }
     if dataset:
         payload["dataset"] = {
@@ -1115,24 +1117,15 @@ def download_experiment_json(experiment_id):
             key: json_value(value) for key, value in tranco_sample.items()
             if key not in {"id", "experiment_id"}
         }
-    temporary = tempfile.NamedTemporaryFile(prefix="warp-export-", suffix=".warp", delete=False)
-    temporary.close()
-    with zipfile.ZipFile(temporary.name, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("experiment.json", json.dumps(payload, ensure_ascii=False, indent=2))
-        if dataset:
-            add_dataset_to_warp(archive, dataset["storage_key"])
-
-    @after_this_request
-    def remove_export_file(response):
-        try:
-            os.remove(temporary.name)
-        except OSError:
-            pass
-        return response
-
-    return send_file(
-        temporary.name, mimetype="application/vnd.warp+zip", as_attachment=True,
-        download_name=f"experiment-{experiment_id}.warp",
+    from warp_export import archive_chunks, dataset_members
+    from dataset_storage import DATASET_ROOT
+    # Validate dataset paths before headers are sent. Compression then streams
+    # directly to the client, with neither a multi-GB base64 object nor JSON copy.
+    files = dataset_members(dataset['storage_key'], DATASET_ROOT) if dataset else ()
+    return Response(
+        archive_chunks(payload, results, files), mimetype="application/vnd.warp+zip",
+        headers={'Content-Disposition': f'attachment; filename="experiment-{experiment_id}.warp"',
+                 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'},
     )
 
 
@@ -1468,6 +1461,7 @@ def import_experiment_json():
     if not upload:
         flash(_("Select an exported .warp experiment file."), "warning")
         return redirect(url_for("experiments.import_experiment_json"))
+    package = None
     try:
         if not (upload.filename or "").lower().endswith(".warp"):
             raise ValueError("invalid extension")
@@ -1477,14 +1471,17 @@ def import_experiment_json():
         if "experiment.json" not in names or any(
             name.startswith("/") or ".." in name.replace("\\", "/").split("/")
             for name in names
-        ) or any(name != "experiment.json" and not name.startswith("dataset/") for name in names):
+        ) or len(names) != len(package_members) or any(name != "experiment.json" and not name.startswith(("dataset/", "artifacts/")) for name in names):
             raise ValueError("invalid package")
         manifest_info = package.getinfo("experiment.json")
-        if manifest_info.file_size > current_app.config["MAX_CONTENT_LENGTH"] or len(package_members) > 10_001:
+        if manifest_info.file_size > 64 * 1024**2 or len(package_members) > 100_001:
             raise ValueError("package limits exceeded")
         payload = json.loads(package.read("experiment.json").decode("utf-8"))
         imported_results = validate_portable_payload(payload)
+        validate_archive_artifacts(payload, package)
     except Exception:
+        if package is not None:
+            package.close()
         flash(_("The selected file is not a supported experiment export."), "danger")
         return redirect(url_for("experiments.import_experiment_json"))
 
@@ -1606,7 +1603,7 @@ def import_experiment_json():
             if not normalized or normalized in existing:
                 continue
             source["id"] = source.get("id")
-            source = decode_artifacts(source, entry.get("artifacts"), target_id)
+            source = decode_artifacts(source, entry.get("artifacts"), target_id, archive=package)
             clone_result(cursor, source, target_id, "imported", copy_files=False)
             existing.add(normalized)
             added += 1
@@ -1671,6 +1668,8 @@ def import_experiment_json():
                             pass
         flash(_("The experiment could not be imported."), "danger")
         return redirect(url_for("experiments.import_experiment_json"))
+    finally:
+        package.close()
     cursor.close()
     conn.close()
     flash(_("%(count)s imported URL result(s) were added.", count=added), "success")
@@ -1696,10 +1695,28 @@ def delete_experiment(experiment_id):
     if experiment.get("status") in {"queued", "running"}:
         cursor.close()
         conn.close()
-        flash(_("A running evaluation experiment cannot be deleted."), "warning")
+        flash(_("Evaluation #%(id)s cannot be deleted while it is queued or running. Wait for it to finish, or pause it from Evaluations and wait for the current page to finish before deleting it.", id=experiment_id), "warning")
         return redirect(url_for("experiments.experiments"))
 
     try:
+        cursor.execute(
+            """SELECT COUNT(*) AS total FROM remediation_runs rr
+               JOIN experiment_results r ON r.id=rr.source_result_id
+               WHERE r.experiment_id=%s""", (experiment_id,),
+        )
+        dependent_count = int((cursor.fetchone() or {}).get("total") or 0)
+        if dependent_count:
+            cursor.execute(
+                """SELECT rr.id FROM remediation_runs rr
+                   JOIN experiment_results r ON r.id=rr.source_result_id
+                   WHERE r.experiment_id=%s ORDER BY rr.id LIMIT 10""",
+                (experiment_id,),
+            )
+            ids = ", ".join(f"#{row['id']}" for row in cursor.fetchall())
+            if dependent_count > 10:
+                ids += ", …"
+            flash(_("Evaluation #%(id)s cannot be deleted: %(count)s remediation run(s) use its stored pages (%(runs)s). Find these IDs in Remediation runs. Keep this evaluation if those runs are needed; otherwise delete the dependent runs first. Runs used in comparisons must first be removed from their comparisons. Nothing was deleted.", id=experiment_id, count=dependent_count, runs=ids), "warning")
+            return redirect(url_for("experiments.experiments"))
         cursor.execute(
             "DELETE FROM experiment_results WHERE experiment_id = %s",
             (experiment_id,),
@@ -1712,7 +1729,8 @@ def delete_experiment(experiment_id):
         conn.commit()
     except Exception:
         conn.rollback()
-        flash(_("The evaluation experiment could not be deleted from the database."), "danger")
+        current_app.logger.exception("Evaluation %s deletion failed", experiment_id)
+        flash(_("Evaluation #%(id)s could not be deleted because the database rejected the operation. The transaction was rolled back. Refresh the list before trying again; if the problem persists, ask the administrator to check the web service logs for this evaluation ID. No generated files were removed.", id=experiment_id), "danger")
         return redirect(url_for("experiments.experiments"))
     finally:
         cursor.close()
@@ -2490,7 +2508,7 @@ def build_experiment_analysis(results):
 
     tranco_groups = {}
     for item in valid_results:
-        group = item.get("tranco_stratum")
+        group = item.get("tranco_stratum_id") or item.get("tranco_stratum")
         if group:
             tranco_groups.setdefault(group, []).append(item)
     tranco_strata = []
@@ -2498,7 +2516,8 @@ def build_experiment_analysis(results):
         float(item.get("axe_violations") or 0)
         for items in tranco_groups.values() for item in items
     )
-    for group, items in tranco_groups.items():
+    for group, items in sorted(tranco_groups.items(), key=lambda pair: (
+            pair[1][0].get('tranco_stratum_order') or 0, pair[0])):
         axe = [item.get("axe_violations") for item in items if item.get("axe_violations") is not None]
         critical = [item.get("axe_critical") for item in items if item.get("axe_critical") is not None]
         lighthouse = [item.get("lighthouse_score") for item in items if item.get("lighthouse_score") is not None]
@@ -2508,7 +2527,7 @@ def build_experiment_analysis(results):
             for item in items if item.get("semantic_status") == "completed"
         ]
         tranco_strata.append({
-            "name": group,
+            "name": items[0].get('tranco_stratum') or group,
             "n": len(items),
             "zero_critical_percent": round(100 * sum((value or 0) == 0 for value in critical) / len(critical), 1) if critical else 0,
             "lighthouse_90_percent": round(100 * sum((value or 0) >= 90 for value in lighthouse) / len(lighthouse), 1) if lighthouse else 0,
@@ -2592,13 +2611,7 @@ def build_experiment_analysis(results):
                 "tranco_rank": item.get("tranco_rank"),
                 "tranco_stratum": item.get("tranco_stratum"),
                 "site_category": item.get("site_category") or _("Unclassified"),
-                "tranco_stratum_order": {
-                    "rank_1_500": 1, "Global top 500": 1,
-                    "rank_501_5000": 2, "Very high popularity": 2,
-                    "rank_5001_50000": 3, "High popularity": 3,
-                    "rank_50001_250000": 4, "Medium popularity": 4,
-                    "rank_250001_1000000": 5, "Popularity tail": 5,
-                }.get(item.get("tranco_stratum")),
+                "tranco_stratum_order": item.get("tranco_stratum_order"),
             }
             for item in results
         ],
@@ -2643,7 +2656,9 @@ def experiment_report_loading(experiment_id):
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute(
-            "SELECT id, title FROM experiments WHERE id = %s",
+            """SELECT id, title, created_at, source_type, axe_standard,
+                      axe_include_best_practices, include_wave, reuse_cached_results
+               FROM experiments WHERE id = %s""",
             (experiment_id,),
         )
         experiment = cursor.fetchone()
@@ -2771,15 +2786,17 @@ def experiment_report(experiment_id):
             results_by_url = {
                 normalize_url(item.get("url")): item for item in results
             }
-            stratum_design = {
-                stratum.get("label"): stratum
-                for stratum in tranco_sample.get("strata") or []
-            }
+            ordered_strata = sorted(tranco_sample.get("strata") or [],
+                                    key=lambda row: int(row.get('rank_min') or 0))
+            stratum_design = {stratum.get("label"): dict(stratum, order=index)
+                              for index, stratum in enumerate(ordered_strata, 1)}
             for item in results:
                 candidate = selected_by_url.get(normalize_url(item.get("url"))) or {}
                 design = stratum_design.get(candidate.get("stratum")) or {}
                 item["tranco_rank"] = candidate.get("rank")
-                item["tranco_stratum"] = candidate.get("stratum_name") or candidate.get("stratum")
+                item["tranco_stratum_id"] = candidate.get("stratum")
+                item["tranco_stratum"] = design.get("display_name") or candidate.get("stratum_name") or candidate.get("stratum")
+                item["tranco_stratum_order"] = design.get("order")
                 item["tranco_frame_count"] = design.get("frame_count")
                 item["tranco_selected_count"] = design.get("selected_count")
             strata_quality = []
@@ -3036,13 +3053,15 @@ def run_experiment():
     elif source_type == "tranco":
         resource_policy = "external"
         try:
+            from tranco_sampling import form_strata
+            definitions = form_strata(request.form)
             list_bytes, list_filename, list_id = fetch_latest_standard_list()
             ranking, frame_metadata = parse_tranco(list_bytes, list_filename)
             sampling_seed = request.form.get("tranco_seed", "").strip()
             try:
                 sample_counts = {
                     label: int(request.form.get(f"tranco_count_{label}", "0"))
-                    for label, _name, _lower, _upper in TRANCO_STRATA
+                    for label, _name, _lower, _upper in definitions
                 }
             except ValueError as error:
                 raise TrancoImportError("Tranco sample size must be a whole number.") from error
@@ -3051,7 +3070,8 @@ def run_experiment():
                 for label, count in sample_counts.items()
             }
             candidates, strata = sample_tranco(
-                ranking, list_id, sampling_seed, sample_counts, reserve_counts
+                ranking, list_id, sampling_seed, sample_counts, reserve_counts,
+                strata_definitions=definitions,
             )
         except (TrancoImportError, ValueError) as error:
             flash(_(str(error)), "danger")

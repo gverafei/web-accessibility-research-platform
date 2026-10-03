@@ -18,6 +18,7 @@ from remediation_recipes import automatic_recipe, common_conditions
 from remediation_model_choices import model_choices, model_choice, frozen_model_configuration, run_model_presentation
 from remediation_approaches import presentation_priority, presentation_name
 from remediation_control_copy import control_copy
+from remediation_report_presentation import iteration_presentation, event_presentation
 
 
 remediation_bp = Blueprint("remediation", __name__, url_prefix="/remediation")
@@ -285,7 +286,7 @@ def new_run():
             cursor.close(); conn.close(); flash(_("This legacy acquisition has no stored HTML snapshot and cannot be remediated reproducibly."), "danger"); return redirect(url_for("remediation.new_run"))
         preservation_levels={0:15,1:35,2:55,3:75,4:90}
         requested_level=request.form.get("preservation_level",type=int)
-        priority=preservation_levels.get(requested_level,max(0,min(100,request.form.get("accessibility_priority",type=int) or 55)))
+        priority=preservation_levels.get(requested_level,max(0,min(100,request.form.get("accessibility_priority",type=int) or 15)))
         expert=request.form.get("use_expert_settings")=="on"
         execution_mode=request.form.get('execution_mode','iterative')
         if execution_mode not in {'iterative','single_shot','regenerate_only','regenerate_refine'}: execution_mode='iterative'
@@ -368,21 +369,32 @@ def compare_with_original(run_id):
     cursor.execute("""SELECT rr.id,rr.source_result_id,COALESCE(er.display_name,o.display_name,o.observation_key,er.url) source_name
                       FROM remediation_runs rr JOIN experiment_results er ON er.id=rr.source_result_id
                       LEFT JOIN dataset_observations o ON o.id=er.dataset_observation_id
-                      WHERE rr.id=%s AND rr.status IN ('accepted','completed_with_warnings')""",(run_id,)); run=cursor.fetchone()
+                      WHERE rr.id=%s AND rr.status IN ('accepted','completed_with_warnings') FOR UPDATE""",(run_id,)); run=cursor.fetchone()
     if not run:
         cursor.close(); conn.close(); flash(_("Only an accepted remediation can be compared with its original."),"warning"); return redirect(url_for("remediation.run_detail",run_id=run_id))
     try:
+        # Serialize clicks on this run. Reuse only its two-member comparison,
+        # never a larger research study that happens to include the same run.
+        cursor.execute("""SELECT comparison_id FROM comparison_members
+            GROUP BY comparison_id HAVING COUNT(*)=2
+            AND SUM(source_result_id=%s)=1 AND SUM(source_remediation_run_id=%s)=1
+            ORDER BY comparison_id LIMIT 1""", (run['source_result_id'], run_id))
+        existing = cursor.fetchone()
+        if existing:
+            comparison_id = existing['comparison_id']
+            conn.commit(); cursor.close(); conn.close()
+            return redirect(url_for('comparisons.comparison_detail', comparison_id=comparison_id))
         timestamp=now_local(); title=f"{run['source_name']} · original vs remediated"[:160]
         cursor.execute("INSERT INTO comparison_studies (title,dimension_label,created_at,updated_at) VALUES (%s,'Version',%s,%s)",(title,timestamp,timestamp)); comparison_id=cursor.lastrowid
-        insert_members(cursor,comparison_id,[run["source_result_id"]],"Original")
-        insert_remediation_members(cursor,comparison_id,[run_id],"Remediated")
+        if insert_members(cursor,comparison_id,[run["source_result_id"]],"Original") != 1 or insert_remediation_members(cursor,comparison_id,[run_id],"Remediated") != 1:
+            raise ValueError('The original/candidate pair is incomplete')
         cursor.execute("UPDATE comparison_members SET is_baseline=TRUE,pair_key=%s WHERE comparison_id=%s AND source_result_id=%s",(f"remediation-{run_id}",comparison_id,run["source_result_id"]))
         cursor.execute("UPDATE comparison_members SET pair_key=%s WHERE comparison_id=%s AND source_remediation_run_id=%s",(f"remediation-{run_id}",comparison_id,run_id))
         conn.commit()
     except Exception:
         conn.rollback(); cursor.close(); conn.close(); flash(_("The comparison could not be created."),"danger"); return redirect(url_for("remediation.run_detail",run_id=run_id))
     cursor.close(); conn.close()
-    return redirect(url_for("comparisons.comparisons",comparison_id=comparison_id))
+    return redirect(url_for("comparisons.comparison_detail",comparison_id=comparison_id))
 
 
 @remediation_bp.get("/<int:run_id>")
@@ -397,12 +409,13 @@ def run_detail(run_id):
         for field,target in (("dom_changes_json","dom_changes"),("specialist_reviews_json","specialist_reviews"),("agent_usage_json","agent_usage"),("strategy_json","strategy")):
             fallback="{}" if target in {"dom_changes","strategy"} else "[]"
             try: item[target]=json.loads(item.get(field) or fallback)
-            except (ValueError,TypeError): item[target]={} if target=="dom_changes" else []
+            except (ValueError,TypeError): item[target]={} if target in {'dom_changes','strategy'} else []
         if run.get('execution_mode')=='single_shot' and item.get('strategy'):
             # Present old evidence with current process terminology; do not
             # rewrite stored prompts, model responses or scientific provenance.
             item['strategy'].setdefault('approach',{})['name']='Zero-shot — single call'
             item['strategy']['repair_engine']='Zero-shot prompting; one generation call; no planner, checker feedback, RAG, screenshot or repair postprocessor'
+        iteration_presentation(item, run_id, DATASET_ROOT)
         recorded_roles=[(entry.get('role') or 'Agent',entry.get('model')) for entry in item['agent_usage'] if isinstance(entry,dict)]
         if not recorded_roles:
             recorded_roles=[('Generator',item.get('generator_model'))]
@@ -422,6 +435,8 @@ def run_detail(run_id):
                 taxonomy['original']=axe_taxonomy(run['source_axe_raw_path'])
                 taxonomy['candidate']=axe_taxonomy(item['axe_raw_path'])
     participants=[{"model":model,"roles":", ".join(sorted(roles))} for model,roles in model_roles.items()]
+    for event in events:
+        event_presentation(event)
     accepted_item=next((item for item in reversed(iterations) if item.get("decision")=="accept"),None)
     measurable=[item for item in iterations if item.get("axe_violations") is not None and item.get("lighthouse_score") is not None]
     retained_item=next((item for item in iterations if item['id']==run.get('accepted_iteration_id')),None)
@@ -433,7 +448,9 @@ def run_detail(run_id):
     run['model_presentation']=run_model_presentation(run)
     cursor.close(); conn.close()
     report_candidate_available=bool(best and best.get('output_path') and Path(best['output_path']).is_file())
-    return render_template("remediation_detail.html",run=run,iterations=iterations,participants=participants,events=events,category_counts=category_counts,taxonomy=taxonomy,best_candidate=best,report_candidate_available=report_candidate_available)
+    response = Response(render_template("remediation_detail.html",run=run,iterations=iterations,participants=participants,events=events,category_counts=category_counts,taxonomy=taxonomy,best_candidate=best,report_candidate_available=report_candidate_available,partial_report=request.args.get('live') == '1'), mimetype='text/html')
+    response.headers['Cache-Control'] = 'no-store'
+    return response
 
 
 @remediation_bp.get("/<int:run_id>/iterations/<int:iteration_id>/candidate")

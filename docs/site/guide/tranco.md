@@ -10,17 +10,28 @@ Choose **Tranco** in New acquisition. The form obtains the latest standard top-m
 
 | Bundled UI stratum | Rank interval |
 | --- | --- |
-| Global top 500 | 1–500 |
-| Very high popularity | 501–5,000 |
-| High popularity | 5,001–50,000 |
-| Medium popularity | 50,001–250,000 |
-| Popularity tail | 250,001–1,000,000 |
+| Global top 1,000 | 1–1,000 |
+| Very high popularity | 1,001–10,000 |
+| High popularity | 10,001–100,000 |
+| Medium popularity | 100,001–500,000 |
+| Popularity tail | 500,001–1,000,000 |
+
+Labels are editable before submission. Reports derive group labels, ordering and
+weights from that evaluation's saved design. Earlier evaluations retain their
+original intervals and names; updating defaults does not relabel their data.
 
 Choose independent whole-number counts for your study. A11yResearch imposes no fixed per-stratum or total observation-count cap: the target in a group must not exceed the domains available in that interval of the pinned ranking. A zero count disables a stratum. The values initially shown in the form are editable starting values, not a prescribed study design.
 
 For each enabled group, A11yResearch requests an ordered reserve of at least 10 candidates or the target count, whichever is larger. It records only the **unused domains actually available** in that group. Selecting all domains in an interval is allowed, but leaves no reserve; reserving candidates never reduces the requested primary target. Large collections require correspondingly more processing time, memory and disk space. See [acquisition capacity](acquisition.md#collection-size-and-resource-planning).
 
 ## Reproducible ordering
+
+Selection is pseudorandom **without replacement within each stratum**, rather
+than taking the highest-ranked domains in each interval. A seed is a
+researcher-supplied text value that controls the ordering. Changing it produces
+a different ordering; keeping it and all other inputs fixed reproduces the
+same selection. A final acquired collection may include reserve substitutions,
+so its attempt history is part of the sampling evidence.
 
 `sample_tranco()` in `web/app/tranco_sampling.py` sorts candidates by a SHA-256 key derived from the procedure version, list ID, seed, stratum label, rank and domain. The first candidates become selected observations and the following candidates become the reserve. Identical inputs therefore produce the same ordering without depending on a particular Python random-number implementation.
 
@@ -40,7 +51,7 @@ A11yResearch retries each unsuccessful website acquisition once. If it still fai
 
 If all eligible ranked candidates in that interval have already been tried, recovery ends for that group. Work in other groups continues. The worker eventually finalizes the evaluation with the successful observations retained and an **incomplete dataset** warning; `completed` is the processing lifecycle status, not a guarantee that all targets were achieved. The report keeps target and final counts separate, and failed URLs/error context remain available outside the valid measurement cohort.
 
-For example, selecting all 500 domains ranked 1–500 leaves no reserve. If only 300 succeed after the controlled retries, the final count is **300 out of a target of 500**, with 200 unresolved failures. The target is not silently reduced to 300, those failures are not counted as zero-issue pages, and rank 501 is not used as a replacement. A later researcher-requested retry may recover more pages, but cannot guarantee 500 successes. Redefining the interval or choosing a newer ranking requires an explicit new sampling design, not an automatic substitution.
+For example, selecting all 1,000 domains ranked 1–1,000 leaves no reserve. If only 800 succeed after controlled retries, the final count is **800 out of a target of 1,000**, with 200 unresolved failures. The target is not silently reduced, failures are not counted as zero-issue pages, and rank 1,001 cannot replace a top-group domain. A later researcher-requested retry cannot guarantee full coverage. Redefining the interval or ranking requires an explicit new design.
 
 An evaluator/service interruption is different: A11yResearch retains the candidate and requeues the work rather than consuming its website retry. A temporarily unavailable pinned ranking is likewise not evidence that the domain pool is exhausted. See [jobs and recovery](../technical/jobs.md).
 
@@ -54,8 +65,8 @@ from tranco_sampling import sample_tranco
 
 ranking = [(rank, f"site{rank}.example.org") for rank in range(1, 501)]
 counts = {
-    "rank_1_500": 2, "rank_501_5000": 0, "rank_5001_50000": 0,
-    "rank_50001_250000": 0, "rank_250001_1000000": 0,
+    "rank_1_1000": 2, "rank_1001_10000": 0, "rank_10001_100000": 0,
+    "rank_100001_500000": 0, "rank_500001_1000000": 0,
 }
 reserves = {key: (2 if count else 0) for key, count in counts.items()}
 candidates, strata = sample_tranco(ranking, "EXAMPLE", "pilot-42", counts, reserves)

@@ -4,6 +4,34 @@ from remediation_recipes import automatic_recipe, common_conditions, COMMON_COND
 
 
 class RecipeTests(unittest.TestCase):
+    def test_resource_overrides_apply_per_run_across_all_levels(self):
+        settings = {'remediation_max_iterations': '5',
+                    'remediation_max_cost_usd': '0.07',
+                    'remediation_max_execution_seconds': '410'}
+        for priority in (15, 35, 55, 75, 90):
+            for mode in ('iterative', 'regenerate_refine', 'single_shot', 'regenerate_only'):
+                with self.subTest(priority=priority, mode=mode):
+                    recipe = automatic_recipe(priority, mode, settings)
+                    self.assertEqual(recipe['iterations'],
+                                     1 if mode in ('single_shot', 'regenerate_only') else 5)
+                    self.assertEqual((recipe['cost'], recipe['seconds']), (0.07, 410))
+
+    def test_default_budgets_are_shared_by_all_levels_and_modes(self):
+        for priority in (15, 35, 55, 75, 90):
+            for mode in ('iterative', 'single_shot', 'regenerate_only', 'regenerate_refine'):
+                recipe = automatic_recipe(priority, mode)
+                self.assertEqual((recipe['cost'], recipe['seconds']), (0.25, 360))
+
+    def test_invalid_resource_limits_are_rejected_not_clamped(self):
+        for key, values in {
+            'remediation_max_iterations': ('', '0', '11', '1.5', 'bad', True),
+            'remediation_max_cost_usd': ('', '0', '.009', '100.01', 'NaN', 'sNaN', 'Infinity', 'bad'),
+            'remediation_max_execution_seconds': ('', '29', '7201', '30.5', 'bad'),
+        }.items():
+            for value in values:
+                with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                    common_conditions({key: value})
+
     def test_configured_targets_are_shared_by_all_interventions_and_baseline(self):
         settings = {'remediation_min_lighthouse': '97', 'remediation_max_axe': '0'}
         for priority in (15,35,55,75,90):

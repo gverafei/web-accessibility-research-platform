@@ -53,3 +53,17 @@ The source repository is private. Publishing Pages from a private repository req
 ## Scope and versions
 
 The main-branch site describes the current software. A pinned revision or release connects an experiment to the corresponding source. Maintained versions can have separate documentation when their workflows differ.
+
+When a manuscript clarification concerns implemented behavior, reconcile the
+relevant guide or technical page too: metric definitions, sampling, retrieval,
+exchange and model selection must agree with the actual code. Do not copy
+private study records or describe a historical example as a test of a newer
+format. A terminology difference should be explained rather than silently
+renaming interface controls.
+
+Review connected workflows together: navigation/loading/search, sampling and
+chart denominators, comparison filters, preservation metrics, model selection,
+stored-result reuse, per-run budgets, retrieval maintenance and exchange format.
+Check actual routes/defaults rather than copying old screenshots or manuscript
+values. A documentation update is not a publication: rebuild/check locally and
+deploy only after the reviewed software snapshot is authorized for publication.

@@ -386,6 +386,61 @@ class ExperimentAnalysisTestCase(unittest.TestCase):
         self.assertTrue(any("DELETE FROM experiments" in item for item in statements))
         self.assertIn("COMMIT", statements)
 
+    def test_dependent_remediations_block_deletion_with_ids_and_next_steps(self):
+        from unittest.mock import MagicMock
+        conn = MagicMock(); cursor = conn.cursor.return_value
+        cursor.fetchone.side_effect = [
+            {'id':42,'title':'Study','status':'completed'}, {'total':125},
+        ]
+        cursor.fetchall.return_value = [{'id':value} for value in range(659,669)]
+        client = main.app.test_client()
+        with patch.object(experiments,'get_connection',return_value=conn):
+            response = client.post('/experiments/42/delete')
+        self.assertEqual(response.status_code,302)
+        with client.session_transaction() as session:
+            message = session['_flashes'][-1][1]
+        self.assertIn('125 remediation',message)
+        self.assertIn('#659',message)
+        self.assertIn('Remediation runs',message)
+        self.assertIn('comparisons',message)
+        self.assertIn('Nothing was deleted',message)
+        self.assertIn('LIMIT 10',cursor.execute.call_args.args[0])
+        for call in cursor.execute.call_args_list:
+            self.assertTrue(call.args[0].lstrip().startswith('SELECT'))
+        conn.commit.assert_not_called()
+        cursor.close.assert_called_once(); conn.close.assert_called_once()
+
+    def test_running_deletion_explains_wait_or_pause_without_database_writes(self):
+        from unittest.mock import MagicMock
+        for status in ('queued','running'):
+            conn = MagicMock(); cursor = conn.cursor.return_value
+            cursor.fetchone.return_value = {'id':42,'title':'Study','status':status}
+            client=main.app.test_client()
+            with patch.object(experiments,'get_connection',return_value=conn):
+                client.post('/experiments/42/delete')
+            with client.session_transaction() as session:
+                message=session['_flashes'][-1][1]
+            self.assertIn('#42',message); self.assertIn('pause',message)
+            self.assertIn('current page',message)
+            self.assertEqual(cursor.execute.call_count,1)
+            conn.commit.assert_not_called()
+
+    def test_database_deletion_failure_rolls_back_and_explains_recovery(self):
+        from unittest.mock import MagicMock
+        conn = MagicMock(); cursor = conn.cursor.return_value
+        cursor.fetchone.side_effect = [{'id':42,'title':'Study','status':'completed'}, {'total':0}]
+        cursor.execute.side_effect = [None,None,RuntimeError('database failure')]
+        client=main.app.test_client()
+        with patch.object(experiments,'get_connection',return_value=conn), \
+                patch.object(experiments.shutil,'rmtree') as remove, \
+                patch.object(main.app.logger,'exception'):
+            client.post('/experiments/42/delete')
+        with client.session_transaction() as session:
+            message=session['_flashes'][-1][1]
+        self.assertIn('rolled back',message); self.assertIn('Refresh',message)
+        self.assertIn('administrator',message); self.assertIn('#42',message)
+        conn.rollback.assert_called_once(); conn.commit.assert_not_called(); remove.assert_not_called()
+
     def test_failed_experiment_can_resume_without_deleting_results(self):
         statements = []
         rows = iter((

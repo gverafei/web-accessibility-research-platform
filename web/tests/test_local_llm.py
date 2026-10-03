@@ -147,20 +147,20 @@ class LocalLlmTests(unittest.TestCase):
     def test_connection_check_only_lists_installed_models(self):
         from main import app
         response = MagicMock()
-        response.json.return_value = {'data': [{'id': 'llama3.1:8b'}]}
+        response.json.return_value = {'models': [{'name': 'llama3.1:8b'}]}
         with patch('routes.experiments.get_settings', return_value=SETTINGS), \
              patch('routes.experiments.requests.get', return_value=response) as get, \
              patch('routes.experiments.requests.post') as post:
             result = app.test_client().post('/configuration/test-ollama')
         self.assertEqual(result.status_code, 302)
-        self.assertEqual(get.call_args.args[0], 'http://host.docker.internal:11434/v1/models')
+        self.assertEqual(get.call_args.args[0], 'http://host.docker.internal:11434/api/tags')
         self.assertEqual(post.call_count, 1)
         self.assertTrue(post.call_args.args[0].endswith('/api/show'))
 
     def test_connection_check_handles_ollama_null_model_list(self):
         from main import app
         response = MagicMock()
-        response.json.return_value = {'data': None}
+        response.json.return_value = {'models': None}
         with patch('routes.experiments.get_settings', return_value=SETTINGS), \
              patch('routes.experiments.requests.get', return_value=response):
             result = app.test_client().post('/configuration/test-ollama')
@@ -194,6 +194,7 @@ class LocalLlmTests(unittest.TestCase):
 
     def test_local_selection_is_frozen_in_run(self, act_grounding='on'):
         import json
+        selected_model = 'ollama/' + SETTINGS['ollama_model']
         act_fields={'act_grounding_configured':'1'}
         if act_grounding is not None:
             act_fields['act_grounding']=act_grounding
@@ -209,12 +210,12 @@ class LocalLlmTests(unittest.TestCase):
              patch('routes.remediation.source_snapshot', return_value='<html><body>Source</body></html>'), \
              patch('routes.remediation.classified_page_type', return_value='homepage'):
             response = app.test_client().post('/remediation/new', data={
-                'source_result_id': '42', 'selected_model': 'ollama/llama3.1:8b', 'preservation_level': '3',
+                'source_result_id': '42', 'selected_model': selected_model, 'preservation_level': '3',
                 **act_fields,
                 'use_wave': 'on', 'expert_use_wave': 'on', 'min_aim': '10'})
         self.assertEqual(response.status_code, 302)
         insert = next(call.args[1] for call in cursor.execute.call_args_list if call.args[0].startswith('INSERT INTO remediation_runs'))
-        self.assertEqual(insert[5], 'ollama/llama3.1:8b')
+        self.assertEqual(insert[5], selected_model)
         self.assertEqual(insert[7], insert[5])
         self.assertEqual(insert[19], 'local')
         self.assertFalse(insert[17])
@@ -224,6 +225,11 @@ class LocalLlmTests(unittest.TestCase):
         self.assertEqual(json.loads(snapshot[0]), local_configuration(SETTINGS))
         expert_flag=next(call.args[1] for call in cursor.execute.call_args_list if 'SET use_expert_settings=' in call.args[0])
         self.assertEqual(expert_flag,(False,123))
+
+    def test_gemma4_local_selection_is_frozen_without_cloud_substitution(self):
+        with patch.dict(SETTINGS, {'ollama_model':'gemma4:latest',
+                                 'ollama_capabilities_json':'["completion","vision","thinking"]'}):
+            self.test_local_selection_is_frozen_in_run()
 
     def test_act_can_be_disabled_for_controlled_comparison(self):
         self.test_local_selection_is_frozen_in_run('off')

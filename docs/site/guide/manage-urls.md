@@ -8,6 +8,10 @@ The page starts with five rows and queries the server for the requested page. Fi
 
 The URL and thumbnail identify the acquisition. The separate editable name lets you assign a reusable label without rewriting the captured source. The category is also editable. Scores stay linked to the underlying evaluation; editing a label is not a remeasurement.
 
+The table uses compact proportional columns and wraps long names and headings.
+The category selector fits inside its own cell. All columns remain available;
+horizontal scrolling is retained when a narrow window cannot fit the table.
+
 An unavailable thumbnail means there is no readable screenshot for that record. Inspect the evaluation and artifact paths instead of assuming a blank thumbnail is a successful blank website.
 
 ## Automatic categorization

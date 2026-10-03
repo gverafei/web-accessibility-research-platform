@@ -33,7 +33,7 @@ Choose an external-resource policy only for a trusted dataset when those depende
 | --- | ---: |
 | Total uncompressed size | 1,500,000,000 bytes |
 | Individual archived file | 100,000,000 bytes |
-| Default HTTP upload limit | 1,610,612,736 bytes |
+| Default HTTP upload limit | 3,221,225,472 bytes (3 GiB) |
 
 There is no fixed HTML-observation or archive-file count cap. The importer still rejects unsafe absolute/traversal paths, archive symlinks and oversized datasets. The HTTP upload limit can be changed through `MAX_DATASET_UPLOAD_BYTES`, but raising it does not remove the other byte/path protections. Multipart uploads do not use Flask's default 1,000-part cap. See [resource planning](acquisition.md#collection-size-and-resource-planning) before submitting a large corpus.
 

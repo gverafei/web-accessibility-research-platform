@@ -32,8 +32,19 @@ test('dark labels have an opaque contrasting background',()=>{
     assert.equal(result.labels[0].color,'#f1f5f9');
     assert.deepEqual(result.backgrounds,['#17212b']);
 });
+test('light labels have no white rectangle over the bar',()=>{
+    const result=draw([14],{horizontal:true,stacked:true});
+    assert.equal(result.labels[0].color,'#17212b');
+    assert.deepEqual(result.backgrounds,[]);
+});
 test('close horizontal labels do not collide',()=>{
     assert.equal(draw([12,13],{horizontal:true,spacing:2}).labels.length,1);
     // Oversized text boxes never escape the plotting area.
     assert.equal(draw([1e100]).labels.length,0);
+});
+test('ordinary narrow bars show labels in available category space',()=>{
+    assert.deepEqual(draw([28.18,40.13,34.40,37.77,45.35],{thickness:32,spacing:90}).labels.map(x=>x.t),
+        ['28.18','40.13','34.4','37.77','45.35']);
+    assert.equal(draw([28.18],{thickness:32,stacked:true}).labels.length,0);
+    assert.equal(draw([28.18,40.13],{thickness:32,spacing:20}).labels.length,1);
 });

@@ -102,6 +102,14 @@ test('temporary candidate address keeps original source identity and navigation 
   assert.equal(results().viewChange(10,{status:'loading'},view),false);
 });
 
+test('recovered completion uses frozen configuration instead of submitted RAG controls', () => {
+  const data={id:12,configuration:{selectedModel:'anthropic/claude-opus-5.5',
+    modelName:'Claude Opus 5.5 · Light reasoning',preservation:0,preservationName:'Minimal patches',rag:false}};
+  const completion={config:{rag:true},...results().evidence(data)};
+  assert.equal(completion.config.rag,false);
+  assert.equal(completion.config.preservationName,'Minimal patches');
+});
+
 test('extension defaults to an accessible stored-result reuse switch', () => {
   const html=fs.readFileSync(path.join(__dirname,'../sidepanel.html'),'utf8');
   assert.match(html,/id="reuseResults" type="checkbox" role="switch" checked/);

@@ -6,6 +6,10 @@ Comparison studies place original observations and generated candidates into lab
 
 Use **Comparisons** to create a study from stored evaluation results and/or remediation runs. A remediation report also offers an action to compare a run with its original. Give the study and group labels a meaning that is clear in exports.
 
+**Compare with original** opens the completed comparison report directly. If
+that pair already has a comparison, the action opens it instead of creating
+duplicates or taking you to the editor.
+
 For a stratified comparison, create original and remediated groups for each stratum in the study. Candidate-to-source links identify the acquisition used for generation, including cases where a domain has multiple stored captures.
 
 ## Measures to read together
@@ -35,5 +39,13 @@ This setup supports within-stratum paired analysis. A study comparing interventi
 ## Editing a study
 
 Group names, display names, ordering and baseline selection are editable without changing raw measurements. Adding or removing members updates the analysis cohort and its pair counts.
+
+**Selected pages** starts at five rows per page and offers
+5/10/20/25/50/100/250/500. Its search filters page names, URLs and pair IDs and
+keeps the matched original/candidate pair together. Filtering and paging do not
+remove members from the analysis. Save inline edits with Enter, then use
+**Update charts** after changing groups, baseline or page order. There is no
+notes control above the report. The breadcrumb trail provides a direct return
+to Comparisons.
 
 The comparison implementation is in `routes/comparisons.py`. See [statistics](statistics.md) for rank/density summaries and [storage](../technical/storage.md) for source/run/member links.

@@ -6,13 +6,16 @@ const path = require('node:path');
 const code = fs.readFileSync(path.join(__dirname, '../app/static/js/remediation_history.js'), 'utf8');
 
 function fixture(size=1) {
-  const state = {rows:[], timers:[], calls:[], notice:{hidden:true}, input:{value:'example', addEventListener(){}}, count:{}, failed:false, hidden:false};
+  const state = {rows:[], timers:[], calls:[], notice:{hidden:true}, input:{value:'example', addEventListener(_,fn){this.filter=fn;}}, count:{}, failed:false, hidden:false};
   function row(id, status) {
-    return {dataset:{runId:String(id),runStatus:status}, textContent:`example ${id}`, hidden:false,
-      replaceWith(next) {state.rows[state.rows.indexOf(this)]=next;}};
+    const item = {dataset:{runId:String(id),runStatus:status}, textContent:`example ${id}`, hidden:false};
+    const entry = {hidden:false, actions:status, row:item,
+      replaceWith(next) {state.rows[state.rows.indexOf(item)]=next.row;}};
+    item.closest = () => entry;
+    return item;
   }
   state.rows=Array.from({length:size},(_, i)=>row(i+1,'running'));
-  const document = {querySelector:()=>({querySelectorAll:()=>state.rows}),
+  const document = {querySelector:()=>({querySelectorAll:()=>state.rows, addEventListener(){}}),
     getElementById:id=>({'remediationListFilter':state.input,'remediationFilterCount':state.count,'remediationLiveStatus':state.notice}[id]),
     get hidden(){return state.hidden;}};
   class DOMParser {parseFromString(html) {const ids=JSON.parse(html.slice(html.indexOf('['),html.lastIndexOf(']')+1)); return {querySelectorAll:()=>ids.map(id=>row(id,'completed_with_warnings'))};}}
@@ -27,7 +30,16 @@ test('live rows update while filtered, preserve input and stop at terminal statu
   assert.equal(s.calls.length,1); assert.equal(s.input.value,'example');
   assert.equal(s.rows[0].dataset.runStatus,'completed_with_warnings');
   assert.equal(s.rows[0].hidden,false); await s.timers.shift()();
+  assert.equal(s.rows[0].closest().actions,'completed_with_warnings');
   assert.equal(s.calls.length,1); assert.equal(s.timers.length,0);
+});
+test('filter hides the complete record including action footer',()=>{
+  const s=fixture(); s.input.value='not found';
+  s.input.filter();
+  assert.equal(s.rows[0].closest().hidden,true);
+  assert.equal(s.count.textContent,'0 / 1');
+  s.input.value='example'; s.input.filter();
+  assert.equal(s.rows[0].closest().hidden,false);
 });
 test('requests are bounded and only identify active rows',async()=>{
   const s=fixture(55); s.rows[0].dataset.runStatus='accepted';

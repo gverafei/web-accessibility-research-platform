@@ -1,13 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ _("Loading evaluation report") }}{% endblock %}
 {% block content %}
-<header class="report-hero loading-hero mb-4">
-    <div>
-        <div class="eyebrow">{{ _("Evaluation report") }}</div>
-        <h1>{{ experiment.title }}</h1>
-        <p class="mb-0">{{ _("Preparing the stored results and charts.") }}</p>
-    </div>
-</header>
+{% set report_loading = true %}
+{% include '_evaluation_report_header.html' %}
 <section class="loading-report" aria-live="polite" aria-busy="true">
     <div class="loading-status-card">
         <div class="loading-orbit" aria-hidden="true"><span></span></div>
@@ -26,4 +21,4 @@
     </div>
 </section>
 {% endblock %}
-{% block scripts %}<script>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.location.replace({{ url_for('experiments.experiment_report', experiment_id=experiment.id)|tojson }}),50)));</script>{% endblock %}
+{% block scripts %}<script>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{const section=window.location.hash==="#url-results"?"#url-results":"";window.location.replace({{ url_for('experiments.experiment_report', experiment_id=experiment.id)|tojson }}+section)},50)));</script>{% endblock %}

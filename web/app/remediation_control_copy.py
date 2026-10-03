@@ -22,5 +22,5 @@ def control_copy(translate=lambda value: value):
         ],
         'labels': {key: translate(value) for key, value in (
             ('temperature', 'Temperature'), ('iterations', 'iterations'),
-            ('act', 'ACT examples after failure'), ('native', 'Native / scoped components'))},
+            ('act', 'RAG-ACT examples after failure'), ('native', 'Native / scoped components'))},
     }

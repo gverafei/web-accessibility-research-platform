@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from flask import Flask
 from browser_extension_config import extension_configuration
-from browser_extension_results import reusable_request, stored_measurements
+from browser_extension_results import reusable_request, reusable_run, stored_measurements, completion_configuration
 from routes.extension_api import extension_api_bp, request_payload
 
 
@@ -24,13 +24,60 @@ class ExtensionResultsTests(unittest.TestCase):
         self.assertEqual(reusable_request(self.cursor, 'https://example.org', 42, self.config)['id'], 3)
 
     @patch('browser_extension_results.candidate_path', return_value=True)
-    def test_changed_source_or_controls_are_not_reused(self, path):
+    def test_url_and_sliders_reuse_even_with_a_newer_acquisition(self, path):
         self.cursor.fetchall.return_value = [self.entry(source_result_id=43)]
-        self.assertIsNone(reusable_request(self.cursor, 'https://example.org',42,self.config))
-        for key, value in [('use_rag', True),('preservation_level',0),('selected_model','other/model'),
-                           ('research_targets',{'axe':0,'lighthouse':100})]:
+        self.assertEqual(reusable_request(self.cursor, 'https://example.org',42,self.config)['id'],3)
+        for key, value in [('use_rag', True),('research_targets',{'axe':0,'lighthouse':100})]:
             self.cursor.fetchall.return_value = [self.entry(configuration_json=json.dumps({**self.config,key:value}))]
+            self.assertEqual(reusable_request(self.cursor,'https://example.org',42,self.config)['id'],3)
+
+    @patch('browser_extension_results.candidate_path', return_value=True)
+    def test_different_model_reasoning_or_intervention_is_not_reused(self, path):
+        for config in [
+            {**self.config,'preservation_level':2},
+            {**self.config,'model_configuration':{**self.config['model_configuration'],'model':'other/model'}},
+            {**self.config,'model_configuration':{**self.config['model_configuration'],'reasoning_effort':'high'}},
+            {'selected_model':'openai/gpt-6-luna','preservation_level':0},
+            [],
+        ]:
+            self.cursor.fetchall.return_value = [self.entry(configuration_json=json.dumps(config))]
             self.assertIsNone(reusable_request(self.cursor,'https://example.org',42,self.config))
+
+    @patch('browser_extension_results.candidate_path', return_value=True)
+    def test_catalogue_presentation_changes_do_not_invalidate_cache(self, path):
+        saved={**self.config,'selected_model':'old-catalogue-alias',
+               'model_configuration':{**self.config['model_configuration'],'color':'#123456',
+                                      'label':'Renamed','digest':'old','input_price':9}}
+        self.cursor.fetchall.return_value=[self.entry(configuration_json=json.dumps(saved))]
+        self.assertEqual(reusable_request(self.cursor,'https://example.org',42,self.config)['id'],3)
+
+    def backend_run(self, **overrides):
+        return {'id':787,'generator_model':self.config['model_configuration']['model'],
+                'model_config_json':json.dumps(self.config['model_configuration']),
+                'accessibility_priority':15,'execution_mode':'iterative','use_rag':False,
+                'max_axe':3,'min_lighthouse':94,'model_cost_tier':'high',
+                'status':'accepted','output_path':'/datasets/remediations/787/result.html',**overrides}
+
+    @patch('browser_extension_results.candidate_path', return_value=True)
+    def test_web_created_run_is_available_without_extension_request(self, path):
+        self.cursor.fetchall.return_value=[self.backend_run()]
+        self.assertEqual(reusable_run(self.cursor,'https://example.org',self.config)['id'],787)
+        self.assertEqual(self.cursor.execute.call_args.args[1],('https://example.org',))
+        for overrides in [{'execution_mode':'single_shot'},{'accessibility_priority':55},
+                          {'model_config_json':'{}'},{'generator_model':'other/model'}]:
+            self.cursor.fetchall.return_value=[self.backend_run(**overrides)]
+            self.assertIsNone(reusable_run(self.cursor,'https://example.org',self.config))
+        path.return_value=None
+        self.cursor.fetchall.return_value=[self.backend_run()]
+        self.assertIsNone(reusable_run(self.cursor,'https://example.org',self.config))
+        self.cursor.fetchall.return_value=[self.backend_run(status='running',output_path=None)]
+        self.assertEqual(reusable_run(self.cursor,'https://example.org',self.config)['id'],787)
+
+    def test_completion_reports_frozen_rag_not_retrieval_controls(self):
+        config=completion_configuration(self.backend_run(use_rag=True))
+        self.assertTrue(config['rag'])
+        self.assertEqual(config['preservation'],0)
+        self.assertEqual(config['preservationName'],'Minimal patches')
 
     @patch('browser_extension_results.candidate_path', return_value=None)
     def test_missing_output_and_failed_runs_are_not_reused(self, path):
@@ -43,9 +90,13 @@ class ExtensionResultsTests(unittest.TestCase):
         self.assertEqual(reusable_request(self.cursor,'https://example.org',42,self.config)['id'],3)
         self.cursor.fetchall.return_value = [self.entry(remediation_run_id=None,acquisition_status='running')]
         self.assertEqual(reusable_request(self.cursor,'https://example.org',None,self.config)['id'],3)
+        self.assertEqual(reusable_request(self.cursor,'https://example.org',42,self.config)['id'],3)
         self.cursor.fetchall.return_value = [self.entry(remediation_run_id=None,acquisition_status='completed',
             acquisition_experiment_id=12,source_experiment_id=12)]
         self.assertEqual(reusable_request(self.cursor,'https://example.org',42,self.config)['id'],3)
+        self.cursor.fetchall.return_value=[self.entry(remediation_run_id=None,
+            acquisition_status='completed',status='failed')]
+        self.assertIsNone(reusable_request(self.cursor,'https://example.org',42,self.config))
 
     @patch('routes.extension_api.get_settings', return_value={})
     @patch('routes.extension_api.get_connection')
@@ -115,6 +166,28 @@ class ExtensionResultsTests(unittest.TestCase):
         insert = next(call for call in self.cursor.execute.call_args_list if 'INSERT INTO experiments' in call.args[0])
         self.assertFalse(insert.args[1][2])
         self.assertEqual(insert.args[0].count('%s'),len(insert.args[1]))
+
+    @patch('routes.extension_api.create_run')
+    @patch('routes.extension_api.reusable_run')
+    @patch('routes.extension_api.reusable_request',return_value=None)
+    @patch('routes.extension_api.get_settings',return_value={})
+    @patch('routes.extension_api.get_connection')
+    def test_recover_web_run_only_inserts_delivery_binding(self, connect, settings, reuse, saved, create):
+        connect.return_value.cursor.return_value=self.cursor
+        self.cursor.fetchone.side_effect=[{'locked':1},{'id':42}]
+        self.cursor.lastrowid=55
+        saved.return_value=self.backend_run()
+        response=self.client().post('/api/browser-extension/requests',json={
+            'url':'https://example.org','selected_model':'openai/gpt-6-luna','use_rag':True})
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json['id'],55)
+        self.assertTrue(response.json['reused'])
+        create.assert_not_called()
+        inserts=[call for call in self.cursor.execute.call_args_list if 'INSERT' in call.args[0]]
+        self.assertEqual(len(inserts),1)
+        self.assertIn('INSERT INTO browser_remediation_requests',inserts[0].args[0])
+        self.assertEqual(inserts[0].args[0].count('%s'),len(inserts[0].args[1]))
+        self.assertFalse(json.loads(inserts[0].args[1][-1])['use_rag'])
 
     @patch('routes.extension_api.get_connection')
     def test_non_boolean_rerun_rejected_before_any_database_write(self, connect):

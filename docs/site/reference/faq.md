@@ -16,9 +16,25 @@ No silent model/provider substitution is permitted. The explicit frozen choice r
 
 No. They change the permitted repair/regeneration scope and its recipe. General settings define shared Axe/Lighthouse targets, frozen for each new run.
 
+## Do sliders change the money or time limit?
+
+No. **Configuration → General → Remediation targets → Resource limits per run**
+sets shared limits, initially US$0.25 and 360 seconds for each run, not for a whole
+study. Actual charges can differ between models and attempts. A call already in
+progress can finish beyond a continuation threshold; see [Remediation](../guide/remediation.md#shared-targets-and-resource-limits).
+
 ## Why does “RAG enabled” not mean RAG used?
 
 Adaptive retrieval waits for measured findings in a later refinement. Relevant complete examples may be unavailable. Inspect actual activation and supplied evidence in the iteration trace.
+
+## Does RAG-ACT contain only 125 examples?
+
+No. The corpus has no fixed 125-case limit. Synchronization indexes approved
+W3C ACT cases with `passed` or `failed` outcomes, excluding `inapplicable` and
+unapproved cases. The upstream catalogue can therefore be larger than the local
+official count. Platform-authored examples are counted separately. See the
+current counts, provenance and stored HTML on **RAG-ACT** in the main sidebar.
+Retrieval sends only a bounded relevant subset to each refinement prompt.
 
 ## Can I close a report or extension panel while it runs?
 

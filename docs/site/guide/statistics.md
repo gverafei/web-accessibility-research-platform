@@ -25,7 +25,15 @@ Scatterplots compare raw measurements on linear axes, with graph-specific colors
 
 Distribution plots show medians, quartiles, 1.5×IQR whiskers and outliers. Axe distribution displays can use a `log1p` transformation for readability while retaining original-count labels. Summary statistics use the recorded values independently of the display scale.
 
-Stratum bars can show issue shares or mean Lighthouse scores. An issue share reflects that group's contribution to the **observed sample's** total issues, not automatically its contribution to the ranking population.
+The Tranco summary bars show **mean WCAG Axe issue instances per completed
+page** and **mean Lighthouse score** in each stratum. Both are arithmetic means,
+so a larger stratum does not appear worse merely because it contributes more
+pages. They describe observed pages, not frame-weighted population estimates.
+
+Numeric bars show their values directly wherever there is room, including zero
+and negative values. Dense charts and very small stacked segments retain
+tooltips to avoid overlapping labels. Light-theme labels have no white backing;
+both themes use the shared chart-label component.
 
 ## Cross-tool ranking
 
