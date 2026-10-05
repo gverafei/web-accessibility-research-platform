@@ -7,10 +7,12 @@
   const loading = document.getElementById('urlCatalogLoading'), status = document.getElementById('urlPaginationStatus');
   const first = document.querySelector('.pager-first'), previous = document.querySelector('.pager-previous');
   const next = document.querySelector('.pager-next'), last = document.querySelector('.pager-last');
-  let page = 1, pageCount = 1, sort = 'date', direction = 'desc', controller, debounce;
+  let page = 1, pageCount = 1, sort = 'date', direction = 'desc', controller, debounce, finishBusy;
 
-  async function load() {
+  async function load(control = null) {
     if (controller) controller.abort();
+    finishBusy?.();
+    finishBusy = globalThis.warpButtonBusy?.(control);
     const request = controller = new AbortController();
     // Reserve space before fetching; loading and image decoding must not move
     // the table or change the column widths between catalog pages.
@@ -30,29 +32,35 @@
       first.disabled = previous.disabled = page <= 1;
       next.disabled = last.disabled = page >= pageCount;
       const start = document.getElementById('startCategorization');
+      start.dataset.missingCount = data.uncategorized_count;
       start.textContent = '✦ ' + config.categorize + (data.uncategorized_count ? ` (${data.uncategorized_count.toLocaleString('en-US')})` : '');
       const available = [...document.getElementById('categoryModel').options].some(option => !option.disabled);
-      start.disabled = !available || !data.uncategorized_count;
+      start.disabled = !available || !data.uncategorized_count || !document.getElementById('categoryModel').value;
       loading.hidden = true;
     } catch (error) {
       if (error.name === 'AbortError') return;
       loading.textContent = config.loadError + ' ';
       const retry = document.createElement('button'); retry.className = 'btn btn-sm btn-outline-primary';
-      retry.textContent = '↻'; retry.setAttribute('aria-label', config.loadError); retry.onclick = load;
+      retry.textContent = '↻'; retry.setAttribute('aria-label', config.loadError); retry.onclick = () => load(retry);
       loading.append(retry);
     } finally {
-      if (request === controller) table.setAttribute('aria-busy', 'false');
+      if (request === controller) {
+        finishBusy?.(); finishBusy = null;
+        first.disabled = previous.disabled = page <= 1;
+        next.disabled = last.disabled = page >= pageCount;
+        table.setAttribute('aria-busy', 'false');
+      }
     }
   }
   filter.addEventListener('input', () => {clearTimeout(debounce); page = 1; debounce = setTimeout(load, 250);});
   size.addEventListener('change', () => {page = 1; load();});
-  first.onclick = () => {page = 1; load();}; previous.onclick = () => {page--; load();};
-  next.onclick = () => {page++; load();}; last.onclick = () => {page = pageCount; load();};
+  first.onclick = () => {page = 1; load(first);}; previous.onclick = () => {page--; load(previous);};
+  next.onclick = () => {page++; load(next);}; last.onclick = () => {page = pageCount; load(last);};
   table.querySelectorAll('.sort-button').forEach(button => button.onclick = () => {
     sort = button.dataset.column; direction = button.dataset.direction;
     table.querySelectorAll('.sort-button').forEach(item => {item.classList.remove('active'); item.querySelector('span').textContent = '↕';});
     button.classList.add('active'); button.querySelector('span').textContent = direction === 'asc' ? '↑' : '↓';
-    button.dataset.direction = direction === 'asc' ? 'desc' : 'asc'; page = 1; load();
+    button.dataset.direction = direction === 'asc' ? 'desc' : 'asc'; page = 1; load(button);
   });
   const endpoint = (url, id) => url.replace('/0/', '/' + id + '/');
   async function save(url, payload) {

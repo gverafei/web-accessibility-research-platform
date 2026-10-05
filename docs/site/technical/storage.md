@@ -13,7 +13,7 @@ A11yResearch keeps structured research records in MySQL and large evidence files
 | `tranco_samples` | Pinned frame and candidate/reserve metadata |
 | `tranco_attempts` | Acquisition-attempt/recovery evidence distinct from valid observations |
 | `datasets`, `dataset_observations` | Local corpus identity and individual content digests |
-| `remediation_runs` | Immutable-source link, frozen model/targets and execution policy |
+| `remediation_runs` | Immutable-source link, frozen model/targets and execution policy; nullable import provenance with package digest/source IDs |
 | `remediation_iterations` | Generated candidate, measurements, usage and decisions |
 | `remediation_events` | Agentic activity log |
 | `browser_remediation_requests` | Extension request and linked acquisition/remediation progress |
@@ -64,7 +64,7 @@ Remediation reads a stored source and writes candidates separately. Source/resul
 6. Record the source revision, image versions and checksums.
 7. Test restoration into an isolated installation before relying on the backup.
 
-A consistent MySQL backup and matched artifact directories support installation recovery. Infrastructure-specific database tools or coordinated volume snapshots provide that consistency. Evaluation-level `.warp` exports complement a backup with portable research records.
+A consistent MySQL backup and matched artifact directories support installation recovery. Infrastructure-specific database tools or coordinated volume snapshots provide that consistency. Evaluation and terminal-remediation `.warp` exports complement a backup with portable research records. Imported runs keep historical costs; their nullable `import_provenance_json` distinguishes these from charges incurred locally. Original and retained-iteration links point to new destination records, not source-installation IDs.
 
 ## Cleanup
 

@@ -44,6 +44,7 @@
         async function cycle() {
             if (button.disabled) return;
             const next = nextTheme(html.dataset.themeChoice);
+            const done = env.warpButtonBusy?.(button);
             button.disabled = true;
             button.setAttribute('aria-busy', 'true');
             status.textContent = '';
@@ -59,8 +60,11 @@
                 status.textContent = button.dataset.error;
                 button.title = button.dataset.error;
             } finally {
+                done?.();
                 button.disabled = false;
                 button.removeAttribute('aria-busy');
+                // A busy-state reset restores the old icon; render the saved choice.
+                render();
             }
         }
         media.addEventListener('change', () => { if (html.dataset.themeChoice === 'system') render(); });

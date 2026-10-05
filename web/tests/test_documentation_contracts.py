@@ -40,6 +40,16 @@ class DocumentationContractsTests(unittest.TestCase):
                 self.assertIn('3,221,225,472', text)
                 self.assertNotIn('1,610,612,736', text)
 
+    def test_exchange_explains_product_not_paper_example_packages(self):
+        text = (ROOT / 'docs/site/guide/exchange.md').read_text()
+        for phrase in ('**Export data**', '**Remediation runs**', '**Export selected**',
+                       'remediation.json', '**Import**', 'historical', 'do **not** queue a job'):
+            self.assertIn(phrase, text)
+        for path in ('guide/exchange.md', 'guide/remediation.md'):
+            guide = (ROOT / 'docs/site' / path).read_text()
+            self.assertNotIn('examples/softwarex', guide)
+            self.assertNotIn('example-2-remediations-125.warp', guide)
+
 
 if __name__ == '__main__':
     unittest.main()

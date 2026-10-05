@@ -1,4 +1,4 @@
-"""Assign the WebAIM category vocabulary with a pinned local classifier."""
+"""Assign the WebAIM category vocabulary with an explicitly pinned classifier."""
 
 import json
 from datetime import datetime
@@ -8,6 +8,7 @@ import requests
 from database import get_connection
 from local_llm import local_chat, local_configuration
 from settings import get_settings
+from category_models import load_category_snapshot
 
 CATEGORIES = (
     "Government", "Non-Profit/Charity", "Science", "Personal Finance", "Careers",
@@ -84,15 +85,24 @@ def classify(experiment_id, batch_size=40):
     return updated
 
 
-def classify_managed_urls(batch_size=10, one_batch=False, model=None, experiment_id=None):
+def classify_managed_urls(batch_size=10, one_batch=False, model=None, experiment_id=None, model_config=None):
     """Classify latest uncategorized completed observations shown in Manage URLs."""
-    config = local_configuration(get_settings())
-    if not config and not (model and model.startswith("openai/")):
+    settings = get_settings()
+    snapshot = load_category_snapshot(model_config, model)
+    cloud = snapshot['provider'] == 'cloud' if snapshot else bool(model and not model.startswith('ollama/'))
+    config = snapshot['config'] if snapshot else (None if cloud else local_configuration(settings))
+    if not config and not cloud:
         raise RuntimeError("A configured local Ollama model is required for categorization.")
-    source_model = model if model and model.startswith("openai/") else "ollama/" + config["model"]
-    if model and model.startswith('ollama/'):
+    source_model = model if model else "ollama/" + config["model"]
+    if not snapshot and model and model.startswith('ollama/'):
         config = {**config, 'model': model.removeprefix('ollama/')}
-        source_model = model
+    if cloud and not config:
+        # Compatibility for pre-snapshot jobs: keep their explicit provider/model.
+        config = {'base_url': settings['openrouter_base_url'], 'model': model,
+                  'reasoning_effort': 'low' if model.startswith('openai/') else None,
+                  'supported_parameters': ['reasoning', 'response_format'] if model.startswith('openai/') else []}
+    if cloud and not settings.get('openrouter_api_key'):
+        raise RuntimeError('Configure the OpenRouter API key before categorization.')
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -129,14 +139,17 @@ def classify_managed_urls(batch_size=10, one_batch=False, model=None, experiment
                 "and values are exact vocabulary strings. Do not omit ids and do not add commentary.\n"
                 + json.dumps(observations, ensure_ascii=False)
             )
-            if model and model.startswith("openai/"):
-                settings = get_settings()
+            if cloud:
+                request_payload = {'model': source_model, 'messages': [{'role': 'user', 'content': prompt}],
+                                   'max_tokens': 4000}
+                if 'response_format' in config['supported_parameters']:
+                    request_payload['response_format'] = {'type': 'json_object'}
+                if config.get('reasoning_effort') is not None:
+                    request_payload['reasoning'] = {'effort': config['reasoning_effort']}
                 response = requests.post(
-                    settings["openrouter_base_url"].rstrip("/") + "/chat/completions",
+                    config['base_url'].rstrip("/") + "/chat/completions",
                     headers={"Authorization": f"Bearer {settings['openrouter_api_key']}", "Content-Type": "application/json"},
-                    json={"model": model, "messages": [{"role": "user", "content": prompt}],
-                          "response_format": {"type": "json_object"},
-                          "reasoning": {"effort": "low"}, "max_tokens": 4000},
+                    json=request_payload,
                     timeout=300,
                 )
                 response.raise_for_status()
@@ -153,7 +166,7 @@ def classify_managed_urls(batch_size=10, one_batch=False, model=None, experiment
                 choices = envelope.get("choices") or []
                 content = ((choices[0].get("message") or {}).get("content") if choices else None)
                 if not content:
-                    raise RuntimeError("GPT-6 Luna returned no category response.")
+                    raise RuntimeError("The selected model returned no category response.")
             else:
                 content, _input_tokens, _output_tokens = local_chat(
                     config, [{"role": "user", "content": prompt}], json_mode=True,
@@ -176,7 +189,8 @@ def classify_managed_urls(batch_size=10, one_batch=False, model=None, experiment
                     "The selected classifier returned empty, unexpected or unknown categories. "
                     + (json.dumps(payload, ensure_ascii=False)[:1000] if isinstance(payload, dict) else 'Non-object response')
                 )
-            sampling = 'light reasoning' if source_model.startswith('openai/') else 'temperature 0'
+            effort = config.get('reasoning_effort')
+            sampling = ('light reasoning' if effort == 'low' else 'reasoning ' + (effort or 'provider default')) if cloud else 'temperature 0'
             source = f"{source_model} · closed WebAIM 2026 vocabulary · {sampling}"
             rows_by_id = {str(row["id"]): row for row in batch}
             for result_id, category in payload.items():
@@ -240,6 +254,7 @@ def process_managed_url_categorization(batch_size=10):
                         batch_size=batch_size if validation_attempt == 0 else 1,
                         one_batch=True, model=job.get("model"),
                         experiment_id=job.get('experiment_id'),
+                        model_config=job.get('model_config_json'),
                     )
                     break
                 except (CategoryResponseError, json.JSONDecodeError):

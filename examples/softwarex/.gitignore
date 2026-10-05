@@ -1,0 +1,3 @@
+# Publish large, reviewed bundles as release/data assets, not source Git objects.
+*.warp
+*.partial

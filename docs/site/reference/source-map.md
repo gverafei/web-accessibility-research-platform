@@ -1,9 +1,16 @@
 # Source map
 
+Shared request indicators and upper-page notifications are implemented in
+`web/app/static/js/ui_feedback.js` and mounted by `web/app/templates/base.html`.
+Explicit AJAX controls reuse the same busy-state helper; visual rules live in
+the canonical `web/app/static/css/theme.css`.
+
 Shared history layouts use `web/app/static/js/history_views.js` and
 `web/app/templates/_history_view_toggle.html`; their presentation lives in the
 canonical `web/app/static/css/theme.css`. Table and card modes reuse each record
 rather than creating independent copies of its state or actions.
+`web/app/templates/_history_view_head.html` loads the shared preference before
+the list is painted; controls bind after the document is ready.
 
 This map connects documentation topics to their implementation files. Paths are relative to the repository root.
 
@@ -22,6 +29,9 @@ This map connects documentation topics to their implementation files. Paths are 
 | Experiment portability | `web/app/result_portability.py` |
 | Comparison analysis | `web/app/routes/comparisons.py` |
 | Remediation submission/report | `web/app/routes/remediation.py` |
+| Remediation analytical CSV | `web/app/remediation_csv.py`; read-only download route in `web/app/routes/remediation.py` |
+| Native download readiness | `web/app/download_feedback.py`; shared button feedback in `web/app/static/js/ui_feedback.js` |
+| Remediation exchange | `web/app/remediation_portability.py`, `web/app/warp_export.py`; import dispatch in `web/app/routes/experiments.py` |
 | Main remediation orchestration | `web/app/remediation_jobs.py` |
 | State machine and skills | `web/app/remediation_agent_runtime.py`, `web/app/remediation_skill_catalog.py`, `web/app/agent_skills/manifest.json` |
 | Typed tool contracts | `web/app/remediation_tool_registry.py` |

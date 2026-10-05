@@ -9,6 +9,43 @@ CSS = ROOT / "web/app/static/css/theme.css"
 
 
 class SharedThemeTests(unittest.TestCase):
+    def test_acquisition_loading_has_local_animation_and_paints_before_navigation(self):
+        css = CSS.read_text()
+        self.assertIn('@keyframes button-busy-spin', css)
+        self.assertIn('animation: button-busy-spin .75s linear infinite', css)
+        self.assertIn('border-right-color: transparent', css)
+        page = (ROOT / 'web/app/templates/index.html').read_text()
+        self.assertIn('data-busy-navigation', page)
+        self.assertNotIn('submitButton.disabled = true', page)
+
+    def test_report_buttons_align_at_bottom_without_form_margins(self):
+        css = CSS.read_text()
+        self.assertIn('.report-heading .report-heading-actions { align-items: flex-end; }', css)
+        self.assertIn('.report-heading .report-heading-actions > form { display: flex; margin: 0; }', css)
+
+    def test_selected_history_records_keep_highlight_in_tables_and_cards(self):
+        css = CSS.read_text()
+        self.assertIn('.history-list-view .table [data-history-selected="true"] > tr > td', css)
+        self.assertIn('--bs-table-bg-state: var(--ui-table-hover)', css)
+        self.assertIn('.history-list-view[data-history-view="cards"] [data-history-selected="true"] { background: var(--ui-table-hover)', css)
+        self.assertIn('[data-history-selectable="true"] { cursor: default; }', css)
+        self.assertNotIn('[data-history-selectable="true"] { cursor: pointer; }', css)
+
+    def test_history_toolbar_shares_normal_weight_typography(self):
+        css = CSS.read_text()
+        rule = re.search(r'html\[data-theme\] \.list-filter-bar :is\(\.history-view-toggle button, \.list-selection-actions \.btn, \.list-selection-actions label\) \{([^}]+)', css).group(1)
+        self.assertIn('font: inherit', rule)
+        self.assertIn('font-size: .72rem', rule)
+        self.assertIn('font-weight: 400', rule)
+        self.assertIn('line-height: 1.5', rule)
+
+    def test_categorization_panel_uses_shared_surface_and_text_tokens(self):
+        css = CSS.read_text()
+        panel = re.search(r'html\[data-theme\] \.url-category-automation \{([^}]+)', css).group(1)
+        self.assertIn('var(--ui-surface)',panel)
+        self.assertIn('var(--ui-ink)',panel)
+        self.assertIn('var(--ui-line)',panel)
+
     def test_extension_mirror_is_identical(self):
         self.assertEqual(CSS.read_bytes(), (ROOT / "browser_extension/theme.css").read_bytes())
 

@@ -475,6 +475,18 @@ msgid "Add selected"
 msgstr "Agregar seleccionados"
 
 #: app/templates/compose.html:31
+msgid "Response HTML"
+msgstr "HTML de respuesta"
+
+msgid "Rendered HTML"
+msgstr "HTML renderizado"
+
+msgid "HTML from the initial page response, before browser rendering."
+msgstr "HTML de la respuesta inicial de la página, antes del renderizado en el navegador."
+
+msgid "Frozen rendered DOM used for evaluation."
+msgstr "DOM renderizado congelado utilizado para la evaluación."
+
 msgid "Replace matching URLs"
 msgstr "Reemplazar URL coincidentes"
 
@@ -4191,6 +4203,36 @@ msgstr "hallazgos"
 msgid "Unclassified"
 msgstr "Sin clasificar"
 
+msgid "Category"
+msgstr "Categoría"
+
+msgid "Completed page results"
+msgstr "Resultados de página completados"
+
+msgid "Includes reused, imported and combined results; not unique URLs."
+msgstr "Incluye resultados reutilizados, importados y combinados; no son URLs únicas."
+
+msgid "across completed page results, including reused copies"
+msgstr "entre resultados de página completados, incluidas las copias reutilizadas"
+
+msgid "Stored page results"
+msgstr "Resultados de página guardados"
+
+msgid "Includes failed attempts and reused, imported or combined results."
+msgstr "Incluye intentos fallidos y resultados reutilizados, importados o combinados."
+
+msgid "Edit page names and WebAIM categories for unique URLs. Each row shows the latest completed result for a normalized URL."
+msgstr "Edita nombres de página y categorías WebAIM para URLs únicas. Cada fila muestra el resultado completado más reciente de una URL normalizada."
+
+msgid "Loading unique URLs…"
+msgstr "Cargando URLs únicas…"
+
+msgid "unique URLs"
+msgstr "URLs únicas"
+
+msgid "matching unique URLs"
+msgstr "URLs únicas coincidentes"
+
 msgid "Counts are affected elements, not merely distinct Axe rule names. Categories are evidence and do not add a gate under Automated metrics."
 msgstr "Los conteos son elementos afectados, no sólo nombres de reglas Axe. Las categorías son evidencia y no agregan una condición en Métricas automáticas."
 
@@ -5579,6 +5621,45 @@ msgstr "No se pudo actualizar la lista. Se conservan los resultados anteriores; 
 msgid "List view"
 msgstr "Vista del listado"
 
+msgid "Loading category models…"
+msgstr "Cargando modelos de categorización…"
+
+msgid "Choose a category model"
+msgstr "Elige un modelo de categorización"
+
+msgid "Category model"
+msgstr "Modelo de categorización"
+
+msgid "Automatic categorization"
+msgstr "Categorización automática"
+
+msgid "Choose a pinned model; the job continues if you leave this page."
+msgstr "Elige un modelo fijo; el trabajo continúa si sales de esta página."
+
+msgid "Categorize missing"
+msgstr "Categorizar pendientes"
+
+msgid "local, no cloud cost"
+msgstr "local, sin costo de nube"
+
+msgid "Refresh installed models"
+msgstr "Actualizar modelos instalados"
+
+msgid "Select an available category model."
+msgstr "Selecciona un modelo de categorización disponible."
+
+msgid "cloud, API cost"
+msgstr "nube, costo de API"
+
+msgid "Default from Configuration"
+msgstr "Predeterminado en Configuración"
+
+msgid "Could not load local models. Check the Ollama server in Configuration."
+msgstr "No se pudieron cargar los modelos locales. Revisa el servidor Ollama en Configuración."
+
+msgid "No category model is available. Check Configuration."
+msgstr "No hay modelos de categorización disponibles. Revisa Configuración."
+
 msgid "Table"
 msgstr "Tabla"
 
@@ -5587,3 +5668,60 @@ msgstr "Tarjetas"
 
 msgid "Only approved passed/failed ACT cases are indexed to provide examples of accessibility barriers and correct implementations; unapproved and inapplicable cases are excluded."
 msgstr "Solo se indexan casos ACT aprobados con resultado passed/failed para aportar ejemplos de barreras de accesibilidad e implementaciones correctas; se excluyen los casos no aprobados y los no aplicables."
+
+msgid "Import evaluation or remediation .warp packages with their frozen evidence and histories, without new execution. To combine stored evaluations, use Combine evaluations."
+msgstr "Importa paquetes .warp de evaluaciones o remediaciones con sus evidencias e historiales congelados, sin volver a ejecutarlos. Para reunir evaluaciones guardadas, usa Combinar evaluaciones."
+
+msgid "Export remediations"
+msgstr "Exportar remediaciones"
+
+msgid "Import .warp"
+msgstr "Importar .warp"
+
+msgid "Export .warp"
+msgstr "Exportar .warp"
+
+msgid "Export selected .warp"
+msgstr "Exportar selección .warp"
+
+msgid "Select remediation"
+msgstr "Seleccionar remediación"
+
+msgid "Export selected"
+msgstr "Exportar seleccionados"
+
+msgid "Select all visible completed remediations"
+msgstr "Seleccionar todas las remediaciones finalizadas visibles"
+
+msgid "Export all selected runs, including those hidden by the filter."
+msgstr "Exportar todas las corridas seleccionadas, incluidas las ocultas por el filtro."
+
+msgid "Invalid remediation selection."
+msgstr "La selección de remediaciones no es válida."
+
+msgid "Select completed runs to share their frozen originals, candidates, configuration and execution evidence in one .warp package."
+msgstr "Selecciona corridas finalizadas para compartir sus originales congelados, candidatos, configuración y evidencias de ejecución en un paquete .warp."
+
+msgid "Export does not execute models or evaluators. Review captured content and prompts for privacy and redistribution rights before sharing. Missing optional legacy artifacts are listed in the package."
+msgstr "Exportar no ejecuta modelos ni evaluadores. Revisa la privacidad y los derechos de redistribución del contenido capturado y los prompts antes de compartir. El paquete indica los archivos históricos opcionales que falten."
+
+msgid "No completed remediation runs available."
+msgstr "No hay corridas de remediación finalizadas disponibles."
+
+msgid "Imported costs are historical and excluded from the local cost total."
+msgstr "Los costes importados son históricos y se excluyen del total de costes locales."
+
+msgid "Imported remediation evidence. Costs and timestamps are historical; this import did not execute models or evaluators."
+msgstr "Evidencia de remediación importada. Los costes y las fechas son históricos; esta importación no ejecutó modelos ni evaluadores."
+
+msgid "Remediation evidence imported. No models or evaluators were executed; costs are historical."
+msgstr "Evidencia de remediación importada. No se ejecutaron modelos ni evaluadores; los costes son históricos."
+
+msgid "Loading…"
+msgstr "Cargando…"
+
+msgid "Categorization could not be stopped. Please try again."
+msgstr "No se pudo detener la categorización. Inténtalo de nuevo."
+
+msgid "The page could not be removed. Please try again."
+msgstr "No se pudo quitar la página. Inténtalo de nuevo."

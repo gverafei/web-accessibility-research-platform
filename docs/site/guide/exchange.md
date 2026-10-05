@@ -16,6 +16,11 @@ curl --fail --output experiment-42.warp \
 
 The export includes available supported artifacts from the result's artifact directory. Its contents reflect the evidence present in the installation at export time.
 
+Download buttons show a spinner while the server prepares the file. It stops
+when the file is handed to the browser for saving, not after you save or cancel
+the dialog. This also applies to CSV and raw JSON/HTML evidence downloads.
+It does not indicate that all streamed bytes have been written to disk.
+
 ## Inspect offline
 
 ```python
@@ -47,11 +52,94 @@ uncompressed. Bundled local datasets retain their separate 1.5-billion-byte tota
 and 100-million-byte file limits. A large export can therefore need a higher
 receiving upload budget even though export streams its evidence successfully.
 
+## Export and import remediations
+
+**Download CSV** in a remediation report exports its original and recorded
+iterations for analysis, without generating or evaluating anything. It is not an
+importable package; use **Export data** for complete portable evidence.
+
+Open a terminal remediation report or its history row and choose **Export data**.
+For a batch, click a record's non-interactive area or select the checkbox beside its
+page name directly in **Remediation runs**. The entire selected record stays highlighted
+in table and card views; links and action buttons retain their normal behavior. Then
+choose **Export selected**, the first control before Table/Cards and search. The button
+shows the selected count and downloads one `.warp` package. Search by URL, name,
+ID or status; **Select all** beside the toolbar checkbox selects only visible completed runs. Selections
+remain selected when you change the filter or switch between table and cards,
+including selected rows hidden by a filter. Active runs cannot be selected or exported.
+Keyboard users can select the native checkboxes with Space.
+
+When the package contains multiple runs, its suggested filename includes the export
+date and time in the configured application timezone, for example
+`remediations-20261005-090703.warp` (compact date and time separated by a hyphen).
+Single-run exports keep `remediation-<ID>.warp`.
+
+These packages use `warp-remediations`, version `1`, with `remediation.json`.
+They contain the linked frozen source observations and recorded environments,
+run configuration, templates used, all stored iterations and events, candidate
+HTML, screenshots, raw evaluator files and model-call/response evidence when
+available. Binary files retain their bytes and carry size/SHA-256 references.
+Missing optional legacy artifacts are listed, never reconstructed. A referenced
+candidate or original rendered HTML must be present for export to succeed.
+
+Use the same **Import** page for either package type. Remediation imports create
+new source evaluations and runs, remap their source/retained-iteration/file links,
+and retain terminal status, measurements, timestamps, decisions and historical
+costs. They do **not** queue a job, call a model/evaluator, or publish a candidate.
+The restored source evaluations contain only the observations linked to the
+selected runs, not necessarily the entire original collection. Retained sampling
+metadata describes the original acquisition; it does not establish that the
+exported subset is a new representative sample. Export the full source evaluation
+separately when that collection is needed for study-wide analysis.
+Run reports mark imported evidence; historical imported costs are excluded from
+the Dashboard and remediation-history local cost total. Re-export preserves
+prior import provenance. Re-importing creates another independent copy.
+
+Validation checks references, terminal states, duplicate paths, traversal,
+symlinks, sizes and all binary hashes before records are created. The same
+64-MiB manifest, 100,001-member and 32-GiB evidence limits apply. Database writes
+are transactional; failure removes only that import's new artifact directories.
+The receiving HTTP upload limit still applies.
+
+```bash
+# Export existing recorded evidence; no new remediation is submitted.
+curl --fail --output remediation-21.warp http://localhost/remediation/21/export
+# Export a selected batch of terminal runs.
+curl --fail --output remediations.warp \
+  --data 'run_ids=21&run_ids=22' http://localhost/remediation/export
+```
+
+Inspect `remediation.json` offline with a ZIP reader before sharing. Prompts and
+captured pages can contain sensitive material even though provider settings and
+credentials are not exported. Historical prompts, event details and checkpoint
+files preserve their original identifiers/paths as provenance; only live file
+links in the imported records are relocated. This is evidence transfer, not a
+guarantee that external assets remain available or that live interactions replay.
+Original local-dataset resource bundles and browser sessions are not included in
+a remediation package; export the source dataset evaluation separately if needed.
+
 ## Compose a collection
 
 Open **Combine evaluations**, select source results and create a new collection. A11yResearch clones stored results and their available artifacts with source identifiers and composition provenance. It does not perform a fresh visit or add fresh evaluation charges for the copy.
 
-When source evaluations contain the same normalized URL, the selected record determines which capture is included. Stored acquisition dates, settings and provenance help distinguish observations collected under different conditions.
+The destination and source selectors share aligned headers at the top of their
+panels. Page counts, matching search/selection controls and the two lists also
+align. Secondary actions sit in the panel footers. Click **Page** in the source
+list to alternate ascending and descending URL order. Panels grow with their
+content up to the available screen space, then scroll internally; on narrow
+screens they stack vertically.
+
+**Available pages** counts selectable source observations under the current
+filter; pages already in the destination remain visible but disabled and marked
+**Already present**.
+
+Each normalized URL appears only once in the destination. Existing observations
+are never automatically replaced, including through the composition API. To use
+a different observation of the same URL, first explicitly remove it from the
+left-hand destination list, then add the desired source observation. Removal
+deletes the destination's copy and its generated files, not the source record.
+Stored acquisition dates, settings and provenance help distinguish observations
+collected under different conditions.
 
 For example, two collaborators can contribute disjoint batches without
 remeasuring their pages:
@@ -68,6 +156,10 @@ results do not initiate browser acquisition or evaluator calls.
 
 ## What this does not export
 
-The evaluation package is not a complete database backup or a round-trip format for every remediation run, comparison study, configuration secret or Qdrant corpus. Back up the installation separately when migrating all state.
+Neither package type is a complete database backup. Comparison-study membership,
+browser-extension delivery requests/sessions, configuration secrets and the
+Qdrant corpus are not transferred. Remediation packages restore recorded terminal
+runs, not resumable active jobs. Back up the installation separately when
+migrating all state.
 
 Portable exchange reduces repeated computation, but it does not grant rights to redistribute third-party HTML/images. Share only evidence you are authorized to distribute. See [security](../technical/security.md) and [storage](../technical/storage.md).

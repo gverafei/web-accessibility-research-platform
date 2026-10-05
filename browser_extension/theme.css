@@ -1,4 +1,4 @@
-/* Shared component skin. Loaded last, without changing layout or slider tokens.
+/* Shared component skin. Loaded last, without changing slider tokens.
  * Canonical source: web/app/static/css/theme.css.
  * Extension mirror: run web/tools/sync_theme_assets.py after editing this file.
  * Remediation model/preservation cards, descendants and range inputs are exempt.
@@ -20,6 +20,68 @@
   --ui-table-hover: color-mix(in srgb, var(--ui-blue) 8%, var(--ui-surface));
   --ui-shadow: 0 5px 20px #18529d0a;
 }
+
+/* Same loading affordance on every request/navigation action, in both themes. */
+.action-busy { white-space: nowrap; }
+.button-busy-spinner { display: inline-block; box-sizing: border-box; width: 1em; height: 1em; border: .125em solid currentColor; border-right-color: transparent; border-radius: 50%; vertical-align: -.125em; margin-right: .35em; flex-shrink: 0; animation: button-busy-spin .75s linear infinite; }
+@keyframes button-busy-spin { to { transform: rotate(360deg); } }
+.action-busy :is(svg, .bi, .button-icon)[hidden] { display: none !important; }
+.action-busy .button-busy-spinner { color: currentColor; }
+.model-provider-picker { scroll-margin-top: 4rem; }
+@media (prefers-reduced-motion: reduce) {
+  .button-busy-spinner { animation-duration: 1.5s; }
+}
+
+/* Composition panels share toolbar geometry and desktop row tracks. */
+.dataset-workspace { height: auto; min-height: 0; }
+.dataset-workspace .table-responsive { height: auto; min-height: 0; }
+.dataset-list-toolbar {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  gap: .65rem;
+  align-items: center;
+}
+.dataset-list-toolbar .list-filter-control { width: 100%; min-width: 0; }
+.dataset-list-toolbar .list-filter-control .form-control { max-width: none; }
+.dataset-list-toolbar .form-check {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: 0;
+  white-space: nowrap;
+}
+.dataset-workspace .form-check-input { float: none; margin: 0; flex-shrink: 0; }
+.dataset-selection-count { white-space: nowrap; text-align: right; }
+.dataset-pane-footer {
+  padding: .75rem 1rem;
+  border-top: 1px solid var(--ui-line);
+}
+.dataset-pane-footer .dataset-new-name { padding: 0; border: 0; margin-bottom: .65rem; }
+.dataset-footer-actions { display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+@media (min-width: 1151px) {
+  .dataset-workspace { grid-template-rows: auto auto auto minmax(0, 1fr) auto; row-gap: 0; max-height: var(--compose-space, calc(100dvh - 14rem)); }
+  .dataset-workspace > :is(section, form), .dataset-workspace > form#composeForm, .dataset-workspace > form > section {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / span 5;
+    min-height: 0;
+    height: auto;
+    row-gap: 0;
+  }
+  .dataset-workspace > section { grid-column: 1; }
+  .dataset-workspace > form { grid-column: 2; }
+  .dataset-workspace #removeResultsForm {
+    display: grid;
+    grid-row: 3 / span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+  .dataset-workspace :is(.dataset-target-inline, .dataset-pane-title, .dataset-list-toolbar, .dataset-pane-footer) { min-height: 0; }
+}
+@media (max-width: 620px) {
+  .dataset-list-toolbar { grid-template-columns: minmax(0, 1fr) max-content; }
+  .dataset-list-toolbar .list-filter-control { grid-column: 1 / -1; grid-row: 2; }
+}
 html[data-theme="dark"] {
   --ui-blue: #91c0ff;
   --ui-green: #80d9a3;
@@ -39,6 +101,12 @@ html[data-theme="dark"] {
 }
 
 /* Chrome and navigation: soft surfaces, shared contrast and focus treatment. */
+html[data-theme] .url-category-automation {
+  background: color-mix(in srgb, var(--ui-blue) 5%, var(--ui-surface));
+  border-color: var(--ui-line);
+  color: var(--ui-ink);
+}
+html[data-theme] .url-category-automation small { color: var(--ui-muted); }
 html[data-theme] body { background: var(--ui-paper); }
 html[data-theme] .app-sidebar {
   background: var(--ui-sidebar);
@@ -142,6 +210,9 @@ html[data-theme] :is(.dashboard-hero, .comparison-hero, .report-hero, .report-he
 html[data-theme] :is(.dashboard-hero, .comparison-hero, .report-hero, .report-heading) h1 { color: var(--ui-ink); }
 html[data-theme] :is(.dashboard-hero > div > span, .report-kicker, .comparison-kicker, .hero-kicker, .report-hero .eyebrow, .comparison-hero .eyebrow) { color: var(--ui-green); }
 html[data-theme] :is(.dashboard-hero p, .report-hero p, .comparison-hero p, .report-hero-meta, .comparison-hero-meta, .report-action-group > span) { color: var(--ui-muted); }
+/* Align export groups and standalone actions by their button bottoms. */
+.report-heading .report-heading-actions { align-items: flex-end; }
+.report-heading .report-heading-actions > form { display: flex; margin: 0; }
 html[data-theme] .research-metric {
   background: color-mix(in srgb, var(--ui-neutral) 3%, var(--ui-surface));
   border-color: var(--ui-line);
@@ -370,8 +441,10 @@ html[data-theme] .extension-panel #stages li.current {
 
 /* Histories share one record layout, compact action footer and view switch. */
 .history-view-toggle { display: inline-flex; gap: .15rem; border: 1px solid var(--ui-control-line); border-radius: .4rem; padding: .12rem; }
-.history-view-toggle button { display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .5rem; border: 0; border-radius: .25rem; font: inherit; font-size: .72rem; color: var(--ui-muted); background: transparent; }
-.history-view-toggle button[aria-pressed="true"] { color: var(--ui-blue); background: color-mix(in srgb, var(--ui-blue) 10%, var(--ui-surface)); }
+html[data-theme] .list-filter-bar :is(.history-view-toggle button, .list-selection-actions .btn, .list-selection-actions label) { font: inherit; font-size: .72rem; font-weight: 400; line-height: 1.5; }
+.history-view-toggle button { display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .5rem; border: 0; border-radius: .25rem; color: var(--ui-muted); background: transparent; }
+html:not([data-history-view="cards"]) .history-view-toggle button[aria-pressed="true"],
+html[data-history-view="cards"] .history-view-toggle button[data-history-mode="cards"] { color: var(--ui-blue); background: color-mix(in srgb, var(--ui-blue) 10%, var(--ui-surface)); }
 .history-view-toggle button:hover { color: var(--ui-ink); }
 .history-view-toggle button:focus-visible { outline: 2px solid var(--ui-blue); outline-offset: 2px; }
 .history-view-toggle svg, .source-url-icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.6; }
@@ -392,20 +465,30 @@ html[data-theme] .history-list-view .table .experiment-actions .history-action:h
 html[data-theme] .history-list-view .table .experiment-actions .experiment-action-delete { color: var(--ui-red); }
 html[data-theme] .history-list-view .table .experiment-actions .experiment-action-delete:hover:not(:disabled) { color: var(--ui-red); background: color-mix(in srgb, var(--ui-red) 8%, var(--ui-surface)); border-color: var(--ui-red); }
 .history-list-view .history-action svg { width: .8rem; height: .8rem; }
+.list-selection-actions { display: flex; align-items: center; gap: .45rem; margin: 0; }
+.list-selection-actions .btn { min-height: 2rem; padding: .3rem .5rem; }
+.list-selection-actions label { gap: .35rem; white-space: nowrap; }
+.list-filter-bar:has(.list-selection-actions) { flex-wrap: wrap; }
+.list-selection-actions [data-history-selection-count] { margin-inline-start: .25rem; }
+.history-list-view .history-record-select { flex-shrink: 0; margin: 0 .45rem 0 0; }
 .history-list-view .table [data-history-entry]:is(:hover, :focus-within) > tr > td { --bs-table-bg: var(--ui-table-hover); --bs-table-accent-bg: var(--ui-table-hover); }
+.history-list-view [data-history-selectable="true"] { cursor: default; }
+.history-list-view .table [data-history-selected="true"] > tr > td { --bs-table-bg: var(--ui-table-hover); --bs-table-accent-bg: var(--ui-table-hover); --bs-table-bg-state: var(--ui-table-hover); }
+.history-list-view[data-history-view="cards"] [data-history-selected="true"] { background: var(--ui-table-hover); border-color: var(--ui-blue); }
 .history-list-view [data-history-entry][hidden] { display: none !important; }
-.history-list-view[data-history-view="cards"] { overflow: visible; contain: none; }
-.history-list-view[data-history-view="cards"] .table { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; min-width: 0; margin: 0; }
-.history-list-view[data-history-view="cards"] thead { display: none; }
-.history-list-view[data-history-view="cards"] tbody { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--ui-line); border-radius: .65rem; overflow: hidden; background: var(--ui-surface); }
-.history-list-view[data-history-view="cards"] tbody > tr:first-child { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1; }
-.history-list-view[data-history-view="cards"] .table td { display: block; min-width: 0; padding: .65rem .75rem; border: 0; white-space: normal; text-align: left; background: transparent; box-shadow: none; }
-.history-list-view[data-history-view="cards"] td[data-label]::before { content: attr(data-label); display: block; margin-bottom: .35rem; color: var(--ui-muted); font-size: .64rem; font-weight: 400; }
-.history-list-view[data-history-view="cards"] td:first-child { grid-column: 1 / -1; }
-.history-list-view[data-history-view="cards"] .history-actions-row { display: block; border-top: 1px solid var(--ui-line); }
-.history-list-view[data-history-view="cards"] .table .history-actions-row > td { padding: .3rem .45rem; }
-.history-list-view[data-history-view="cards"] .remediation-history-table td:nth-child(4) { grid-column: 1 / -1; }
-.history-list-view[data-history-view="cards"] .run-model-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-@media (min-width: 1700px) { .history-list-view[data-history-view="cards"] .table { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 1050px) { .history-list-view[data-history-view="cards"] .table { grid-template-columns: 1fr; } }
+/* The head preference styles the original records even before controls initialize. */
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) { overflow: visible; contain: none; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .table { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; min-width: 0; margin: 0; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) thead { display: none; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) tbody { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--ui-line); border-radius: .65rem; overflow: hidden; background: var(--ui-surface); }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) tbody > tr:first-child { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); flex: 1; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .table td { display: block; min-width: 0; padding: .65rem .75rem; border: 0; white-space: normal; text-align: left; background: transparent; box-shadow: none; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) td[data-label]::before { content: attr(data-label); display: block; margin-bottom: .35rem; color: var(--ui-muted); font-size: .64rem; font-weight: 400; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) td:first-child { grid-column: 1 / -1; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .history-actions-row { display: block; border-top: 1px solid var(--ui-line); }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .table .history-actions-row > td { padding: .3rem .45rem; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .remediation-history-table td:nth-child(4) { grid-column: 1 / -1; }
+:is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .run-model-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 1700px) { :is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .table { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1050px) { :is(.history-list-view[data-history-view="cards"], html[data-history-view="cards"] .history-list-view) .table { grid-template-columns: 1fr; } }
 @media (max-width: 620px) { .list-filter-bar { flex-wrap: wrap; } .list-filter-bar .list-filter-control { width: 100%; } }

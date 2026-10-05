@@ -2,9 +2,42 @@ import json
 import unittest
 from unittest.mock import MagicMock, patch
 import classify_site_categories as categories
+from category_models import freeze_category_model
 
 
 class CategoryScopeTests(unittest.TestCase):
+    def test_saved_non_openai_default_dispatches_cloud_with_frozen_settings(self):
+        snapshot=freeze_category_model({'id':'anthropic/example@high',
+            'model':'anthropic/example','provider':'cloud','config':{
+                'base_url':'https://saved.invalid/v1','model':'anthropic/example',
+                'reasoning_effort':'high','supported_parameters':['reasoning']}})
+        connection=MagicMock(); connection.cursor.return_value.fetchall.return_value=[{'id':7,'url':'https://example.org/'}]
+        accounting=MagicMock(); response=MagicMock()
+        response.json.return_value={'usage':{'cost':0.001},'choices':[{'message':{'content':'{"7":"Education"}'}}]}
+        with (patch.object(categories,'get_connection',side_effect=[connection,accounting]),
+              patch.object(categories,'get_settings',return_value={'openrouter_api_key':'current-secret','openrouter_base_url':'https://changed.invalid'}),
+              patch.object(categories,'local_chat') as local,
+              patch.object(categories.requests,'post',return_value=response) as cloud):
+            result=categories.classify_managed_urls(one_batch=True,model='anthropic/example',model_config=json.dumps(snapshot))
+        self.assertEqual(result,(1,'anthropic/example'))
+        self.assertEqual(cloud.call_args.args[0],'https://saved.invalid/v1/chat/completions')
+        self.assertEqual(cloud.call_args.kwargs['json']['reasoning'],{'effort':'high'})
+        self.assertNotIn('response_format',cloud.call_args.kwargs['json'])
+        local.assert_not_called(); accounting.commit.assert_called_once()
+
+    def test_selected_local_model_is_not_replaced_by_configuration(self):
+        snapshot=freeze_category_model({'id':'ollama/llama:latest','model':'ollama/llama:latest',
+            'provider':'local','config':{'model':'llama:latest','base_url':'http://saved:11434/v1'}})
+        connection=MagicMock(); connection.cursor.return_value.fetchall.return_value=[{'id':7,'url':'https://example.org/'}]
+        with (patch.object(categories,'get_connection',return_value=connection),
+              patch.object(categories,'get_settings',return_value={'ollama_model':'gemma4:latest'}),
+              patch.object(categories,'local_chat',return_value=('{"7":"Education"}',20,10)) as local,
+              patch.object(categories.requests,'post') as cloud):
+            categories.classify_managed_urls(one_batch=True,model='ollama/llama:latest',model_config=snapshot)
+        self.assertEqual(local.call_args.args[0]['model'],'llama:latest')
+        self.assertEqual(local.call_args.args[0]['base_url'],'http://saved:11434/v1')
+        cloud.assert_not_called()
+
     def test_gemma4_category_selection_dispatches_locally_without_cloud(self):
         connection=MagicMock(); cursor=connection.cursor.return_value
         cursor.fetchall.return_value=[{'id':7,'url':'https://example.org/','page_title':'University'}]

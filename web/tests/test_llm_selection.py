@@ -64,7 +64,8 @@ class LlmSelectionTestCase(unittest.TestCase):
         self.assertNotIn(b'name="semantic_provider"', response.data)
         self.assertIn(b'name="include_wave"', response.data)
         self.assertNotIn(b'id="processingBox"', response.data)
-        self.assertIn(b"submitButton.disabled = true", response.data)
+        self.assertIn(b"js/ui_feedback.js", response.data)
+        self.assertNotIn(b"submitButton.disabled = true", response.data)
         self.assertIn(b'id="urlCount"', response.data)
         self.assertNotIn(b"maxManualUrls", response.data)
 

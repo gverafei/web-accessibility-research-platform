@@ -5,10 +5,12 @@
         if (busy) return;
         busy = true;
         const button = form.querySelector('button[type="submit"]');
+        let done;
         try {
             if (!await window.warpConfirm(form.dataset.confirm, {
                 danger: true, confirmLabel: form.dataset.confirmLabel,
             })) return;
+            done = window.warpButtonBusy?.(button);
             button.disabled = true;
             button.setAttribute('aria-busy', 'true');
             const response = await fetch(form.action, {
@@ -18,7 +20,7 @@
             const page = new DOMParser().parseFromString(await response.text(), 'text/html');
             const main = page.querySelector('main.app-main');
             if (!main) throw new Error();
-            const messages = [...main.querySelectorAll(':scope > .alert')];
+            const messages = [...main.querySelectorAll('#appNotifications > .alert, :scope > .alert')];
             const stillPresent = [...main.querySelectorAll('form[data-list-delete]')]
                 .some(item => item.getAttribute('action') === new URL(form.action).pathname);
             if (stillPresent || !messages.length) {
@@ -57,6 +59,7 @@
             // A lost response may follow a committed deletion: never retry automatically.
             await window.warpAlert(form.dataset.deleteError);
         } finally {
+            done?.();
             button.disabled = false;
             button.removeAttribute('aria-busy');
             busy = false;

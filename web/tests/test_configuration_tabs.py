@@ -15,6 +15,42 @@ class ConfigurationTabsTests(unittest.TestCase):
                                    clear_experiments_phrase='DELETE')
         self.page = BeautifulSoup(html, 'html.parser')
 
+    def test_ollama_has_only_one_connection_and_discovery_button(self):
+        self.assertIsNotNone(self.page.select_one('#refreshOllamaModels'))
+        self.assertIsNone(self.page.select_one('#testOllamaConnection'))
+
+    def test_both_save_buttons_share_disk_icon_and_models_use_brain_circuit(self):
+        general = self.page.select_one('button[form="generalConfigurationForm"]')
+        models = self.page.select_one('#saveModelsButton')
+        self.assertEqual(str(general.svg), str(models.svg))
+        self.assertNotIn('✓', general.get_text())
+        icon = self.page.select_one('#configurationModelsTab svg')
+        self.assertEqual(len(icon.select('circle')), 2)
+        self.assertFalse(icon.select('rect'))
+        self.assertEqual(icon['aria-hidden'], 'true')
+        self.assertIsNotNone(self.page.select_one('#modelProviderPicker #providerModelStatus[role="status"]'))
+
+    def test_shared_feedback_mounts_before_page_handlers_and_flash_uses_same_host(self):
+        from flask import flash
+        with app.test_request_context('/configuration'):
+            flash('Configuration saved.', 'success')
+            html = render_template('configuration.html', settings=dict(SETTING_DEFAULTS),
+                                   local_models=[], timezone_groups=[], axe_version='test',
+                                   clear_experiments_phrase='DELETE')
+        page = BeautifulSoup(html, 'html.parser')
+        alert = page.select_one('#appNotifications > .alert.alert-success')
+        self.assertEqual(alert['role'], 'status')
+        self.assertIn('Configuration saved.', alert.text)
+        self.assertTrue(alert.select_one('.btn-close')['aria-label'])
+        sources = [script.get('src', '') for script in page.select('script[src]')]
+        shared = next(i for i, src in enumerate(sources) if 'js/ui_feedback.js' in src)
+        local = next(i for i, src in enumerate(sources) if 'js/local_llm_settings.js' in src)
+        self.assertLess(shared, local)
+        # The partial is parsed earlier, but its deferred handler executes only
+        # after the synchronous shared module has initialized at the page footer.
+        self.assertTrue(page.select_one('script[src*="model_catalog_settings.js"]').has_attr('defer'))
+        self.assertFalse(page.select_one('script[src*="ui_feedback.js"]').has_attr('defer'))
+
     def test_tabs_have_accessible_separate_save_scopes(self):
         for name in ('General', 'Models'):
             tab = self.page.select_one(f'#configuration{name}Tab')
@@ -66,8 +102,8 @@ class ConfigurationTabsTests(unittest.TestCase):
             self.assertIsNotNone(button.select_one('[aria-hidden="true"]'))
 
     def test_ollama_connection_button_belongs_to_local_panel(self):
-        button = self.page.select_one('#localLlmSettings #testOllamaConnection')
-        self.assertIn('Test Ollama connection', button.get_text())
+        button = self.page.select_one('#localLlmSettings #refreshOllamaModels')
+        self.assertIn('Refresh installed models', button.get_text())
         self.assertEqual(button['type'], 'button')
         self.assertEqual(button.find_parent('form')['id'], 'generalConfigurationForm')
         self.assertNotIn('The model catalogue has its own save button',

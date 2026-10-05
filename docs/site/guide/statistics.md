@@ -35,6 +35,10 @@ and negative values. Dense charts and very small stacked segments retain
 tooltips to avoid overlapping labels. Light-theme labels have no white backing;
 both themes use the shared chart-label component.
 
+In horizontal URL profiles, hovering a row shows that URL's measurements.
+Stacked-impact tooltips include all impact levels, even segments too small to
+display a numeric label.
+
 ## Cross-tool ranking
 
 For at least three complete observations, A11yResearch converts tool results to within-study percentile ranks with averaged ranks for ties. Axe is oriented so fewer instances are better; Lighthouse (and WAVE AIM when included) are oriented so higher is better. The composite is the mean of the included percentile components.

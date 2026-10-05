@@ -1,0 +1,5 @@
+<p class="small text-muted mb-3">
+    <strong>{{ _("Originally evaluated") }}:</strong> {{ item.evaluated_at or item.created_at }} ·
+    <strong>{{ _("Provenance") }}:</strong> {{ item.provenance or 'fresh' }}{% if item.source_experiment_id %} · {{ _("Source experiment") }} #{{ item.source_experiment_id }}{% endif %} ·
+    <strong>{{ _("Category") }}:</strong> {{ item.site_category or _("Unclassified") }}
+</p>

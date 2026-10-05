@@ -752,7 +752,8 @@ class ExperimentAnalysisTestCase(unittest.TestCase):
 
         with (
             patch.object(experiments, "get_settings", return_value={}),
-            patch.object(experiments, "local_configuration", return_value={"model": "gemma4"}),
+            patch.object(experiments, "resolve_category_model", return_value={
+                "model": "ollama/gemma4", "schema_version": 1}),
             patch.object(experiments, "get_connection", return_value=Connection()),
         ):
             response = main.app.test_client().post(
@@ -763,6 +764,25 @@ class ExperimentAnalysisTestCase(unittest.TestCase):
         self.assertEqual(response.get_json()["job"]["status"], "queued")
         self.assertTrue(any("INSERT INTO url_category_jobs" in item[0] for item in statements))
         self.assertIn(("COMMIT", None), statements)
+
+    def test_category_choices_do_not_expose_endpoint_or_secrets(self):
+        choice={'id':'ollama/example','model':'ollama/example','label':'example',
+                'provider':'local','enabled':True,'is_default':False,
+                'config':{'base_url':'http://private.invalid','api_key':'secret'}}
+        with (patch.object(experiments,'get_settings',return_value={}),
+              patch.object(experiments,'category_model_options',return_value=([choice],False))):
+            response=main.app.test_client().get('/urls/category-models')
+        self.assertEqual(response.status_code,200)
+        self.assertNotIn('config',response.get_json()['models'][0])
+        self.assertNotIn('secret',response.get_data(as_text=True))
+
+    def test_unavailable_category_choice_is_rejected_before_job_write(self):
+        with (patch.object(experiments,'get_settings',return_value={}),
+              patch.object(experiments,'resolve_category_model',side_effect=ValueError('unavailable')),
+              patch.object(experiments,'get_connection') as connection):
+            response=main.app.test_client().post('/urls/auto-categorize',json={'model':'unknown'})
+        self.assertEqual(response.status_code,400)
+        connection.assert_not_called()
 
 
 if __name__ == "__main__":

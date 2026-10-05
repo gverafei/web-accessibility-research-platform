@@ -2,6 +2,14 @@
 
 Open **Configuration** from the application menu. Its two tabs have independent save operations: **General** saves application settings; **Model catalogue** saves the researcher-managed model choices. Switching tabs preserves the current form in the page, but is not a save.
 
+Both save buttons show the same loading spinner while their request is pending.
+Success or failure appears in the same dismissible notice above the page content.
+Saving the catalogue keeps its tab open; a failed save retains the unsaved edits.
+
+The selected tab uses `#general` or `#models`, which are navigation state rather
+than panel anchors, so saving or reloading does not jump down to the tab content.
+Older bookmarked panel links still open the appropriate tab.
+
 ## General settings
 
 The icon in the top bar cycles through **Dark → Light → Follow operating
@@ -46,7 +54,17 @@ intend to execute a fresh run, which can incur new charges.
 
 ### Evaluator controls
 
-Select the Axe standard and whether the separate Best Practices column should be shown. Main Axe scores, charts, comparisons and remediation targets always exclude Best Practices. WCAG counts, Best Practices and the combined count are preserved separately. Set dynamic-page timing and scrolling consistently across experiments you intend to compare.
+Select the default Axe standard for new evaluations. The four report-display switches
+apply to existing reports when you save Configuration and reopen or reload the report:
+Best Practices adds a separate **Best-practice issues** column immediately after
+**Axe issues**; Failed rules and Needs review show their URL-matrix columns; densities
+show two normalized matrix columns and their overview metrics. These controls do not
+repeat the scan or change the stored acquisition profile. An unavailable legacy count
+is displayed as a dash, not zero.
+
+Main Axe scores, charts, comparisons and remediation targets always exclude Best
+Practices. WCAG counts, Best Practices and the combined count are preserved separately.
+Set dynamic-page timing and scrolling consistently across experiments you intend to compare.
 
 Disabling lazy-content activation disables its pointer/scroll controls, not the
 page-load and DOM-stability limits. The stored scroll values are retained for
@@ -57,10 +75,10 @@ WAVE is optional, requires its own key and is used for separate evaluations. It 
 
 ### Local LLM (Ollama)
 
-Ollama is not included in the six-service Compose deployment. Run it on a reachable host, enter the base address, refresh the installed model list, select a model, and use the test control within this panel.
+Ollama is not included in the six-service Compose deployment. Run it on a reachable host, enter the base address, use **Refresh installed models** to verify the connection, and select a model.
 
-Refresh and test use the address currently typed in the form. They discover
-installed models through Ollama's native API and inspect capabilities without
+The refresh control uses the address currently typed in the form. It discovers
+installed models through Ollama's native API and inspects capabilities without
 generating content or requiring a save first. If capability inspection fails
 for a model, it remains visible as unverified; refresh before selecting it.
 
@@ -78,6 +96,10 @@ See [Adaptive RAG-ACT](rag.md).
 ## Model catalogue
 
 Read [Models and reasoning](models.md) for discovery, manual identifiers, capabilities and ordering. Its **Save model catalogue** button commits only that catalogue. Existing runs retain their saved snapshots and digests.
+
+**Add model from OpenRouter** opens the provider picker and scrolls it into view.
+Its loading or error message is shown inside the picker; discovery is read-only,
+and selecting a model changes the draft until you save the catalogue.
 
 ## Settings and reproducibility
 

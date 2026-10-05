@@ -1,0 +1,8 @@
+<div class="d-flex flex-wrap gap-2 mt-3">
+  <a class="btn btn-sm btn-outline-dark" download href="{{ url_for('experiments.download_raw_result', experiment_id=experiment.id, result_id=item.id, tool='axe') }}">Axe JSON</a>
+  <a class="btn btn-sm btn-outline-dark" download href="{{ url_for('experiments.download_raw_result', experiment_id=experiment.id, result_id=item.id, tool='lighthouse') }}">Lighthouse JSON</a>
+  {% if item.wave_raw_path %}<a class="btn btn-sm btn-outline-dark" download href="{{ url_for('experiments.download_raw_result', experiment_id=experiment.id, result_id=item.id, tool='wave') }}">WAVE JSON</a>{% endif %}
+  {% if item.semantic_raw_path %}<a class="btn btn-sm btn-outline-dark" download href="{{ url_for('experiments.download_raw_result', experiment_id=experiment.id, result_id=item.id, tool='semantic') }}">LLM JSON</a>{% endif %}
+  {% if item.response_source_path %}<a class="btn btn-sm btn-outline-dark" download href="{{ url_for('experiments.download_raw_result', experiment_id=experiment.id, result_id=item.id, tool='response') }}" title="{{ _('HTML from the initial page response, before browser rendering.') }}">{{ _('Response HTML') }}</a>{% endif %}
+  {% if item.source_snapshot_path %}<a class="btn btn-sm btn-outline-dark" download href="{{ url_for('experiments.download_raw_result', experiment_id=experiment.id, result_id=item.id, tool='rendered') }}" title="{{ _('Frozen rendered DOM used for evaluation.') }}">{{ _('Rendered HTML') }}</a>{% endif %}
+</div>

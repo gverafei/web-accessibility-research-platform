@@ -21,7 +21,7 @@
     <div class="model-picker-identities">{% for choice in model_choices %}<span data-model-identity="{{ choice.id }}" hidden>{{ model_identity(choice.model, choice.label|default(choice.name)) }}{% if choice.reasoning_effort %}<span class="model-effort-tag" title="{{ _('Reasoning effort') }}">{{ _('Light') if choice.reasoning_effort == 'low' else choice.reasoning_effort|title }}</span>{% endif %}</span>{% endfor %}</div>
     <div class="model-tier-slider"><input aria-label="{{ _('Choose the model') }}" class="model-tier-range" id="modelTierRange" name="model_cost_tier" type="range" min="0" max="{{ model_choices|length - 1 }}" step="1" value="{{ 2 if model_choices[0].tier == 'local' else 1 }}"><div class="model-tier-stops">{% for choice in model_choices %}<button type="button" data-tier-index="{{ loop.index0 }}" title="{{ choice.name }}" aria-label="{{ choice.name }}"><span></span></button>{% endfor %}</div></div>
     <p id="modelTierDetail"></p>
-    <a class="small" href="{{ url_for('experiments.configuration') }}#modelCatalogEditor">{{ _("Manage model catalogue") }}</a>
+    <a class="small" href="{{ url_for('experiments.configuration') }}#models">{{ _("Manage model catalogue") }}</a>
   </div>
 </fieldset>
 <p class="form-text">{{ _("Model order reflects experimental tiers, not a strict price ranking.") }}</p>

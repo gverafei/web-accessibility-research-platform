@@ -11,6 +11,7 @@ from routes.model_catalog import model_catalog_bp
 from routes.rag_maintenance import rag_maintenance_bp
 from settings import get_settings
 from navigation import breadcrumbs
+from download_feedback import signal_download_ready
 
 
 def select_locale():
@@ -23,6 +24,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     app.request_class = ResearchRequest
+    app.after_request(signal_download_ready)
 
     Babel(app, locale_selector=select_locale)
 

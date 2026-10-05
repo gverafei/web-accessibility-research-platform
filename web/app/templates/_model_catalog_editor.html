@@ -1,19 +1,21 @@
+{% from '_button_icons.html' import save_icon %}
 <section class="card shadow-sm mb-4 model-catalog-editor" id="modelCatalogEditor" data-endpoint="{{ url_for('model_catalog.get_catalog') }}">
   <div class="card-body p-4">
     <div class="settings-toolbar">
       <p class="settings-toolbar-description text-muted mb-0">{{ _('Choose the models, reasoning settings, colors and order shown in both sliders. Existing runs keep their frozen configuration. No automatic model replacement.') }}</p>
       <div class="settings-toolbar-actions d-flex flex-wrap align-items-center justify-content-end gap-2">
         <button type="button" class="btn btn-outline-secondary btn-sm text-nowrap" id="discoverModelsButton"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>{{ _('Add model from OpenRouter') }}</button>
-        <button type="button" id="saveModelsButton" class="btn btn-primary btn-sm text-nowrap"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l4 4v14H3V3h2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/></svg>{{ _('Save model catalogue') }}</button>
+        <button type="button" id="saveModelsButton" class="btn btn-primary btn-sm text-nowrap">{{ save_icon() }}{{ _('Save model catalogue') }}</button>
       </div>
     </div>
     <span class="model-catalog-status mb-2" role="status" aria-live="polite" id="modelCatalogStatus"></span>
     <div class="table-responsive"><table class="table align-middle model-catalog-table"><thead><tr><th>{{ _('Position') }}</th><th>{{ _('Model') }}</th><th>{{ _('Experimental tier') }}</th><th>{{ _('Reasoning') }}</th><th>{{ _('Color') }}</th><th>{{ _('Enabled') }}</th><th>{{ _('Default') }}</th><th>{{ _('Actions') }}</th></tr></thead><tbody id="modelCatalogRows"></tbody></table></div>
     <div class="model-provider-picker mt-3 border rounded p-3" id="modelProviderPicker" hidden>
       <div class="model-provider-search-row"><label class="form-label" for="providerModelSearch">{{ _('Search provider models') }}</label><div class="model-provider-search-controls"><input type="search" id="providerModelSearch" class="form-control" placeholder="{{ _('Search by name, provider or model ID') }}"><button type="button" class="btn btn-outline-secondary" id="closeProviderPicker">{{ _('Close') }}</button></div></div>
+      <p id="providerModelStatus" class="form-text" role="status" aria-live="polite"></p>
       <p class="form-text">{{ _('This reads the provider catalogue, not a generation call. Add a model explicitly; A11yResearch never updates your slider automatically. Reasoning availability does not guarantee that every effort level is accepted by every provider.') }}</p>
       <div id="providerModelResults" class="model-provider-results"></div>
     </div>
   </div>
 </section>
-<script src="{{ url_for('static', filename='js/model_catalog_settings.js', v='20260929-3') }}" defer></script>
+<script src="{{ url_for('static', filename='js/model_catalog_settings.js', v='20261005-picker-scroll') }}" defer></script>

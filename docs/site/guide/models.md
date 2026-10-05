@@ -52,4 +52,10 @@ Catalogue updates apply to new runs. Existing runs retain their original model a
 
 Configure an installed Ollama model under General settings. Local choices are managed separately from OpenRouter discovery. A context-capacity error appears in the run report with the selected local model's details. See [Configuration](configuration.md) and [Troubleshooting](../reference/troubleshooting.md).
 
-With an empty server field, **Refresh installed models** or **Test Ollama connection** uses the suggested Docker host address and puts it visibly in the field. This only discovers models: choose one and save Configuration to enable it in remediation and categorization. Clearing both fields disables the local model. Neither connection button generates content or saves a model automatically.
+With an empty server field, **Refresh installed models** uses the suggested Docker host address and puts it visibly in the field. This single action verifies connectivity and discovers models: choose one and save Configuration to enable it in remediation. It never generates content or saves a model automatically.
+
+[Automatic categorization](manage-urls.md) offers the local model saved in
+Configuration, also used for the local remediation slider option.
+Its cloud option follows the model catalogue's **Default** entry, including its
+reasoning setting. Clearing both Ollama fields disables local categorization as well
+as the local remediation option.

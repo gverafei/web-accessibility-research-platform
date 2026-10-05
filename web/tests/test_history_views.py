@@ -30,6 +30,12 @@ class HistoryViewTests(unittest.TestCase):
         self.assertNotIn('↗', group.select_one('.evaluation-source-chip').get_text())
         self.assertEqual(dom.select_one('[data-history-view]')['data-history-view'], 'table')
         self.assertEqual([b.get_text(strip=True) for b in dom.select('[data-history-mode]')], ['Table', 'Cards'])
+        scripts = dom.select('script[src*="js/history_views.js"]')
+        self.assertEqual(len(scripts), 1)
+        self.assertIsNotNone(scripts[0].find_parent('head'))
+        self.assertNotIn('defer', scripts[0].attrs)
+        self.assertNotIn('async', scripts[0].attrs)
+        self.assertIn('before-paint', scripts[0]['src'])
 
     def test_controls_are_shared_and_localized_without_different_datasets(self):
         with app.test_request_context('/evaluations'), patch('main.get_settings', return_value={}):
@@ -41,5 +47,13 @@ class HistoryViewTests(unittest.TestCase):
         for template in ('experiments.html', 'remediation_history.html'):
             source = (root/'templates'/template).read_text()
             self.assertIn('_history_view_toggle.html', source)
-            self.assertIn('js/history_views.js', source)
+            self.assertIn('_history_view_head.html', source)
             self.assertNotIn('data-row-open', source)
+
+    def test_prepaint_styles_share_card_layout_and_default_button_state(self):
+        root = Path(__file__).resolve().parents[1] / 'app'
+        css = (root/'static/css/theme.css').read_text()
+        self.assertIn('html[data-history-view="cards"] .history-list-view) .table { display: grid;', css)
+        self.assertIn('html[data-history-view="cards"] .history-list-view) thead { display: none;', css)
+        self.assertIn('html[data-history-view="cards"] .history-view-toggle button[data-history-mode="cards"]', css)
+        self.assertIn('html:not([data-history-view="cards"]) .history-view-toggle button[aria-pressed="true"]', css)

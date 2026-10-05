@@ -2,6 +2,22 @@
 
 A remediation run starts from a completed result with a readable stored HTML snapshot. A11yResearch preserves that source, creates separate candidates and remeasures them. It does not edit the remote website.
 
+To share an already completed run without executing it again, use **Export data**
+in its report, or select checkboxes in **Remediation runs** and use **Export selected**
+beside the view and search controls for a batch, without opening another screen.
+Restore either through **Import**. Sources, candidates, histories and available
+evidence are retained, with historical costs distinguished from local charges.
+See [portable remediation exchange](exchange.md#export-and-import-remediations).
+
+The report also offers **Download CSV** beside **Export data**. The CSV contains
+the original measurement and one row per recorded iteration, including run
+targets/limits, source identity, models, decisions, the recorded retained-candidate
+link, separate WCAG and Best-practice counts, preservation measurements, tokens,
+costs and duration. Run totals are repeated context, not additional iteration costs
+to sum. RAG enabled and examples actually supplied are separate fields. Unknown
+values and unavailable recovered iteration accounting remain blank, not zero.
+This is an analytical export; use `.warp` to transfer HTML, raw evidence and histories.
+
 ## Submit a run
 
 1. Open **New remediation** and find the acquired page.

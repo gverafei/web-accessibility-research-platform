@@ -5,6 +5,7 @@
   const endpoint = root.dataset.endpoint, rows = document.getElementById('modelCatalogRows');
   const status = document.getElementById('modelCatalogStatus'), picker = document.getElementById('modelProviderPicker');
   const search = document.getElementById('providerModelSearch'), results = document.getElementById('providerModelResults');
+  const providerStatus = document.getElementById('providerModelStatus');
   const es = document.documentElement.lang.startsWith('es');
   const say = (en, spanish) => es ? spanish : en;
   let choices = [], available = [], dirty = false;
@@ -72,18 +73,30 @@
     if(!matching.length)results.append(element('p',say('No matching models.','Sin modelos coincidentes.')));
     else if(matching.length>60)results.append(element('p',say('Refine the search to see more models.','Afina la búsqueda para ver más modelos.')));
   }
+  const revealPicker = () => picker.scrollIntoView({block:'start',behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   document.getElementById('discoverModelsButton').onclick=async()=>{
-    picker.hidden=false;showStatus(say('Loading provider catalogue…','Cargando catálogo del proveedor…'));
-    try{available=(await jsonRequest(`${endpoint}/discover`)).models;renderProvider();showStatus(say('Choose a model to add.','Selecciona un modelo para agregarlo.'));search.focus();}
-    catch(error){showStatus(error.message, 'error');}
+    const button=document.getElementById('discoverModelsButton');
+    if(button.disabled)return;
+    const done=window.warpButtonBusy(button);
+    picker.hidden=false;results.replaceChildren();
+    providerStatus.textContent=say('Loading provider catalogue…','Cargando catálogo del proveedor…');
+    revealPicker();
+    search.focus({preventScroll:true});
+    try{available=(await jsonRequest(`${endpoint}/discover`)).models;renderProvider();providerStatus.textContent=say('Choose a model to add.','Selecciona un modelo para agregarlo.');
+      // The loaded list increases page height; finish revealing the panel only
+      // if the researcher is still using its search, not after closing/leaving it.
+      if(!picker.hidden&&document.activeElement===search)revealPicker();}
+    catch(error){providerStatus.textContent=error.message;}finally{done();}
   };
   document.getElementById('closeProviderPicker').onclick=()=>picker.hidden=true;
   search.oninput=renderProvider;
   document.getElementById('saveModelsButton').onclick=async()=>{
-    const button=document.getElementById('saveModelsButton');button.disabled=true;
+    const button=document.getElementById('saveModelsButton');
+    if(button.disabled)return;
+    const done=window.warpButtonBusy(button);
     showStatus(say('Saving model catalogue…','Guardando catálogo de modelos…'));
-    try{choices=(await jsonRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({choices})})).choices;dirty=false;render();showStatus(say('✓ Model catalogue saved.','✓ Catálogo de modelos guardado.'), 'success');}
-    catch(error){showStatus(error.message, 'error');}finally{button.disabled=false;}
+    try{choices=(await jsonRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({choices})})).choices;dirty=false;render();showStatus('');window.warpNotify(say('Model catalogue saved. Existing runs retain their frozen model configuration.','Catálogo de modelos guardado. Las corridas existentes conservan su configuración de modelos.'), 'success');}
+    catch(error){showStatus(dirty?say('Unsaved changes','Cambios sin guardar'):'', 'unsaved');window.warpNotify(error.message, 'danger');}finally{done();}
   };
   window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
   jsonRequest(endpoint).then(data=>{choices=data.choices;render();}).catch(error=>showStatus(error.message, 'error'));

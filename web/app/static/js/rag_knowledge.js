@@ -69,10 +69,12 @@
       ++revision; // Discard any GET started before this explicit action.
       clear(polling);
       const mode = current.corpus.count > 0 ? 'update' : 'initialize';
+      let done;
       try {
         if (mode === 'update' && !await confirm(labels.confirm, {confirmLabel: labels.update})) {
           return;
         }
+        done = root.warpButtonBusy?.(button);
         const data = await request(panel.dataset.syncUrl, {method:'POST', headers:{'Content-Type':'application/json'},
           body:JSON.stringify({mode, confirmed:mode === 'update'})});
         if (disposed) return;
@@ -80,6 +82,7 @@
         render(current);
       } catch (error) { if (!disposed) text('ragSyncMessage', error.message || labels.loadError); }
       finally {
+        done?.();
         requesting = false;
         // Retain any POST error until refresh; recheck state before another action.
         button.disabled = true;

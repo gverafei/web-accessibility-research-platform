@@ -11,6 +11,11 @@ The URL workflow visits public HTTP(S) pages, captures evidence and measures acc
 5. Enable WAVE only if needed and configured.
 6. Submit and follow the job in **Evaluations**.
 
+**Generate report** shows a spinner and disables repeat submission while the
+request opens the job page. The same indicator is used by other submission,
+navigation and export buttons; it indicates a pending request, not percentage
+completion of the background evaluation.
+
 There is no fixed observation-count cap in the acquisition form or queueing handler, for either URLs, Tranco samples or local HTML. For a ranking-based sample, use the [Tranco workflow](tranco.md); for captured files, use [local HTML](local-html.md).
 
 ## Collection size and resource planning

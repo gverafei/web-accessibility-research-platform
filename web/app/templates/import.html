@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ _("Import experiment") }}{% endblock %}
 {% block content %}
-<header class="app-page-heading"><h1>{{ _("Import experiment") }}</h1><p>{{ _("Restore a portable platform export as a new, independent experiment. Use Combine evaluations when you intentionally want to combine stored results.") }}</p></header>
+<header class="app-page-heading"><h1>{{ _("Import experiment") }}</h1><p>{{ _('Import evaluation or remediation .warp packages with their frozen evidence and histories, without new execution. To combine stored evaluations, use Combine evaluations.') }}</p></header>
 
 <section class="card shadow-sm">
     <div class="card-body p-4">
@@ -22,5 +22,5 @@
 </section>
 {% endblock %}
 {% block scripts %}<script>
-const importForm=document.querySelector("form"),importSubmit=document.querySelector(".import-submit"),importProgress=document.querySelector(".import-progress");importForm.addEventListener("submit",event=>{event.preventDefault();importSubmit.disabled=true;importSubmit.setAttribute("aria-busy","true");importSubmit.querySelector("span").textContent={{ _("Importing…")|tojson }};importProgress.hidden=false;requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>HTMLFormElement.prototype.submit.call(importForm),80)))});
+const importSubmit=document.querySelector(".import-submit"),importForm=importSubmit.closest("form"),importProgress=document.querySelector(".import-progress");importForm.addEventListener("submit",event=>{event.preventDefault();if(importSubmit.disabled)return;window.warpButtonBusy(importSubmit,{label:{{ _("Importing…")|tojson }}});importProgress.hidden=false;requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>HTMLFormElement.prototype.submit.call(importForm),80)))});
 </script>{% endblock %}

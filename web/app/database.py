@@ -111,6 +111,7 @@ def init_db():
             """)
             ensure_column(cursor, "url_category_jobs", "input_tokens", "INT NOT NULL DEFAULT 0")
             ensure_column(cursor, "url_category_jobs", "experiment_id", "INT NULL")
+            ensure_column(cursor, "url_category_jobs", "model_config_json", "LONGTEXT NULL")
             ensure_column(cursor, "url_category_jobs", "output_tokens", "INT NOT NULL DEFAULT 0")
             ensure_column(cursor, "url_category_jobs", "cost_usd", "DECIMAL(14,8) NOT NULL DEFAULT 0")
 
@@ -597,6 +598,7 @@ def init_db():
             ensure_column(cursor, "remediation_iterations", "axe_metrics_json", "JSON NULL")
             ensure_column(cursor, "remediation_iterations", "axe_raw_path", "TEXT NULL")
             ensure_column(cursor, "remediation_runs", "axe_counting_policy", "VARCHAR(50) NULL")
+            ensure_column(cursor, "remediation_runs", "import_provenance_json", "JSON NULL")
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS remediation_events (
                     id INT AUTO_INCREMENT PRIMARY KEY,

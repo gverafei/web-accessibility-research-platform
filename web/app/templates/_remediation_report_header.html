@@ -1,5 +1,6 @@
 {% from '_remediation_identity.html' import preservation_colors with context %}
 {% from '_report_heading.html' import report_heading %}
+{% from '_portable_export.html' import portable_export, csv_export with context %}
 {% set metadata %}<span>{{ run.title }}</span><small>{{ _('Started') }} {{ run.created_at }}</small>{% endset %}
 {% set tags %}
       <span class="remediation-report-approach">{{ _(run.presentation_name) if run.presentation_name else _('Intervention approach') }}</span>
@@ -8,10 +9,12 @@
       {% if run.execution_mode in ['regenerate_only','regenerate_refine'] %}<span>{{ _('Whole-page regeneration — single call') if run.execution_mode == 'regenerate_only' else _('Whole-page regeneration + localized refinement') }}</span>{% endif %}
 {% endset %}
 {% set actions %}
+  {% if run.status in ['accepted','completed_with_warnings','failed'] %}<div class="report-action-group"><span>{{ _('Export') }}</span><div>{{ csv_export(url_for('remediation.download_run_csv',run_id=run.id)) }}{{ portable_export(url_for('remediation.export_run',run_id=run.id)) }}</div></div>{% endif %}
   {% if run.status == 'accepted' %}<form method="post" action="{{ url_for('remediation.compare_with_original',run_id=run.id) }}"><button class="btn btn-primary" type="submit">{{ _('Compare with original') }}</button></form>{% endif %}
 {% endset %}
 {% set kicker %}ATPGE · {{ _('Remediation report') }} #{{ run.id }}{% endset %}
 {{ report_heading(kicker, run.source_name or run.source_url, metadata, actions, tags, preservation_colors.get(run.presentation_priority,'#18529d')) }}
+{% if run.import_provenance_json %}<p class="text-muted small" role="note">{{ _('Imported remediation evidence. Costs and timestamps are historical; this import did not execute models or evaluators.') }}</p>{% endif %}
 {% set has_candidate=report_candidate_available if report_candidate_available is defined else best %}
 {% if not run.axe_counting_policy %}<p class="text-muted small">{{ _("Axe scores exclude Best Practices. Historical acceptance statuses remain as originally recorded.") }}</p>{% endif %}
 {% if run.status == 'completed_with_warnings' and not run.error_message %}

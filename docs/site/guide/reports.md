@@ -16,13 +16,34 @@ stored records and do not acquire or evaluate pages again.
 
 ## URL measurement matrix
 
+### Result counts and unique URLs
+
+The dashboard's **Completed page results** counts stored results with completed
+status. The **Stored page results** total in Evaluations also includes failed
+attempts. Both count records across collections, including reused, imported and
+combined copies; they do not count distinct URLs or new acquisition calls.
+The dashboard's Lighthouse average likewise includes completed result copies.
+**Manage URLs** groups completed results by normalized URL and shows the latest
+one per URL. Its **unique URLs** total can therefore be smaller. Filtering that
+catalogue shows the number of matching unique URLs, not the total across all
+evaluations. No stored results are removed by this grouping.
+
+### Inspecting individual observations
+
 The matrix supports filtering, sorting and pagination. Each row ties a page's URL and thumbnail to its measurements and provenance. Use the thumbnail preview to inspect captured content; use the URL link to open the current website, remembering that it may no longer match the stored page.
 
-Depending on the experiment, the matrix includes Axe issue/severity counts, Lighthouse score, Tranco rank/stratum, category, evaluation date and source/provenance information. A dash denotes missing information, not a zero.
+The matrix includes each page's category for every acquisition source, including
+URL batches, local HTML and imported or combined evaluations. The same category
+appears in URL-level evidence; **Unclassified** means no category has been assigned.
+Assign or correct categories in [Manage URLs](manage-urls.md), then reload the
+report to see the saved values. Tranco rank and stratum appear only for Tranco
+studies. Depending on the experiment, the matrix also includes Axe issue/severity
+counts, Lighthouse score, evaluation date and source/provenance information.
+A dash denotes missing information, not a zero.
 
 ## Measurements
 
-- **Axe issues:** reported affected-node instances, summed across selected WCAG-tagged rules, excluding Best Practices. A DOM node can occur in more than one rule; the optional Best Practices column is separate.
+- **Axe issues:** reported affected-node instances, summed across selected WCAG-tagged rules, excluding Best Practices. A DOM node can occur in more than one rule; the optional **Best-practice issues** column is separate and appears immediately after Axe issues when enabled in Configuration. Display switches apply to existing reports after saving and reloading, without rescanning; unavailable legacy counts appear as a dash.
 - **Critical/serious/moderate/minor:** the reported impact classification, not a separate manual user assessment.
 - **Lighthouse:** the accessibility score on its native 0–100 scale.
 - **WAVE:** optional independent API measurements, present only when that tool was requested and returned usable evidence.
@@ -38,7 +59,14 @@ Graphs use the same underlying stored observations as the matrix, but an individ
 
 ## Downloads
 
-The evaluation actions offer a CSV table and a portable `.warp` export. The report can expose raw Axe/Lighthouse/WAVE JSON and screenshots for specific rows. A Tranco evaluation also provides its sampling manifest.
+The evaluation actions offer a CSV table and a portable `.warp` export. The
+**URL-level evidence** panel offers raw Axe/Lighthouse/WAVE JSON and, when
+stored, two HTML downloads alongside them: **Response HTML** is the initial page
+response before browser rendering; **Rendered HTML** is the frozen rendered DOM
+used for evaluation. They can differ after scripts and dynamic-content loading.
+HTML is downloaded as a file, not executed inside the platform. These downloads
+also use preserved artifacts in imported or combined collections; no new visit
+or evaluation is performed. A Tranco evaluation provides its sampling manifest.
 
 CSV is convenient for analysis but is not an artifact-complete backup. Use `.warp` for evaluation exchange and a full storage backup for the whole installation, including remediation/comparison records.
 

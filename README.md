@@ -11,7 +11,7 @@ A11yResearch helps researchers acquire and evaluate collections of web pages, re
 - Agentic remediation with five explicit intervention policies, adaptive RAG-ACT retrieval, shared configurable per-run limits, bounded refinement and rollback.
 - A researcher-managed model catalogue shared by the web interface and browser extension, with frozen choices and no silent model/provider substitution.
 - Iteration traces, activity logs, paired comparisons and recorded usage/charges.
-- Portable `.warp` evaluation exchange and composition without unnecessary reevaluation.
+- Portable `.warp` evaluation and terminal-remediation exchange, including frozen evidence and histories without new model/evaluator calls; evaluation composition without unnecessary reevaluation.
 
 Acquisition and ordinary Axe/Lighthouse evaluation do **not** use an LLM. Cloud remediation/categorization and WAVE are optional separately configured services that may incur charges.
 

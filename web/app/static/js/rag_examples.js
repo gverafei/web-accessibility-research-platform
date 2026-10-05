@@ -6,10 +6,11 @@
         if (!panel) return;
         const form = panel.querySelector('form');
         const message = panel.querySelector('#ragBrowseMessage');
-        let revision = 0, controller, debounce, disposed = false, pendingVersion = '';
+        let revision = 0, controller, debounce, disposed = false, pendingVersion = '', finishBusy;
         function invalidate() {
             ++revision;
             controller?.abort();
+            finishBusy?.(); finishBusy = null;
             env.clearTimeout(debounce);
         }
         function formUrl() {
@@ -19,10 +20,11 @@
             if (pendingVersion) url.searchParams.delete('collection');
             return url.href;
         }
-        async function load(href, recovered = false) {
+        async function load(href, recovered = false, control = null) {
             const url = new URL(href, env.location.href);
             if (url.origin !== env.location.origin || url.pathname !== '/rag-act') return;
             invalidate();
+            finishBusy = env.warpButtonBusy?.(control);
             const mine = revision;
             controller = new AbortController();
             const signal = controller.signal;
@@ -80,6 +82,7 @@
             } finally {
                 env.clearTimeout(timeout);
                 if (!disposed && mine === revision) {
+                    finishBusy?.(); finishBusy = null;
                     pendingVersion = '';
                     panel.setAttribute('aria-busy', 'false');
                 }
@@ -95,14 +98,14 @@
             message.textContent = '';
             debounce = env.setTimeout(() => load(formUrl()), 250);
         });
-        form.addEventListener('submit', event => { event.preventDefault(); load(formUrl()); });
+        form.addEventListener('submit', event => { event.preventDefault(); load(formUrl(), false, event.submitter); });
         panel.addEventListener('click', event => {
             const link = event.target.closest('.measurement-pagination a');
             if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return;
             event.preventDefault();
             const url = new URL(formUrl());
             url.searchParams.set('page', new URL(link.href).searchParams.get('page') || '1');
-            load(url.href);
+            load(url.href, false, link);
         });
         function observeCorpus(event) {
             const version = event.detail?.version;

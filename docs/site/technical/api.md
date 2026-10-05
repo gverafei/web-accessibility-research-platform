@@ -20,6 +20,7 @@ Route handlers are grouped in `web/app/routes/experiments.py` (acquisition, repo
 | POST | `http://localhost/experiments/<id>/pause` | Request pause |
 | POST | `http://localhost/experiments/<id>/resume` | Resume allowed pending work |
 | GET | `http://localhost/experiments/<id>/csv` | Measurements table download |
+| GET | `http://localhost/experiments/<id>/raw/<result_id>/<type>` | Stored artifact attachment; type is `axe`, `lighthouse`, `wave`, `semantic` (JSON), `response` or `rendered` (HTML). Result must belong to the experiment and file must be under `/results/raw`. No acquisition or evaluation |
 | GET | `http://localhost/experiments/<id>/json` | `.warp` export (ZIP, not a bare JSON response) |
 | GET | `http://localhost/experiments/<id>/tranco-sample.csv` | Sampling manifest where available |
 | POST | `http://localhost/experiments/<id>/tranco-fill-missing` | Fill curated vacancies from stored same-stratum reserves |
@@ -27,6 +28,7 @@ Route handlers are grouped in `web/app/routes/experiments.py` (acquisition, repo
 | POST | `http://localhost/experiments/<id>/tranco-replace-failed` | Reserve replacement for eligible failures |
 | GET | `http://localhost/urls/manage/data` | Bounded catalogue page, JSON with rendered rows |
 | POST | `http://localhost/urls/auto-categorize` | Start/check persisted category job, JSON |
+| GET | `http://localhost/urls/category-models` | Configured local model and cloud default; model choice IDs |
 | GET | `http://localhost/urls/auto-categorize/status` | Persisted category status |
 | POST | `http://localhost/urls/auto-categorize/stop` | Stop at a safe batch boundary |
 | GET/POST | `http://localhost/configuration/models` | Read/save catalogue JSON |
@@ -36,6 +38,8 @@ Route handlers are grouped in `web/app/routes/experiments.py` (acquisition, repo
 | POST | `http://localhost/rag-act/synchronize` | Queue explicit maintenance: JSON `mode` is `initialize` or `update`; updates require boolean `confirmed: true`. HTTP 202 queued, 409 conflicting/active remediation, 503 unavailable service/storage |
 | GET/POST | `http://localhost/remediation/new` | Form / queue one source remediation |
 | GET | `http://localhost/remediation/<id>` | Run report with evidence |
+| GET | `http://localhost/remediation/<id>/export` | Terminal run `.warp` with original/candidates/history |
+| GET/POST | `http://localhost/remediation/export` | GET redirects to Remediation runs; POST exports a terminal batch using repeated form field `run_ids` |
 | GET | `http://localhost/api/browser-extension/configuration` | Extension model/policy catalogue |
 | POST | `http://localhost/api/browser-extension/requests` | Submit URL and frozen research controls |
 | GET | `http://localhost/api/browser-extension/requests/<id>` | Resolve/update persistent request progress |
@@ -91,14 +95,35 @@ Sizes are 5/10/25/50/100. Sort keys are `url`, `name`, `axe`, `lighthouse`, `cat
 
 ```bash
 curl --fail --header 'Content-Type: application/json' \
-  --data '{"model":"luna","experiment_id":42}' \
+  --data '{"model":"openai/gpt-6-luna","experiment_id":42}' \
   http://localhost/urls/auto-categorize
 curl --fail http://localhost/urls/auto-categorize/status
 ```
 
-`model` accepts `local` or `luna`. A specified evaluation must be completed. Omit `experiment_id` only if global catalogue categorization is intended. An active job is returned with its persistent status.
+First inspect `GET /urls/category-models` and use an enabled choice's exact `id`
+as `model`. The example assumes GPT-6 Luna is the configured cloud default;
+otherwise replace that ID with the returned default or the configured
+`ollama/<model-name>` choice. A cloud choice may include a reasoning suffix in
+its ID. New jobs freeze the model/server/reasoning configuration, without API
+keys. Legacy `local` means the configured Ollama model, and `luna` only means
+GPT-6 Luna when that exact choice is available; neither alias permits fallback.
+A specified evaluation must be completed. Omit `experiment_id` only if global
+catalogue categorization is intended. An active job is returned with its
+persistent status.
+
+The existing Import handler also recognizes `remediation.json` (`warp-remediations`
+v1) in a `.warp` upload. It validates every binary hash before creating new
+records; terminal imports never submit generation or evaluation jobs. See
+[exchange](../guide/exchange.md#export-and-import-remediations) for limits and provenance.
 
 ## Submit one explicit remediation
+
+`GET /remediation/<run_id>/csv` downloads `remediation-<run_id>.csv` as UTF-8.
+It reads saved run/source/iteration records only, with an original row followed
+by iteration rows; missing values stay blank and the recorded retained link is
+identified separately from iteration decisions. It returns 404 for a missing
+run or source and does not submit jobs or modify evidence. See
+[remediation exports](../guide/remediation.md) for accounting and RAG field meanings.
 
 ```bash
 curl --fail --dump-header - --output /dev/null \

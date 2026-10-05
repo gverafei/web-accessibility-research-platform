@@ -8,7 +8,7 @@
         <div class="card shadow-sm">
             <div class="card-body">
 
-                <form method="post" enctype="multipart/form-data" action="{{ url_for('experiments.run_experiment') }}" id="experimentForm" class="acquisition-form">
+                <form method="post" enctype="multipart/form-data" action="{{ url_for('experiments.run_experiment') }}" id="experimentForm" class="acquisition-form" data-busy-navigation>
                     <fieldset class="experiment-form-section acquisition-step">
                     <legend><span>1</span>{{ _("Acquisition source") }}</legend>
                     <div class="mb-3 source-type-selector" role="radiogroup" aria-label="{{ _('Evaluation source') }}">
@@ -145,7 +145,6 @@
 {% block scripts %}
 <script>
 const form = document.getElementById("experimentForm");
-const submitButton = document.getElementById("submitButton");
 const urlSourceFields = document.getElementById("urlSourceFields");
 const localSourceFields = document.getElementById("localSourceFields");
 const trancoSourceFields = document.getElementById("trancoSourceFields");
@@ -203,7 +202,6 @@ form.addEventListener("submit", function (event) {
         form.reportValidity();
         return;
     }
-    submitButton.disabled = true;
 });
 </script>
 {% endblock %}

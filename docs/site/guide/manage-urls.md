@@ -2,6 +2,11 @@
 
 **Manage URLs** is a reusable catalogue of acquired pages. It shows the latest completed record per normalized URL rather than every copy across all evaluations.
 
+The pagination total is labelled **unique URLs** (or matching unique URLs when
+filtered). It is not the number of evaluation records: the dashboard and
+Evaluations count stored results, including copies in imported or combined
+collections. See [Result counts and unique URLs](reports.md#result-counts-and-unique-urls).
+
 ## Navigation and editing
 
 The page starts with five rows and queries the server for the requested page. Filtering searches URL, captured URL, editable name, page title, category and evaluation title. Sorting is restricted to supported columns. The browser does not receive thousands of table rows before pagination begins.
@@ -16,7 +21,16 @@ An unavailable thumbnail means there is no readable screenshot for that record. 
 
 ## Automatic categorization
 
-The categorization panel offers the configured local Ollama model and GPT-6 Luna through OpenRouter. It labels uncategorized pages using the captured URL and page title against a closed category vocabulary. It does not browse the site again or inspect the entire page content.
+The categorization panel offers the local Ollama model saved in Configuration
+and the enabled cloud model marked
+**Default** in the model catalogue. Labels distinguish local execution without
+cloud charges from cloud execution with API costs. The usable cloud default is
+preselected; if unavailable, choose an available model explicitly. Loading the
+options reads saved configuration and never starts a categorization job.
+
+The classifier labels uncategorized pages using the captured URL and page title
+against a closed category vocabulary. It does not browse the site again or
+inspect the entire page content.
 
 1. Configure the desired local or cloud provider.
 2. Select the classifier shown in the panel.
@@ -26,6 +40,10 @@ The categorization panel offers the configured local Ollama model and GPT-6 Luna
 The job continues after navigating away or refreshing. **Stop** requests an end at a batch boundary; validated assignments already saved are retained. One active categorization job is stored for the installation, so check its status before starting another.
 
 The classifier does not silently fall back from local to cloud. A provider error leaves a useful message; malformed categories or unexpected IDs are rejected. Cloud usage is recorded before the response is interpreted, including a paid response that fails category validation.
+
+Each new job freezes the chosen model identifier, server and applicable reasoning
+settings. Later edits to Configuration do not switch that job to another model.
+Cloud credentials are read at execution time and are not stored in the snapshot.
 
 ## Research scope
 

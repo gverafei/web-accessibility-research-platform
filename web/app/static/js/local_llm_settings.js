@@ -6,9 +6,11 @@
   const status = document.getElementById('ollamaModelsStatus');
   if (!server || !model || !refresh || !status) return;
   const placeholder = model.options[0].text;
-  let pending = null;
+  let pending = null, finishBusy = null;
   const load = async (useSuggestedAddress = false) => {
     pending?.abort();
+    finishBusy?.();
+    finishBusy = null;
     const address = server.value.trim() || (useSuggestedAddress ? server.placeholder : '');
     if (!address) {
       pending = null;
@@ -24,6 +26,7 @@
     const controller = new AbortController();
     pending = controller;
     const timer = setTimeout(() => controller.abort(), 20000);
+    finishBusy = globalThis.warpButtonBusy?.(refresh);
     refresh.disabled = true;
     status.textContent = '';
     try {
@@ -43,6 +46,8 @@
     } finally {
       clearTimeout(timer);
       if (pending === controller) {
+        finishBusy?.();
+        finishBusy = null;
         refresh.disabled = false;
         pending = null;
       }
@@ -50,5 +55,4 @@
   };
   server.addEventListener('change', () => load());
   refresh.addEventListener('click', () => load(true));
-  document.getElementById('testOllamaConnection')?.addEventListener('click', () => load(true));
 })();

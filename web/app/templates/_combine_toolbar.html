@@ -1,0 +1,5 @@
+<div class="dataset-toolbar dataset-list-toolbar">
+  <label class="form-check mb-0"><input class="form-check-input" type="checkbox" id="{{ select_id }}"{% if source_toolbar %} disabled{% endif %}> {{ _("Select all") }}</label>
+  <div class="list-filter-control"><input class="form-control" id="{{ filter_id }}" type="search" aria-label="{{ filter_label }}" placeholder="{{ _('Search pages') }}"{% if source_toolbar %} disabled{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg></div>
+  <span class="small text-muted dataset-selection-count"><strong id="{{ count_id }}">0</strong> {{ _("selected") }}</span>
+</div>

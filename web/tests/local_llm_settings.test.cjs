@@ -15,9 +15,9 @@ function form({address='', selected='', options, error}={}) {
   const refresh=element({dataset:{modelsUrl:'/configuration/ollama-models',
     error:'Connection failed',empty:'No installed models',success:'Verified without generation',
     textLabel:'Text only',visionLabel:'Text and images',unverifiedLabel:'Not verified'}});
-  const status=element(); const probe=element(); const requests=[];
+  const status=element(); const requests=[];
   const elements={ollama_base_url:server,ollama_model:model,refreshOllamaModels:refresh,
-    ollamaModelsStatus:status,testOllamaConnection:probe};
+    ollamaModelsStatus:status};
   vm.runInNewContext(fs.readFileSync(require.resolve('../app/static/js/local_llm_settings.js'),'utf8'),{
     document:{getElementById:id=>elements[id]},AbortController,setTimeout,clearTimeout,
     Option:function(text,value){this.text=text;this.value=value;},
@@ -26,10 +26,10 @@ function form({address='', selected='', options, error}={}) {
         {id:'gemma4:latest',name:'gemma4:latest',vision:true,capabilities_verified:true},
         {id:'llama3.2:latest',name:'llama3.2:latest',vision:false,capabilities_verified:true}]}};}
   });
-  return {server,model,refresh,status,probe,requests};
+  return {server,model,refresh,status,requests};
 }
 
-for (const button of ['refresh','probe']) {
+for (const button of ['refresh']) {
   test(`${button} uses the visibly suggested address when unconfigured`,async()=>{
     const page=form(); await page[button].listeners.click();
     assert.equal(page.server.value,'http://host.docker.internal:11434');
@@ -52,7 +52,7 @@ test('an explicit server is preserved and its selected installed model retained'
   assert.equal(page.model.value,'gemma4:latest');assert.equal(page.refresh.disabled,false);
 });
 test('connection failure remains visible and never initiates generation',async()=>{
-  const page=form({error:'Server unavailable'}); await page.probe.listeners.click();
+  const page=form({error:'Server unavailable'}); await page.refresh.listeners.click();
   assert.equal(page.status.textContent,'Server unavailable');
   assert.equal(page.requests.length,1);assert.equal(page.refresh.disabled,false);
   assert.equal(page.model.options.length,1);

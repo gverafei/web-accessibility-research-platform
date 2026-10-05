@@ -17,16 +17,18 @@
 .url-management-toolbar .measurement-filter input{min-width:0;padding-right:.65rem}
 .url-management-toolbar .measurement-filter span{display:none}
 </style>
-<header class="app-page-heading"><h1>{{ _("Manage URLs") }}</h1><p>{{ _("Edit reusable page names and WebAIM categories for acquired URLs.") }}</p></header>
+<header class="app-page-heading"><h1>{{ _("Manage URLs") }}</h1><p>{{ _("Edit page names and WebAIM categories for unique URLs. Each row shows the latest completed result for a normalized URL.") }}</p></header>
 <section class="url-management-section">
   <div class="url-category-automation" id="categoryAutomation" data-total="{{ uncategorized_count }}" data-job='{{ (category_job or {})|tojson }}'>
     <div><strong>{{ _("Automatic categorization") }}</strong><small>{{ _("Choose a pinned model; the job continues if you leave this page.") }}</small></div>
-    <select class="form-select form-select-sm" id="categoryModel" aria-label="{{ _('Category model') }}">
-      <option value="local"{% if not category_model %} disabled{% endif %}>{{ category_model or _("Local Ollama unavailable") }}{% if category_model %} · {{ _("local, no cloud cost") }}{% endif %}</option>
-      <option value="luna"{% if not luna_available %} disabled{% endif %}>GPT-6 Luna{% if not luna_available %} · {{ _("API key required") }}{% endif %}</option>
-    </select>
+    <div>
+      <select class="form-select form-select-sm" id="categoryModel" aria-label="{{ _('Category model') }}" aria-describedby="categoryModelsStatus" disabled>
+        <option value="" disabled selected>{{ _("Loading category models…") }}</option>
+      </select>
+      <small id="categoryModelsStatus" class="form-text" role="status" aria-live="polite"></small>
+    </div>
     <div class="category-progress" id="categoryProgress" hidden><div><span id="categoryProgressBar"></span></div><small id="categoryProgressText"></small></div>
-    <button class="btn btn-sm btn-primary" id="startCategorization" type="button"{% if (not category_model and not luna_available) or not uncategorized_count %} disabled{% endif %}>✦ {{ _("Categorize missing") }}{% if uncategorized_count %} ({{ uncategorized_count }}){% endif %}</button>
+    <button class="btn btn-sm btn-primary" id="startCategorization" type="button" disabled>✦ {{ _("Categorize missing") }}</button>
     <button class="btn btn-sm btn-outline-danger" id="stopCategorization" type="button" hidden>{{ _("Stop") }}</button>
   </div>
   <div class="report-pagination-toolbar url-management-toolbar">
@@ -34,11 +36,11 @@
     <nav class="measurement-pagination url-catalog-pagination" aria-label="{{ _('URL pagination') }}"><label>{{ _("Rows per page") }} <select class="form-select form-select-sm" id="urlPageSize"><option selected>5</option><option>10</option><option>25</option><option>50</option><option>100</option></select></label><span class="pagination-actions"><button type="button" class="btn btn-outline-secondary pager-first" aria-label="{{ _('First page') }}"><svg viewBox="0 0 24 24"><path d="M18 6l-6 6 6 6M6 5v14"/></svg></button><button type="button" class="btn btn-outline-secondary pager-previous" aria-label="{{ _('Previous page') }}"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" class="btn btn-outline-secondary pager-next" aria-label="{{ _('Next page') }}"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button><button type="button" class="btn btn-outline-secondary pager-last" aria-label="{{ _('Last page') }}"><svg viewBox="0 0 24 24"><path d="M6 6l6 6-6 6M18 5v14"/></svg></button></span><span class="measurement-pagination-status" id="urlPaginationStatus" aria-live="polite"></span></nav>
   </div>
   <div class="url-catalog-frame">
-  <div id="urlCatalogLoading" class="text-muted" role="status" aria-live="polite"><span class="spinner-border spinner-border-sm text-primary me-2" aria-hidden="true"></span>{{ _("Loading acquired pages…") }}</div>
+  <div id="urlCatalogLoading" class="text-muted" role="status" aria-live="polite"><span class="spinner-border spinner-border-sm text-primary me-2" aria-hidden="true"></span>{{ _("Loading unique URLs…") }}</div>
   <div class="table-responsive research-table-wrap measurement-table-wrap"><table class="table table-sm research-table measurement-table mb-0 sortable-table" id="urlCatalogTable">
   <colgroup><col style="width:42px"><col style="width:16%"><col style="width:16%"><col style="width:8%"><col style="width:10%"><col style="width:15%"><col><col style="width:13%"></colgroup>
   <thead><tr><th>#</th>{% set columns = [(_("Page"),"url","asc"),(_("Editable name"),"name","asc"),(_("Axe issues"),"axe","asc"),("Lighthouse","lighthouse","desc"),(_("Category"),"category","asc"),(_("Evaluation"),"evaluation","asc"),(_("Originally evaluated"),"date","desc")] %}{% for label,key,direction in columns %}<th><button type="button" class="sort-button" data-column="{{ key }}" data-direction="{{ direction }}">{{ label }} <span>↕</span></button></th>{% endfor %}</tr></thead><tbody>
-  <tr><td colspan="8" class="text-center py-5"><span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span> {{ _("Loading acquired pages…") }}</td></tr>
+  <tr><td colspan="8" class="text-center py-5"><span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span> {{ _("Loading unique URLs…") }}</td></tr>
   </tbody></table></div>
   </div>
 </section>
@@ -48,12 +50,19 @@
   'dataUrl': url_for('experiments.managed_urls_data'),
   'renameUrl': url_for('comparisons.rename_result',result_id=0),
   'categoryUrl': url_for('experiments.update_url_site_category',result_id=0),
-  'loading': _('Loading acquired pages…'), 'loadError': _('Could not load the pages. Please retry.'),
-  'page': _('Page'), 'of': _('of'), 'rows': _('rows'), 'matches': _('matches'),
-  'categorize': _('Categorize missing')
+  'loading': _('Loading unique URLs…'), 'loadError': _('Could not load the pages. Please retry.'),
+  'page': _('Page'), 'of': _('of'), 'rows': _('unique URLs'), 'matches': _('matching unique URLs'),
+  'categorize': _('Categorize missing'),
+  'modelsUrl': url_for('experiments.managed_url_category_models'),
+  'chooseModel': _('Choose a category model'), 'localLabel': _('local, no cloud cost'),
+  'cloudLabel': _('cloud, API cost'), 'defaultLabel': _('Default from Configuration'),
+  'keyRequired': _('API key required'),
+  'localModelsError': _('Could not load local models. Check the Ollama server in Configuration.'),
+  'noModels': _('No category model is available. Check Configuration.')
 }|tojson }}</script>
-<script src="{{ url_for('static',filename='js/managed_urls.js') }}"></script>
+<script src="{{ url_for('static',filename='js/managed_urls.js',v='20261005-busy') }}"></script>
+<script src="{{ url_for('static',filename='js/category_models.js') }}"></script>
 <script>
-(()=>{const box=document.getElementById('categoryAutomation'),start=document.getElementById('startCategorization'),stop=document.getElementById('stopCategorization'),model=document.getElementById('categoryModel'),progress=document.getElementById('categoryProgress'),bar=document.getElementById('categoryProgressBar'),text=document.getElementById('categoryProgressText');let timer=null,reloaded=false;const renderJob=job=>{const active=['queued','running','stopping'].includes(job.status),total=Number(job.total_urls||0),completed=Number(job.completed_urls||0),remaining=Math.max(0,total-completed);progress.hidden=!active&&job.status!=='failed';start.hidden=active;stop.hidden=!active;stop.disabled=job.status==='stopping';model.disabled=active;bar.style.width=`${total?Math.min(100,completed*100/total):0}%`;text.textContent=job.status==='stopping'?{{ _('Stopping after the current batch…')|tojson }}:job.status==='failed'?(job.error_message||{{ _('Categorization stopped because the model could not complete a batch.')|tojson }}):`${completed} / ${total} · ${remaining} {{ _('remaining') }} · ${job.model||''}`;if(job.status==='completed'&&!reloaded){reloaded=true;bar.style.width='100%';setTimeout(()=>location.reload(),500)}};const poll=async()=>{try{const response=await fetch({{ url_for('experiments.managed_url_categorization_status')|tojson }},{headers:{'Accept':'application/json'}}),data=await response.json();if(response.ok){renderJob(data.job);if(['queued','running','stopping'].includes(data.job.status))timer=setTimeout(poll,1200)}}catch(_error){timer=setTimeout(poll,2500)}};stop.addEventListener('click',async()=>{stop.disabled=true;await fetch({{ url_for('experiments.stop_managed_url_categorization')|tojson }},{method:'POST',headers:{'Accept':'application/json'}});poll()});start.addEventListener('click',async()=>{start.disabled=true;try{const response=await fetch({{ url_for('experiments.auto_categorize_managed_urls')|tojson }},{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({model:model.value})}),data=await response.json();if(!response.ok)throw new Error(data.error);renderJob(data.job);poll()}catch(error){await warpAlert(error.message)}finally{start.disabled=false}});const initialJob=JSON.parse(box.dataset.job||'{}');if(['queued','running','stopping','failed'].includes(initialJob.status)){renderJob(initialJob);if(initialJob.status!=='failed')poll()}})();
+(()=>{const box=document.getElementById('categoryAutomation'),start=document.getElementById('startCategorization'),stop=document.getElementById('stopCategorization'),model=document.getElementById('categoryModel'),progress=document.getElementById('categoryProgress'),bar=document.getElementById('categoryProgressBar'),text=document.getElementById('categoryProgressText');let timer=null,reloaded=false,currentJob=null;const renderJob=job=>{currentJob=job;const active=['queued','running','stopping'].includes(job.status),total=Number(job.total_urls||0),completed=Number(job.completed_urls||0),remaining=Math.max(0,total-completed);progress.hidden=!active&&job.status!=='failed';start.hidden=active;stop.hidden=!active;stop.disabled=job.status==='stopping';model.disabled=active;bar.style.width=`${total?Math.min(100,completed*100/total):0}%`;text.textContent=job.status==='stopping'?{{ _('Stopping after the current batch…')|tojson }}:job.status==='failed'?(job.error_message||{{ _('Categorization stopped because the model could not complete a batch.')|tojson }}):`${completed} / ${total} · ${remaining} {{ _('remaining') }} · ${job.model||''}`;if(job.status==='completed'&&!reloaded){reloaded=true;bar.style.width='100%';setTimeout(()=>location.reload(),500)}};const poll=async()=>{try{const response=await fetch({{ url_for('experiments.managed_url_categorization_status')|tojson }},{headers:{'Accept':'application/json'}}),data=await response.json();if(response.ok){renderJob(data.job);if(['queued','running','stopping'].includes(data.job.status))timer=setTimeout(poll,1200)}}catch(_error){timer=setTimeout(poll,2500)}};stop.addEventListener('click',async()=>{if(stop.disabled)return;const done=window.warpButtonBusy(stop);try{const response=await fetch({{ url_for('experiments.stop_managed_url_categorization')|tojson }},{method:'POST',headers:{'Accept':'application/json'}});if(!response.ok)throw new Error({{ _('Categorization could not be stopped. Please try again.')|tojson }});await poll()}catch(error){await warpAlert(error.message)}finally{done();stop.disabled=currentJob?.status==='stopping';}});start.addEventListener('click',async()=>{if(start.disabled)return;const done=window.warpButtonBusy(start);try{const response=await fetch({{ url_for('experiments.auto_categorize_managed_urls')|tojson }},{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({model:model.value})}),data=await response.json();if(!response.ok)throw new Error(data.error);renderJob(data.job);poll()}catch(error){await warpAlert(error.message)}finally{done();}});const initialJob=JSON.parse(box.dataset.job||'{}');if(['queued','running','stopping','failed'].includes(initialJob.status)){renderJob(initialJob);if(initialJob.status!=='failed')poll()}})();
 </script>
 {% endblock %}

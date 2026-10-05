@@ -17,6 +17,7 @@
       if (!row.hidden) visible++;
     });
     count.textContent = term ? `${visible} / ${current.length}` : '';
+    table.dispatchEvent?.(new Event('history:filtered'));
   }
   input.addEventListener('input', filter);
   table.addEventListener('history:changed', filter);

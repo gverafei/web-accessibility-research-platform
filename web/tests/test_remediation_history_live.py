@@ -58,6 +58,10 @@ class LiveHistoryTests(unittest.TestCase):
         self.assertIn('Evaluation in progress', dom.get_text())
         self.assertNotIn('Automated scores were reached', dom.get_text())
         self.assertTrue(dom.select_one('button[type=submit]').has_attr('disabled'))
+        self.assertFalse(dom.select('a.warp-export'))
+        selection = dom.select_one('input[data-history-select]')
+        self.assertTrue(selection.has_attr('disabled'))
+        self.assertEqual(selection['form'], 'remediationExportSelection')
 
     def test_terminal_regression_and_frozen_model_color(self):
         dom = self.fetch(run('completed_with_warnings'))
@@ -67,6 +71,22 @@ class LiveHistoryTests(unittest.TestCase):
         self.assertIn('--tier-color:#2f9e66', dom.select_one('.remediation-model-tier')['style'])
         self.assertIn('Medium', dom.select_one('.remediation-model-tier').get_text())
         self.assertIn('Light', dom.select_one('.run-model-reasoning').get_text())
+        export = dom.select_one('a.warp-export')
+        self.assertEqual(export['href'], '/remediation/651/export')
+        self.assertEqual(export.get_text(strip=True), 'Export data')
+        self.assertTrue(export.has_attr('download'))
+        selection = dom.select_one('input[data-history-select]')
+        self.assertFalse(selection.has_attr('disabled'))
+        self.assertEqual(selection['name'], 'run_ids')
+        self.assertEqual(selection['value'], '651')
+        self.assertFalse(selection.find_parent('form'))
+
+    def test_old_export_screen_redirects_to_history_without_querying(self):
+        with patch('routes.remediation.get_connection') as connection:
+            response = self.app.test_client().get('/remediation/export')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers['Location'], '/remediation/')
+        connection.assert_not_called()
 
     def test_metric_changes_use_normal_weight_even_for_regressions(self):
         dom = self.fetch(run('completed_with_warnings'))

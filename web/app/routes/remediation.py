@@ -19,6 +19,9 @@ from remediation_model_choices import model_choices, model_choice, frozen_model_
 from remediation_approaches import presentation_priority, presentation_name
 from remediation_control_copy import control_copy
 from remediation_report_presentation import iteration_presentation, event_presentation
+from remediation_portability import export_manifest
+from remediation_csv import remediation_csv
+from warp_export import file_archive_chunks
 
 
 remediation_bp = Blueprint("remediation", __name__, url_prefix="/remediation")
@@ -32,6 +35,65 @@ def available_llm_options(settings=None):
 
 def now_local():
     return datetime.now(ZoneInfo(get_settings()["app_timezone"])).replace(tzinfo=None)
+
+
+def remediation_download(run_ids):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        exported_at = now_local()
+        payload, members = export_manifest(cursor, run_ids, exported_at.isoformat(), dataset_root=DATASET_ROOT)
+    except (ValueError, OSError) as error:
+        flash(str(error), 'warning')
+        return redirect(url_for('remediation.runs'))
+    finally:
+        cursor.close(); conn.close()
+    name = (f'remediation-{payload["runs"][0]["data"]["id"]}' if len(payload['runs']) == 1
+            else f'remediations-{exported_at:%Y%m%d-%H%M%S}')
+    return Response(file_archive_chunks('remediation.json', payload, members),
+        mimetype='application/vnd.warp+zip',
+        headers={'Content-Disposition': f'attachment; filename="{name}.warp"'})
+
+
+@remediation_bp.get('/<int:run_id>/export')
+def export_run(run_id):
+    return remediation_download([run_id])
+
+
+@remediation_bp.get('/<int:run_id>/csv')
+def download_run_csv(run_id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute('SELECT * FROM remediation_runs WHERE id=%s', (run_id,))
+        run = cursor.fetchone()
+        if not run:
+            return Response(status=404)
+        cursor.execute('SELECT * FROM experiment_results WHERE id=%s', (run['source_result_id'],))
+        source = cursor.fetchone()
+        if not source:
+            return Response(status=404)
+        cursor.execute('SELECT * FROM remediation_iterations WHERE run_id=%s ORDER BY iteration_number', (run_id,))
+        iterations = cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+    return Response(remediation_csv(run, source, iterations), mimetype='text/csv',
+                    headers={'Content-Disposition': f'attachment; filename="remediation-{run_id}.csv"',
+                             'Cache-Control': 'no-store'})
+
+
+@remediation_bp.route('/export', methods=['GET', 'POST'])
+def export_runs():
+    if request.method == 'POST':
+        try:
+            ids = [int(value) for value in request.form.getlist('run_ids')]
+        except ValueError:
+            flash(_('Invalid remediation selection.'), 'warning')
+            return redirect(url_for('remediation.runs'))
+        return remediation_download(ids)
+    # Keep old bookmarks usable, without a separate selection screen.
+    return redirect(url_for('remediation.runs'))
 
 
 def source_snapshot(row):
@@ -228,6 +290,8 @@ def runs():
     axe_original=sum(pair[0] for pair in axe_pairs)
     axe_remediated=sum(pair[1] for pair in axe_pairs)
     summary={"total":len(histories),"active":sum(row["status"] in {"queued","running"} for row in histories),"accepted":len(accepted),"completed":len(completed),"cost":sum(float(row["total_cost_usd"] or 0) for row in histories),"axe_original_total":axe_original,"axe_remediated_total":axe_remediated,"axe_removed_total":axe_original-axe_remediated,"axe_improvement_percent":100*(axe_original-axe_remediated)/axe_original if axe_original else None,"lighthouse_headroom_percent":lighthouse_summary["headroom_percent"],"average_lighthouse_gain":lighthouse_summary["average_gain"],"average_aim_gain":sum(aim_gains)/len(aim_gains) if aim_gains else None,"average_dom":sum(dom_values)/len(dom_values) if dom_values else None,"average_retention":sum(retention)/len(retention) if retention else None}
+    summary['historical_import_cost'] = sum(float(row['total_cost_usd'] or 0) for row in histories if row.get('import_provenance_json'))
+    summary['cost'] -= summary['historical_import_cost']
     return render_template("remediation_history.html", runs=histories, summary=summary, has_active=bool(summary["active"]))
 
 

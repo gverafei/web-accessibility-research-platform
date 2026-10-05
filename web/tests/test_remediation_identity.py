@@ -97,6 +97,19 @@ class RemediationIdentityTests(unittest.TestCase):
         self.assertIn('recorded warning',self.render_header(None,{'id':42}))
         self.assertNotIn('alert-warning',self.render_header(None,{'id':42},status='accepted'))
 
+    def test_csv_warp_and_compare_actions_use_shared_export_controls(self):
+        from bs4 import BeautifulSoup
+        dom = BeautifulSoup(self.render_header(None, {'id':42}, status='accepted'), 'html.parser')
+        actions = dom.select_one('.report-heading-actions')
+        self.assertEqual([node.get_text(strip=True) for node in actions.select('.btn')],
+                         ['Download CSV', 'Export data', 'Compare with original'])
+        self.assertEqual(len(actions.select('.report-action-group a[download]')), 2)
+        self.assertEqual([path['d'] for path in actions.select('.report-action-group svg path')],
+                         ['M12 3v12m0 0 4-4m-4 4-4-4M5 20h14'] * 2)
+        self.assertIsNotNone(actions.select_one(':scope > form button'))
+        active = BeautifulSoup(self.render_header(None, status='running'), 'html.parser')
+        self.assertIsNone(active.select_one('a[download]'))
+
     def test_provider_error_is_red_and_distinguishes_retained_candidate(self):
         from bs4 import BeautifulSoup
         dom=BeautifulSoup(self.render_header('402 Client Error: Payment Required',{'id':42}),'html.parser')

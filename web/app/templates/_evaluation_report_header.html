@@ -1,4 +1,5 @@
 {% from '_report_heading.html' import report_heading %}
+{% from '_portable_export.html' import portable_export, csv_export with context %}
 {% set metadata %}
   <small>{{ _('Started') }} {{ experiment.created_at }}</small>
   {% if report_loading %}<span>{{ _('Preparing the stored results and charts.') }}</span>{% endif %}
@@ -16,8 +17,8 @@
   </div>
   {% else %}
   <div class="report-action-group"><span>{{ _('Export') }}</span><div>
-    <a href="{{ url_for('experiments.download_experiment_csv', experiment_id=experiment.id) }}" class="btn btn-primary" download><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>{{ _('Download CSV') }}</a>
-    <a href="{{ url_for('experiments.download_experiment_json', experiment_id=experiment.id) }}" class="btn btn-primary warp-export" download><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>{{ _('Export data') }}</a>
+    {{ csv_export(url_for('experiments.download_experiment_csv', experiment_id=experiment.id)) }}
+    {{ portable_export(url_for('experiments.download_experiment_json', experiment_id=experiment.id)) }}
   </div></div>
   {% endif %}
 {% endset %}

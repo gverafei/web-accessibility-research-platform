@@ -63,6 +63,7 @@ from settings import (
     save_settings,
 )
 from local_llm import local_configuration
+from category_models import category_model_options, resolve_category_model
 from tranco_sampling import (
     TRANCO_STRATA, TrancoImportError, classify_failure, extend_ordered_reserves,
     fetch_latest_standard_list, fetch_pinned_standard_list, parse_tranco,
@@ -182,7 +183,8 @@ def index():
     pages=cursor.fetchone() or {}
     cursor.execute("""SELECT COUNT(*) total,SUM(status='accepted') accepted,
         SUM(accepted_iteration_id IS NOT NULL) available,
-        SUM(status IN ('queued','running')) active,COALESCE(SUM(total_cost_usd),0) cost
+        SUM(status IN ('queued','running')) active,
+        COALESCE(SUM(CASE WHEN import_provenance_json IS NULL THEN total_cost_usd ELSE 0 END),0) cost
         FROM remediation_runs""")
     remediations=cursor.fetchone() or {}
     evaluation_cost=float(evaluations.get('cost') or 0)
@@ -538,13 +540,18 @@ def manage_urls():
     cursor.execute("SELECT * FROM url_category_jobs WHERE id=1")
     category_job = cursor.fetchone()
     cursor.close(); conn.close()
-    settings = get_settings(); config = local_configuration(settings)
     return render_template(
         "manage_urls.html", site_categories=WEBAIM_SITE_CATEGORIES,
-        category_model=(config or {}).get("model"),
-        luna_available=bool(settings.get("openrouter_api_key")),
         category_job=category_job, uncategorized_count=0,
     )
+
+
+@experiments_bp.get('/urls/category-models')
+def managed_url_category_models():
+    choices, local_error = category_model_options(get_settings())
+    return jsonify(models=[{key: item[key] for key in
+        ('id', 'model', 'label', 'provider', 'enabled', 'is_default')} for item in choices],
+        local_error=local_error)
 
 
 @experiments_bp.get("/urls/manage/data")
@@ -607,18 +614,12 @@ def update_url_site_category(result_id):
 @experiments_bp.post("/urls/auto-categorize")
 def auto_categorize_managed_urls():
     settings = get_settings()
-    config = local_configuration(settings)
     requested_model = str((request.get_json(silent=True) or {}).get("model") or "local")
-    if requested_model not in ('local', 'luna'):
+    try:
+        model_config = resolve_category_model(requested_model, settings)
+    except (ValueError, TypeError):
         return jsonify({'ok': False, 'error': _('Select an available category model.')}), 400
-    if requested_model == "luna":
-        if not settings.get("openrouter_api_key"):
-            return jsonify({"ok": False, "error": _("Configure the OpenRouter API key before using GPT-6 Luna.")}), 400
-        selected_model = "openai/gpt-6-luna"
-    else:
-        if not config:
-            return jsonify({"ok": False, "error": _("Configure a local Ollama model before starting.")}), 400
-        selected_model = "ollama/" + config["model"]
+    selected_model = model_config['model']
     conn = get_connection(); cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM url_category_jobs WHERE id=1 FOR UPDATE")
     existing = cursor.fetchone()
@@ -656,12 +657,12 @@ def auto_categorize_managed_urls():
         return jsonify({"ok": True, "job": {"status": "completed", "total_urls": 0, "completed_urls": 0}})
     cursor.execute(
         """INSERT INTO url_category_jobs
-           (id,status,total_urls,completed_urls,model,experiment_id,error_message,created_at,updated_at)
-           VALUES (1,'queued',%s,0,%s,%s,NULL,NOW(),NOW())
+           (id,status,total_urls,completed_urls,model,model_config_json,experiment_id,error_message,created_at,updated_at)
+           VALUES (1,'queued',%s,0,%s,%s,%s,NULL,NOW(),NOW())
            ON DUPLICATE KEY UPDATE status='queued',total_urls=VALUES(total_urls),
-             completed_urls=0,model=VALUES(model),input_tokens=0,output_tokens=0,cost_usd=0,
+             completed_urls=0,model=VALUES(model),model_config_json=VALUES(model_config_json),input_tokens=0,output_tokens=0,cost_usd=0,
              experiment_id=VALUES(experiment_id),error_message=NULL,created_at=NOW(),updated_at=NOW()""",
-        (total, selected_model, scope_id),
+        (total, selected_model, json.dumps(model_config), scope_id),
     )
     conn.commit(); cursor.close(); conn.close()
     return jsonify({"ok": True, "job": {"status": "queued", "total_urls": total, "completed_urls": 0, "model": selected_model, "experiment_id": scope_id}})
@@ -928,7 +929,6 @@ def compose_experiment():
         flash(_("The selected stored results no longer exist."), "warning")
         return redirect(url_for("experiments.compose_experiment"))
     target_value = request.form.get("target_experiment", "new")
-    replacement_artifacts = []
     added_rows = []
     try:
         if target_value == "new":
@@ -974,31 +974,10 @@ def compose_experiment():
         )
         existing = {row["normalized_url"] for row in cursor.fetchall()}
         added = 0
-        replaced = 0
-        replace_existing = request.form.get("replace_existing") == "true"
         for source in sources:
             normalized = normalize_url(source.get("url"))
-            was_replaced = False
             if normalized in existing:
-                if not replace_existing or source.get("experiment_id") == target_id:
-                    continue
-                cursor.execute(
-                    f"""SELECT id, {', '.join(ARTIFACT_COLUMNS)} FROM experiment_results
-                        WHERE experiment_id=%s AND normalized_url=%s""",
-                    (target_id, normalized),
-                )
-                replaced_rows = cursor.fetchall()
-                for row in replaced_rows:
-                    replacement_artifacts.extend(
-                        row.get(column) for column in ARTIFACT_COLUMNS if row.get(column)
-                    )
-                cursor.execute(
-                    "DELETE FROM experiment_results WHERE experiment_id=%s AND normalized_url=%s",
-                    (target_id, normalized),
-                )
-                existing.discard(normalized)
-                replaced += len(replaced_rows)
-                was_replaced = bool(replaced_rows)
+                continue
             cloned_id = clone_result(cursor, source, target_id, "composed")
             existing.add(normalized)
             added += 1
@@ -1011,27 +990,27 @@ def compose_experiment():
                 "evaluated_at": str(source.get("evaluated_at") or source.get("created_at") or ""),
                 "provenance": "composed",
                 "source_experiment_id": source.get("source_experiment_id") or source.get("experiment_id"),
-                "replaced": was_replaced,
             })
 
-        cursor.execute(
-            "SELECT url, wave_status, semantic_status FROM experiment_results WHERE experiment_id=%s ORDER BY id",
-            (target_id,),
-        )
-        combined_rows = cursor.fetchall()
-        cursor.execute(
-            """
-            UPDATE experiments SET urls=%s, include_wave=%s, include_semantic=%s,
-                experiment_origin='composed', evaluation_signature=NULL, completed_at=%s
-            WHERE id=%s
-            """,
-            (
-                "\n".join(row["url"] for row in combined_rows),
-                any(row.get("wave_status") == "completed" for row in combined_rows),
-                any(row.get("semantic_status") == "completed" for row in combined_rows),
-                now_local(), target_id,
-            ),
-        )
+        if added:
+            cursor.execute(
+                "SELECT url, wave_status, semantic_status FROM experiment_results WHERE experiment_id=%s ORDER BY id",
+                (target_id,),
+            )
+            combined_rows = cursor.fetchall()
+            cursor.execute(
+                """
+                UPDATE experiments SET urls=%s, include_wave=%s, include_semantic=%s,
+                    experiment_origin='composed', evaluation_signature=NULL, completed_at=%s
+                WHERE id=%s
+                """,
+                (
+                    "\n".join(row["url"] for row in combined_rows),
+                    any(row.get("wave_status") == "completed" for row in combined_rows),
+                    any(row.get("semantic_status") == "completed" for row in combined_rows),
+                    now_local(), target_id,
+                ),
+            )
         conn.commit()
     except Exception:
         conn.rollback()
@@ -1043,22 +1022,10 @@ def compose_experiment():
         return redirect(url_for("experiments.compose_experiment"))
     cursor.close()
     conn.close()
-    target_directory = os.path.realpath(f"/results/raw/experiment_{target_id}")
-    for path in replacement_artifacts:
-        resolved = os.path.realpath(path)
-        if resolved.startswith(f"{target_directory}{os.sep}"):
-            try:
-                if os.path.isfile(resolved):
-                    os.remove(resolved)
-            except OSError:
-                pass
     if ajax_request:
-        return jsonify({"ok": True, "target_id": target_id, "added": added, "replaced": replaced, "results": added_rows})
+        return jsonify({"ok": True, "target_id": target_id, "added": added, "results": added_rows})
     if added:
-        if replaced:
-            flash(_("%(count)s stored URL result(s) were added; %(replaced)s existing result(s) were replaced.", count=added, replaced=replaced), "success")
-        else:
-            flash(_("%(count)s stored URL result(s) were added.", count=added), "success")
+        flash(_("%(count)s stored URL result(s) were added.", count=added), "success")
     else:
         flash(_("No results were added because every selected URL already exists in the destination experiment."), "warning")
     return redirect(url_for("experiments.experiment_report", experiment_id=target_id))
@@ -1466,6 +1433,17 @@ def import_experiment_json():
         if not (upload.filename or "").lower().endswith(".warp"):
             raise ValueError("invalid extension")
         package = zipfile.ZipFile(upload.stream)
+        if 'remediation.json' in package.namelist():
+            from remediation_portability import validate_package, import_package
+            payload = validate_package(package)
+            conn = get_connection()
+            try:
+                ids = import_package(conn, package, payload, now_local(),
+                                     request.form.get('import_title', '').strip())
+            finally:
+                conn.close(); package.close()
+            flash(_('Remediation evidence imported. No models or evaluators were executed; costs are historical.'), 'success')
+            return redirect(url_for('remediation.run_detail', run_id=ids[0]) if len(ids) == 1 else url_for('remediation.runs'))
         package_members = [item for item in package.infolist() if not item.is_dir()]
         names = {item.filename for item in package_members}
         if "experiment.json" not in names or any(
@@ -2941,9 +2919,7 @@ def experiment_report(experiment_id):
     conn.close()
 
     report_settings = get_settings()
-    show_axe_best_practices = as_bool(experiment.get("axe_include_best_practices"))
     results = [project_wcag(row) for row in results]
-    experiment["axe_include_best_practices"] = show_axe_best_practices
 
     chart_labels = [item.get("display_url") or item["url"] for item in results]
     axe_values = [item["axe_violations"] or 0 for item in results]
@@ -2988,6 +2964,7 @@ def experiment_report(experiment_id):
         environment=environment,
         environment_count=environment_count,
         analysis=analysis,
+        show_axe_best_practices=as_bool(report_settings["axe_include_best_practices"]),
         show_axe_failed_rules=as_bool(report_settings["show_axe_failed_rules"]),
         show_axe_needs_review=as_bool(report_settings["show_axe_needs_review"]),
         show_axe_densities=as_bool(report_settings["show_axe_densities"]),
@@ -3707,7 +3684,9 @@ def download_raw_result(experiment_id, result_id, tool):
         "axe": "axe_raw_path",
         "lighthouse": "lighthouse_raw_path",
         "wave": "wave_raw_path",
-        "semantic": "semantic_raw_path"
+        "semantic": "semantic_raw_path",
+        "response": "response_source_path",
+        "rendered": "source_snapshot_path",
     }
 
     if tool not in allowed_tools:
@@ -3719,7 +3698,8 @@ def download_raw_result(experiment_id, result_id, tool):
 
     cursor.execute("""
         SELECT id, experiment_id, url,
-               axe_raw_path, lighthouse_raw_path, wave_raw_path, semantic_raw_path
+               axe_raw_path, lighthouse_raw_path, wave_raw_path, semantic_raw_path,
+               response_source_path, source_snapshot_path
         FROM experiment_results
         WHERE id = %s AND experiment_id = %s
     """, (result_id, experiment_id))
@@ -3735,17 +3715,24 @@ def download_raw_result(experiment_id, result_id, tool):
 
     file_path = result.get(allowed_tools[tool])
 
-    if not file_path or not os.path.exists(file_path):
+    allowed_root = os.path.realpath("/results/raw")
+    resolved_path = os.path.realpath(file_path) if file_path else ""
+    if (
+        not resolved_path.startswith(f"{allowed_root}{os.sep}")
+        or not os.path.isfile(resolved_path)
+    ):
         flash(_("The requested file does not exist or was not generated."), "warning")
         return redirect(url_for("experiments.experiment_report", experiment_id=experiment_id))
 
-    filename = f"experiment_{experiment_id}_result_{result_id}_{tool}.json"
+    is_html = tool in {"response", "rendered"}
+    extension = "html" if is_html else "json"
+    filename = f"experiment_{experiment_id}_result_{result_id}_{tool}.{extension}"
 
     return send_file(
-        file_path,
+        resolved_path,
         as_attachment=True,
         download_name=filename,
-        mimetype="application/json"
+        mimetype="text/html" if is_html else "application/json"
     )
 
 

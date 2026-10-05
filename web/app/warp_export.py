@@ -132,3 +132,20 @@ def archive_chunks(metadata, results, dataset_files=(), artifact_root='/results/
                     yield from output.drain()
             yield from output.drain()
     yield from output.drain()
+
+
+def file_archive_chunks(manifest_name, metadata, members):
+    """Stream a named manifest and binary members for another versioned format."""
+    output = _Output()
+    with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED,
+                         compresslevel=1, allowZip64=True) as archive:
+        archive.writestr(manifest_name, _json(metadata))
+        yield from output.drain()
+        for path, name in members:
+            with archive.open(name, 'w', force_zip64=True) as member, Path(path).open('rb') as source:
+                yield from output.drain()
+                while chunk := source.read(CHUNK_BYTES):
+                    member.write(chunk)
+                    yield from output.drain()
+            yield from output.drain()
+    yield from output.drain()
