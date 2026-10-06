@@ -1,16 +1,17 @@
 # SoftwareX illustrative examples
 
-Portable recorded examples for A11yResearch. This folder is separate from the
-private research/manuscript workspace. Preparation does not imply publication.
-`MANIFEST.json` records package sizes, SHA-256, counts and source record IDs.
+Portable recorded examples for A11yResearch, available as seven downloads in the
+[SoftwareX examples — version 1 Release](https://github.com/gverafei/web-accessibility-research-platform/releases/tag/softwarex-examples-v1).
+The large `.warp` files are Release assets, not files in the source checkout.
+[MANIFEST.json](MANIFEST.json) records package sizes, SHA-256, counts and source record IDs.
 
 | Example | Package | Contents |
 | --- | --- | --- |
-| 1 | `example-1-tranco-900.warp` | 900 frozen evaluated pages, historical Tranco list 94XL2 |
-| 2 | `example-2-remediations-125.warp` | All 125 minimal-patch runs, 25 sources per popularity stratum; originals, candidates, iterations and events |
-| 3 | `example-3-browser-evaluation.warp`, `example-3-browser-remediation.warp` | Newly authorized www.uv.mx demonstration; not the historical 125-page study |
-| 4 | `example-4-batch-A.warp`, `example-4-batch-B.warp` | The exact two five-page packages used in the recorded round-trip |
-| 4 | `example-4-combined-10.warp` | The combined ten-page evaluation, with recorded measurements and provenance |
+| 1 | [example-1-tranco-900.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-1-tranco-900.warp) | 900 frozen evaluated pages, historical Tranco list 94XL2 |
+| 2 | [example-2-remediations-125.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-2-remediations-125.warp) | All 125 minimal-patch runs, 25 sources per popularity stratum; originals, candidates, iterations and events |
+| 3 | [example-3-browser-evaluation.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-3-browser-evaluation.warp), [example-3-browser-remediation.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-3-browser-remediation.warp) | Separate www.uv.mx browser demonstration |
+| 4 | [example-4-batch-A.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-4-batch-A.warp), [example-4-batch-B.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-4-batch-B.warp) | The exact two five-page packages used in the recorded round-trip |
+| 4 | [example-4-combined-10.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-4-combined-10.warp) | The combined ten-page evaluation, with recorded measurements and provenance |
 
 Example 2 preserves the original frozen GPT-6 Luna / Light reasoning,
 Minimal patches, RAG-ACT off and WAVE off settings. Its historical US$0.15 /
@@ -35,16 +36,16 @@ use **Compare with original** for an accepted restored run. External assets may
 have changed, and frozen automated scores do not establish full WCAG conformance.
 Missing optional legacy artifacts are documented rather than reconstructed.
 
-## Verify and distribute
+## Verify the downloads
 
-Run `python examples/softwarex/verify_packages.py` to check inventory hashes and
-counts without extracting or executing HTML. The large bundles are kept out of
-normal source commits. Use a versioned release asset or an appropriate data
-repository for the actual `.warp` downloads, and add stable links here only after
-publication is authorized. No download URLs or DOI are claimed yet.
+Save all seven downloads in `examples/softwarex/` in your source checkout, then
+run `python examples/softwarex/verify_packages.py` to check package sizes,
+SHA-256 hashes, record counts and referenced artifacts without extracting or
+executing HTML. The verifier uses only the Python standard library.
 
-Before redistribution, review captured third-party HTML, images, prompts and raw
-reports for privacy and rights. The software licence does not grant ownership of
-captured website content. Do not describe this folder as a clean-room synthetic
-dataset or include provider credentials. Never put these packages in the public
-documentation site's build.
+## Captured content
+
+These packages contain recorded third-party website HTML, screenshots, prompts
+and evaluator reports. Captured content retains its original rights; the MIT
+software licence does not grant ownership of website content. Treat HTML as
+untrusted material and review applicable rights before redistributing it.

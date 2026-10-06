@@ -50,6 +50,12 @@ Ollama is optional and configured externally. MySQL/Qdrant use named volumes; mo
 
 Load `browser_extension/` as an unpacked extension in a compatible Chromium browser. The documented prototype targets Chrome/Edge and expects A11yResearch at localhost. It submits the active tab's URL, not its cookies/session/live DOM. See the [extension guide](https://gverafei.github.io/web-accessibility-research-platform/guide/extension/) for controls, permissions and capture scope.
 
+## SoftwareX illustrative examples
+
+The [SoftwareX example collection](examples/softwarex/) provides seven portable `.warp` packages: the 900-page evaluation, 125 remediation runs, a browser-initiated evaluation/remediation, and the two five-page evaluations and their ten-page composition.
+
+Download the packages from the [versioned example Release](https://github.com/gverafei/web-accessibility-research-platform/releases/tag/softwarex-examples-v1); they are not included in the source checkout. The example folder contains restoration instructions, provenance, checksums and an offline verifier. Restore them through **Import** without new model or evaluator calls.
+
 ## Development and verification
 
 ```bash
@@ -77,4 +83,4 @@ Only documentation becomes a Pages artifact; the site does not run A11yResearch 
 
 ## License and citation
 
-[MIT](LICENSE). Cite the repository and the exact release/commit used until a publication/archive citation is available. See [citation and provenance guidance](https://gverafei.github.io/web-accessibility-research-platform/reference/citation/). Third-party website captures and ACT/dependency material retain their own rights and attribution.
+[MIT](LICENSE). Cite the repository and the exact release/commit used until a publication/archive citation is available. See [citation and provenance guidance](https://gverafei.github.io/web-accessibility-research-platform/reference/citation/).

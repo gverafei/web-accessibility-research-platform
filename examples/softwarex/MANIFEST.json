@@ -1,6 +1,12 @@
 {
   "prepared_at": "2026-10-05",
-  "publication": "not published",
+  "publication": "published",
+  "published_at": "2026-10-06",
+  "release": {
+    "tag": "softwarex-examples-v1",
+    "url": "https://github.com/gverafei/web-accessibility-research-platform/releases/tag/softwarex-examples-v1",
+    "source_commit": "1ef94e4ffe9b3d93daed556623e38896d29612ba"
+  },
   "packages": [
     {
       "file": "example-1-tranco-900.warp",
