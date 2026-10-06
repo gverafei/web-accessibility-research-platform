@@ -48,7 +48,9 @@ Deployment uses the `github-pages` environment with Pages/id-token permissions. 
 
 The canonical URL is `https://gverafei.github.io/web-accessibility-research-platform/`. Update `site_url` and README links together if the repository/owner or custom domain changes.
 
-The source repository is private. Publishing Pages from a private repository requires a compatible GitHub plan; the documentation website itself remains public. Repository privacy is not a substitute for reviewing the generated site for confidential information.
+The source repository and documentation website are public. Review both source
+changes and generated site content for confidential information before publishing;
+credentials, captured pages and private research material must remain outside them.
 
 ## Scope and versions
 
