@@ -4,6 +4,26 @@ A11yResearch helps researchers acquire and evaluate collections of web pages, re
 
 **[Complete documentation](https://gverafei.github.io/web-accessibility-research-platform/)** · [Installation](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) · [Researcher guide](https://gverafei.github.io/web-accessibility-research-platform/guide/acquisition/) · [Technical architecture](https://gverafei.github.io/web-accessibility-research-platform/technical/architecture/)
 
+## Interface at a glance
+
+These views are taken from the SoftwareX demonstration recording.
+
+The evaluation report brings URL-level measurements and cross-tool charts together for inspection.
+
+![Navigation through an evaluation report, from the measurement matrix to accessibility charts](docs/site/assets/readme/evaluation-report.gif)
+
+Remediation runs can be reviewed in a list that shows progress, measured results, model choices, and cost.
+
+![Remediation runs list with progress and result summaries](docs/site/assets/readme/remediation-runs.png)
+
+Researchers choose a model and reasoning tier before starting a remediation run.
+
+![Model strategy selection on the New remediation screen](docs/site/assets/readme/model-selection.png)
+
+The remediation report connects before-and-after measurements with preservation and iteration evidence.
+
+![Navigation through a remediation report, from outcome metrics to agent activity](docs/site/assets/readme/remediation-report.gif)
+
 ## Features
 
 - Public-URL acquisition, seeded Tranco sampling and local HTML datasets.
