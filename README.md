@@ -1,28 +1,11 @@
 # A11yResearch: Web Accessibility Research Platform
 
-A11yResearch helps researchers acquire and evaluate collections of web pages, remediate accessibility barriers with explicit AI controls, and compare original and repaired pages while retaining reproducible evidence.
-
-**[Complete documentation](https://gverafei.github.io/web-accessibility-research-platform/)** · [Installation](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) · [Researcher guide](https://gverafei.github.io/web-accessibility-research-platform/guide/acquisition/) · [Technical architecture](https://gverafei.github.io/web-accessibility-research-platform/technical/architecture/)
-
-## Interface at a glance
-
-These views are taken from the SoftwareX demonstration recording.
-
-The evaluation report brings URL-level measurements and cross-tool charts together for inspection.
-
 ![Navigation through an evaluation report, from the measurement matrix to accessibility charts](docs/site/assets/readme/evaluation-report.gif)
 
-Remediation runs can be reviewed in a list that shows progress, measured results, model choices, and cost.
+A11yResearch helps researchers acquire and evaluate collections of web pages, remediate accessibility barriers with explicit AI controls, and compare original and repaired pages while retaining reproducible evidence.
 
-![Remediation runs list with progress and result summaries](docs/site/assets/readme/remediation-runs.png)
+[Complete documentation](https://gverafei.github.io/web-accessibility-research-platform/) · [Installation](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) · [Researcher guide](https://gverafei.github.io/web-accessibility-research-platform/guide/acquisition/) · [Technical architecture](https://gverafei.github.io/web-accessibility-research-platform/technical/architecture/)
 
-Researchers choose a model and reasoning tier before starting a remediation run.
-
-![Model strategy selection on the New remediation screen](docs/site/assets/readme/model-selection.png)
-
-The remediation report connects before-and-after measurements with preservation and iteration evidence.
-
-![Navigation through a remediation report, from outcome metrics to agent activity](docs/site/assets/readme/remediation-report.gif)
 
 ## Features
 
@@ -75,6 +58,29 @@ Load `browser_extension/` as an unpacked extension in a compatible Chromium brow
 The [SoftwareX example collection](examples/softwarex/) provides seven portable `.warp` packages: the 900-page evaluation, 125 remediation runs, a browser-initiated evaluation/remediation, and the two five-page evaluations and their ten-page composition.
 
 Download the packages from the [versioned example Release](https://github.com/gverafei/web-accessibility-research-platform/releases/tag/softwarex-examples-v1); they are not included in the source checkout. The example folder contains restoration instructions, provenance, checksums and an offline verifier. Restore them through **Import** without new model or evaluator calls.
+
+## Interface at a glance
+
+The dashboard provides an overview of evaluations, remediations, costs, and recent work.
+
+![A11yResearch dashboard with research workflow, summary metrics, and recent work](docs/site/assets/readme/dashboard.png)
+
+
+The model catalogue in Configuration lets researchers add and configure a model.
+
+![Adding a model in the Configuration model catalogue](docs/site/assets/readme/model-catalogue.gif)
+
+Researchers choose a model and reasoning tier before starting a remediation run.
+
+![Model strategy selection on the New remediation screen](docs/site/assets/readme/model-selection.png)
+
+Remediation runs can be reviewed in a list that shows progress, measured results, model choices, and cost.
+
+![Remediation runs list with progress and result summaries](docs/site/assets/readme/remediation-runs.png)
+
+The remediation report connects before-and-after measurements with preservation and iteration evidence.
+
+![Remediation report with before-and-after accessibility measurements and content retention](docs/site/assets/readme/remediation-report.png)
 
 ## Development and verification
 
