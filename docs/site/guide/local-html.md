@@ -27,6 +27,13 @@ The default **isolated** policy restricts loading with a Content Security Policy
 
 Choose an external-resource policy only for a trusted dataset when those dependencies are necessary. The policy is stored with the dataset and exported with it. Neither policy establishes that an uploaded page is safe to open outside the controlled environment.
 
+Axe and Lighthouse keep the supplied local HTML as the main document during an
+audit. Attempts to navigate away are blocked and recorded; referenced resources
+remain subject to the selected resource policy. A script may update the displayed
+address without replacing the document.
+If an early redirect interrupts rendering, the evaluator reports an error rather
+than treating the interrupted page as a valid accessibility score.
+
 ## Validation limits
 
 | Limit | Current value |

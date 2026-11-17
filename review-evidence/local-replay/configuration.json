@@ -1,0 +1,68 @@
+{
+  "node": "20.20.2",
+  "chromium": "153.0.8010.52",
+  "axe_core": "4.13.0",
+  "lighthouse": "12.8.2",
+  "playwright": "1.63.0",
+  "axe_profile": "wcag22aa",
+  "axe_primary_counting_policy": "wcag-node-instances-v1",
+  "settings": {
+    "page_load_timeout_ms": 120000,
+    "axe_hard_timeout_ms": 300000,
+    "network_idle_timeout_ms": 15000,
+    "page_settle_delay_ms": 2000,
+    "dom_stability_window_ms": 1500,
+    "dom_stability_timeout_ms": 10000,
+    "lazy_load_scroll": true,
+    "scroll_step_px": 700,
+    "scroll_delay_ms": 400,
+    "max_scroll_steps": 30,
+    "interaction_activation": true
+  },
+  "lighthouse_loading": {
+    "maxWaitForFcp": 90000,
+    "maxWaitForLoad": 120000
+  },
+  "lighthouse_chromium_flags": [
+    "--disable-background-timer-throttling",
+    "--disable-backgrounding-occluded-windows",
+    "--disable-renderer-backgrounding",
+    "--disable-features=PaintHolding"
+  ],
+  "resource_resolution": "Both stored states use the recorded capture URL as resource base; pre-existing absolute bases respected. Stored bytes immutable, reversible render-context insertion only.",
+  "axe_viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "lighthouse_form_factor": "desktop",
+  "lighthouse_screen_emulation": {
+    "mobile": false,
+    "width": 1350,
+    "height": 940,
+    "deviceScaleFactor": 1,
+    "disabled": false
+  },
+  "lighthouse_throttling": "simulate",
+  "lighthouse_throttling_settings": {
+    "rttMs": 40,
+    "throughputKbps": 10240,
+    "requestLatencyMs": 0,
+    "downloadThroughputKbps": 0,
+    "uploadThroughputKbps": 0,
+    "cpuSlowdownMultiplier": 1
+  },
+  "lighthouse_emulated_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+  "analysis_python": "3.12.14",
+  "analysis_numpy": "2.3.5",
+  "control": "125 stored originals and their retained candidates; 25 pairs per stratum",
+  "main_documents": "SHA256-verified stored HTML; no new page acquisition or model generation",
+  "resources": "Referenced external CSS, fonts, images and scripts resolved against the capture URL",
+  "assessments": "Axe and Lighthouse in separate fresh browsers for each stored state",
+  "main_document_identity": "Stored local main document retained while referenced resources load",
+  "analysis": "Unweighted paired changes; percentile intervals from 20000 within-stratum bootstrap samples; seed 20261111",
+  "axe_unit": "Affected node instances from WCAG rules, excluding best-practices findings",
+  "lighthouse_unit": "Desktop accessibility score, 0\u2013100",
+  "target_check": "Axe <=3 and Lighthouse >=94",
+  "image_id": "sha256:1a4d83bb5135cc78036a9558031900b50c932436a70d0e5923ffd53c9b65b8c5",
+  "image_identifier_type": "Local Docker image content ID; not a registry download address"
+}

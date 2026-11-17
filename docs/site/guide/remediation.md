@@ -2,6 +2,10 @@
 
 A remediation run starts from a completed result with a readable stored HTML snapshot. A11yResearch preserves that source, creates separate candidates and remeasures them. It does not edit the remote website.
 
+Local candidate audits prevent scripts or redirects from replacing the supplied
+HTML with another main page. Blocked navigation attempts are retained with the
+evaluator evidence; referenced resources follow the serving policy.
+
 To share an already completed run without executing it again, use **Export data**
 in its report, or select checkboxes in **Remediation runs** and use **Export selected**
 beside the view and search controls for a batch, without opening another screen.

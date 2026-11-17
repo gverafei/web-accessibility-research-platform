@@ -1,6 +1,8 @@
 const lighthouse = require("lighthouse").default;
 const chromeLauncher = require("chrome-launcher");
 const { extractAccessibilityScore } = require("./lighthouse_score");
+const { chromium } = require('playwright');
+const { isLocalDatasetUrl, protectLocalReplay } = require('./local_replay');
 
 async function runLighthouseDirect(url) {
   const chrome = await chromeLauncher.launch({
@@ -8,16 +10,28 @@ async function runLighthouseDirect(url) {
     chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
   });
   if (process.send) process.send({ type: "browser_pid", pid: chrome.pid });
+  let bridge;
   try {
+    let localReplay;
+    if (isLocalDatasetUrl(url)) {
+      bridge = await chromium.connectOverCDP(`http://127.0.0.1:${chrome.port}`);
+      localReplay = await protectLocalReplay(bridge.contexts()[0], url);
+    }
     const runnerResult = await lighthouse(url, {
       logLevel: "error", output: "json", onlyCategories: ["accessibility"], port: chrome.port
     });
     const lhr = runnerResult.lhr;
+    const accessibilityScore = extractAccessibilityScore(lhr);
+    if (localReplay && (lhr.mainDocumentUrl || lhr.finalUrl) !== localReplay.expected_document_url) {
+      throw new Error('Local replay left the supplied main document');
+    }
+    if (localReplay) lhr.localReplay = localReplay;
     return {
-      summary: { accessibility_score: extractAccessibilityScore(lhr) },
+      summary: { accessibility_score: accessibilityScore },
       raw: lhr
     };
   } finally {
+    if (bridge) await bridge.close().catch(() => {});
     try {
       await chrome.kill();
     } catch {

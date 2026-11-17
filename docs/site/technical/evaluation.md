@@ -45,6 +45,15 @@ For each requested URL, the service runs isolated Axe acquisition and Lighthouse
 
 The Axe acquisition path provides rendered HTML, optional response-source HTML, screenshot and page/load features. It gathers the required rule evidence and variants so display choices can be separated from the underlying capture.
 
+Axe uses captured native console functions for its execution context, keeping
+audit diagnostics independent of page logging hooks. Load metadata records the
+context version and the digest of the original axe-core source.
+
+For local HTML, shared navigation controls keep the supplied document in place
+and record attempted replacements. Axe retains the actual initial HTTP response;
+Lighthouse checks `mainDocumentUrl` while allowing History API changes to the
+displayed address. Interrupted rendering retains its measurement error.
+
 Lighthouse uses its own controlled process/browser path. Its accessibility score is validated before use. WAVE is an independent remote API path for public URLs and has its own delay/usage metadata.
 
 ## Quality checks

@@ -2,6 +2,8 @@ const { chromium } = require("playwright");
 const AxeBuilder = require("@axe-core/playwright").default;
 const fs = require("fs");
 const { pageRejection } = require('./acquisition_quality');
+const { isLocalDatasetUrl, protectLocalReplay } = require('./local_replay');
+const { prepareAxeExecutionContext } = require('./axe_execution_context');
 
 const AXE_PROFILES = {
   wcag20a: ["wcag2a"],
@@ -46,14 +48,6 @@ const SECURITY_MARKERS = [
 function isMovedNotice(text) {
   const normalized = String(text || "").toLowerCase();
   return MOVED_MARKERS.some(marker => normalized.includes(marker));
-}
-
-function isLocalDatasetUrl(url) {
-  try {
-    return new URL(url).hostname.toLowerCase() === "dataset-server";
-  } catch {
-    return false;
-  }
 }
 
 function isSecurityChallenge(url, text) {
@@ -294,6 +288,8 @@ async function runAxe(url, screenshotPath = null, options = {}) {
     viewport: { width: 1440, height: 900 }
   });
   const page = await context.newPage();
+  let localReplay;
+  let axeExecutionContext;
   let hardTimedOut = false;
   const hardTimeout = setTimeout(() => {
     hardTimedOut = true;
@@ -304,6 +300,8 @@ async function runAxe(url, screenshotPath = null, options = {}) {
   }, policy.axe_hard_timeout_ms);
 
   try {
+    axeExecutionContext = await prepareAxeExecutionContext(context);
+    localReplay = await protectLocalReplay(context, url);
     const readHtmlResponse = async response => {
       try {
         if (!response) return null;
@@ -318,6 +316,18 @@ async function runAxe(url, screenshotPath = null, options = {}) {
       }
       return null;
     };
+    let localResponseBody;
+    if (localReplay) {
+      page.on('response', response => {
+        const request = response.request();
+        if (localResponseBody || !request.isNavigationRequest()
+            || request.frame() !== page.mainFrame()) return;
+        const address = new URL(response.url()); address.hash = '';
+        if (address.href === localReplay.expected_document_url) {
+          localResponseBody = readHtmlResponse(response);
+        }
+      });
+    }
     // Retain a bounded main-document network buffer. Heavy dynamic pages can
     // otherwise evict the original body before Playwright reads it. Never
     // fabricate a response from the rendered DOM or a second HTTP request.
@@ -327,12 +337,19 @@ async function runAxe(url, screenshotPath = null, options = {}) {
       maxResourceBufferSize: 100 * 1024 * 1024
     });
     let navigationResponse = await page.goto(url, {
-      waitUntil: "domcontentloaded",
+      waitUntil: localReplay ? "commit" : "domcontentloaded",
       timeout: policy.page_load_timeout_ms
     });
+    // Keep the actual main response before a client-side address update can
+    // detach its navigation handle. This is not another request or DOM copy.
+    let responseHtml = await (localResponseBody || readHtmlResponse(navigationResponse));
+    if (localReplay) {
+      await page.waitForFunction(() => document.readyState === 'complete'
+        || performance.getEntriesByType('navigation')[0]?.domContentLoadedEventEnd > 0,
+      null, { timeout: policy.page_load_timeout_ms });
+    }
     // Read the main-document body before scrolling, stabilization and Axe can
     // evict it from Chromium's network cache. The rendered DOM is stored later.
-    let responseHtml = await readHtmlResponse(navigationResponse);
 
     const stabilizePage = async () => {
       let networkIdleReached = true;
@@ -390,6 +407,9 @@ async function runAxe(url, screenshotPath = null, options = {}) {
     }
 
     const capturedUrl = page.url();
+    if (localReplay && new URL(capturedUrl).origin !== new URL(url).origin) {
+      throw new Error('Local replay left the supplied document origin');
+    }
     const acquisitionSignals = [];
     if (!responseHtml) acquisitionSignals.push('original_response_missing');
     const requestedHost = new URL(url).hostname.replace(/^www\./, "");
@@ -438,11 +458,16 @@ async function runAxe(url, screenshotPath = null, options = {}) {
       iframe_count: document.querySelectorAll('iframe').length
     }));
     const htmlMetrics = await extractHtmlMetrics(page);
+    if (localReplay?.blocked_navigations.length) {
+      const painted = await page.evaluate(() => performance.getEntriesByType('paint')
+        .some(entry => entry.name === 'first-contentful-paint'));
+      if (!painted) throw new Error('Local replay produced no content after a blocked navigation');
+    }
     const rejection = localDataset ? null : acquisitionRejection(htmlMetrics, pageTitle);
     if (rejection) throw new Error(rejection);
     const tags = [...AXE_PROFILES[standard]];
     if (!tags.includes("best-practice")) tags.push("best-practice");
-    const results = await new AxeBuilder({ page }).withTags(tags).analyze();
+    const results = await new AxeBuilder({ page, axeSource: axeExecutionContext.source }).withTags(tags).analyze();
 
     // Diagnostic evidence only: do not alter Axe findings or its score. Nested
     // frame/shadow targets remain explicitly unresolved instead of being guessed.
@@ -479,6 +504,7 @@ async function runAxe(url, screenshotPath = null, options = {}) {
       html_metrics: htmlMetrics,
       load_metadata: {
         policy,
+        axe_execution_context: axeExecutionContext.evidence,
         network_idle_reached: stabilization.networkIdleReached,
         scroll_steps: stabilization.scrollSteps,
         dom_stable: stabilization.domStability.stable,
@@ -490,7 +516,8 @@ async function runAxe(url, screenshotPath = null, options = {}) {
       acquisition: {
         captured_url: capturedUrl,
         page_title: pageTitle,
-        signals: acquisitionSignals
+        signals: acquisitionSignals,
+        ...(localReplay ? { local_replay: localReplay } : {})
       },
       raw: results
     };
