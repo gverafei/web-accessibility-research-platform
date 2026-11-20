@@ -151,8 +151,10 @@
         778,
         783
       ],
-      "bytes": 416350828,
-      "sha256": "008eec3d9ad36eaed30aea51d1c6c6564b99b74e185362e820922ae9b534cd62"
+      "bytes": 415335515,
+      "sha256": "edfad89c69d7c4bb042f68072c3e1317ae97f71cadbb144679a3aa0a074c0eeb",
+      "paired_comparison": "SoftwareX Example 2 — Minimal patches",
+      "paired_observations": 250
     },
     {
       "file": "example-4-batch-A.warp",

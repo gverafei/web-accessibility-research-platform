@@ -1,5 +1,8 @@
 # Software architecture
 
+The platform version is recorded in the repository's root `VERSION` file. The browser extension, evaluator package, agent procedures and portable data formats carry their own version identifiers.
+
+
 A11yResearch separates its researcher interface, persistent scheduler, browser evaluator and artifact-serving responsibilities. Models support generation and diagnosis within the remediation workflow; the worker coordinates processing and stores results.
 
 ```mermaid

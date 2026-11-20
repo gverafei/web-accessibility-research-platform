@@ -11,6 +11,7 @@ import stat
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlsplit
 
+from paired_measurements import restore_pair, validate_measurements
 from result_portability import ARTIFACT_COLUMNS, json_value, normalize_url
 from warp_export import CHUNK_BYTES
 
@@ -140,8 +141,14 @@ def export_manifest(cursor, run_ids, exported_at, raw_root='/results/raw', datas
                 if key.endswith('_json') and value:
                     for path in _paths(json.loads(value) if isinstance(value, str) else value):
                         add(path, owner)
-        packages.append({'data': _json_row(run), 'iterations': [_json_row(row) for row in iterations],
-                         'events': [_json_row(row) for row in events]})
+        entry = {'data': _json_row(run), 'iterations': [_json_row(row) for row in iterations],
+                 'events': [_json_row(row) for row in events]}
+        provenance = run.get('import_provenance_json') or {}
+        if isinstance(provenance, str):
+            provenance = json.loads(provenance)
+        if isinstance(provenance, dict) and 'paired_measurement' in provenance:
+            entry['paired_measurement'] = provenance['paired_measurement']
+        packages.append(entry)
     manifest = {'format': 'warp-remediations', 'version': 1, 'exported_at': exported_at,
                 'sources': list(sources.values()), 'experiments': list(experiments.values()),
                 'templates': list(templates.values()), 'runs': packages,
@@ -256,6 +263,7 @@ def validate_package(package):
     missing = payload.get('missing_optional_files', [])
     if not isinstance(missing, list) or any(not isinstance(row, dict) or row.get('owner') not in owners or not isinstance(row.get('path'), str) for row in missing):
         raise ValueError('Invalid missing-file inventory.')
+    validate_measurements(payload, sources, {(f['owner'], f['path']): f['sha256'] for f in files})
     return payload
 
 
@@ -321,6 +329,8 @@ def import_package(conn, package, payload, imported_at, title='', raw_root='/res
                 'prior_import': old.get('import_provenance_json'),
                 'missing_optional_files': [item for item in payload.get('missing_optional_files', [])
                                            if item.get('owner') in {f'run:{old["id"]}', f'source:{old["source_result_id"]}'}]}
+            if 'paired_measurement' in entry:
+                provenance['paired_measurement'] = entry['paired_measurement']
             restored = dict(old, source_result_id=source_map[old['source_result_id']],
                 template_id=template_map.get(old.get('template_id')), accepted_iteration_id=None,
                 published_experiment_id=None, import_provenance_json=provenance,
@@ -350,10 +360,13 @@ def import_package(conn, package, payload, imported_at, title='', raw_root='/res
         for row in payload['sources']:
             paths = {column: file_map.get((f'source:{row["id"]}', row.get(column))) for column in ARTIFACT_COLUMNS}
             cursor.execute('UPDATE experiment_results SET ' + ','.join(f'{key}=%s' for key in paths) + ' WHERE id=%s', [*paths.values(), source_map[row['id']]])
+        sources = {source['id']: source for source in payload['sources']}
+        studies = {}
         imported_ids = []
         for entry in payload['runs']:
             old, iteration_map = entry['data'], {}
             new = run_map[old['id']]
+            candidate_url = None
             scoped = {path: target for (owner, path), target in file_map.items()
                       if owner in {f'run:{old["id"]}', f'source:{old["source_result_id"]}'}}
             for row in entry['iterations']:
@@ -363,6 +376,8 @@ def import_package(conn, package, payload, imported_at, title='', raw_root='/res
                 if restored.get('output_path'):
                     relative = Path(restored['output_path']).relative_to(Path(dataset_root)).as_posix()
                     restored['output_url'] = 'http://dataset-server:8080/' + relative
+                    if row['id'] == old.get('accepted_iteration_id'):
+                        candidate_url = restored['output_url']
                     scoped[row.get('output_url')] = restored['output_url']
                 else:
                     restored['output_url'] = None
@@ -376,6 +391,9 @@ def import_package(conn, package, payload, imported_at, title='', raw_root='/res
                 _insert(cursor, 'remediation_events', dict(row, run_id=new))
             retained = iteration_map.get(old.get('accepted_iteration_id'))
             cursor.execute('UPDATE remediation_runs SET accepted_iteration_id=%s WHERE id=%s', (retained, new))
+            if 'paired_measurement' in entry:
+                restore_pair(cursor, studies, entry['paired_measurement'], sources[old['source_result_id']],
+                             new, retained, candidate_url, imported_at)
             imported_ids.append(new)
         conn.commit()
         return imported_ids

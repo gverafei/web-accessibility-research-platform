@@ -125,6 +125,25 @@ class RemediationPortabilityTests(unittest.TestCase):
         with zipfile.ZipFile(buffer) as archive, self.assertRaises(ValueError):
             validate_package(archive)
 
+    def test_matched_pair_restores_only_scores_bound_to_retained_html(self):
+        payload = copy.deepcopy(self.payload)
+        entry = payload['runs'][0]
+        pair = {'study': 'Paired audit', 'cohort': 'Group A'}
+        for role, owner in [('original', 'source:11'), ('candidate', 'run:21')]:
+            artifact = next(f for f in payload['files'] if f['owner'] == owner)
+            pair[role] = {'sha256': artifact['sha256'], 'axe_wcag_violations': 3,
+                          'lighthouse_score': 94, 'axe_at': '2026-11-12T00:00:00Z',
+                          'lighthouse_at': '2026-11-12T00:02:00Z'}
+        entry['paired_measurement'] = pair
+        with self.archive(payload) as package:
+            self.assertEqual(validate_package(package)['runs'][0]['paired_measurement'], pair)
+        for field, value in [('sha256', '0' * 64), ('lighthouse_score', 101),
+                             ('axe_wcag_violations', -1), ('axe_at', 'invalid')]:
+            broken = copy.deepcopy(payload)
+            broken['runs'][0]['paired_measurement']['candidate'][field] = value
+            with self.archive(broken) as package, self.assertRaises(ValueError):
+                validate_package(package)
+
     def test_active_foreign_candidate_child_and_missing_source_rejected(self):
         changes = [('status', 'queued'), ('accepted_iteration_id', 999), ('source_result_id', 999)]
         for key, value in changes:

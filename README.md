@@ -2,7 +2,7 @@
 
 ![Navigation through an evaluation report, from the measurement matrix to accessibility charts](docs/site/assets/readme/evaluation-report.gif)
 
-A11yResearch helps researchers acquire and evaluate collections of web pages, remediate accessibility barriers with explicit AI controls, and compare original and repaired pages while retaining reproducible evidence.
+A11yResearch [1.0.0](VERSION) helps researchers acquire and evaluate collections of web pages, remediate accessibility barriers with explicit AI controls, and compare original and repaired pages while retaining reproducible evidence.
 
 [Complete documentation](https://gverafei.github.io/web-accessibility-research-platform/) · [Installation](https://gverafei.github.io/web-accessibility-research-platform/getting-started/installation/) · [Researcher guide](https://gverafei.github.io/web-accessibility-research-platform/guide/acquisition/) · [Technical architecture](https://gverafei.github.io/web-accessibility-research-platform/technical/architecture/)
 
@@ -11,7 +11,7 @@ A11yResearch helps researchers acquire and evaluate collections of web pages, re
 
 - Public-URL acquisition, seeded Tranco sampling and local HTML datasets.
 - Axe and Lighthouse evaluation, optional WAVE, screenshots and retained HTML/raw reports.
-- Agentic remediation with five explicit intervention policies, adaptive RAG-ACT retrieval, shared configurable per-run limits, bounded refinement and rollback.
+- Agentic remediation with five explicit intervention levels, adaptive RAG-ACT retrieval, shared configurable per-run limits, bounded refinement and rollback.
 - A researcher-managed model catalogue shared by the web interface and browser extension, with frozen choices and no silent model/provider substitution.
 - Iteration traces, activity logs, paired comparisons and recorded usage/charges.
 - Portable `.warp` evaluation and terminal-remediation exchange, including frozen evidence and histories without new model/evaluator calls; evaluation composition without unnecessary reevaluation.
@@ -107,6 +107,12 @@ mkdocs serve --dev-addr 127.0.0.1:8001
 
 Only documentation becomes a Pages artifact; the site does not run A11yResearch or publish the database/captured pages.
 
-## License and citation
+## License
 
-[MIT](LICENSE). Cite the repository and the exact release/commit used until a publication/archive citation is available. See [citation and provenance guidance](https://gverafei.github.io/web-accessibility-research-platform/reference/citation/).
+[MIT](LICENSE) License.
+
+Third-party HTML, images and screenshots captured by the software remain subject to their original copyright and licensing terms. The MIT software license does not authorize their redistribution.
+
+## Citation
+
+Cite the repository and the exact release/commit used until a publication/archive citation is available. See [citation and provenance guidance](https://gverafei.github.io/web-accessibility-research-platform/reference/citation/).

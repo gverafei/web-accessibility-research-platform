@@ -8,7 +8,7 @@ The large `.warp` files are Release assets, not files in the source checkout.
 | Example | Package | Contents |
 | --- | --- | --- |
 | 1 | [example-1-tranco-900.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-1-tranco-900.warp) | 900 frozen evaluated pages, historical Tranco list 94XL2 |
-| 2 | [example-2-remediations-125.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-2-remediations-125.warp) | All 125 minimal-patch runs, 25 sources per popularity stratum; originals, candidates, iterations and events |
+| 2 | [example-2-remediations-125.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-2-remediations-125.warp) | All 125 minimal-patch runs, 25 sources per popularity stratum; originals, candidates, execution histories and matched local measurements |
 | 3 | [example-3-browser-evaluation.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-3-browser-evaluation.warp), [example-3-browser-remediation.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-3-browser-remediation.warp) | Separate www.uv.mx browser demonstration |
 | 4 | [example-4-batch-A.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-4-batch-A.warp), [example-4-batch-B.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-4-batch-B.warp) | The exact two five-page packages used in the recorded round-trip |
 | 4 | [example-4-combined-10.warp](https://github.com/gverafei/web-accessibility-research-platform/releases/download/softwarex-examples-v1/example-4-combined-10.warp) | The combined ten-page evaluation, with recorded measurements and provenance |
@@ -19,6 +19,18 @@ Minimal patches, RAG-ACT off and WAVE off settings. Its historical US$0.15 /
 describe those original executions; importing does not generate new charges.
 The extension example is a separate later demonstration; the manuscript does
 not report its outcome as part of the controlled 125-page comparison.
+
+## Reproduce Table 7 and Figure 5
+
+Download the Example 2 package above. In A11yResearch 1.0.0, choose **Import**, select the package, then open **Comparisons → SoftwareX Example 2 — Minimal patches**. This comparison uses measurements of the original and retained candidate under matching local conditions. The **Remediation runs** view preserves the generation history and the scores available when each run stopped.
+
+To generate the manuscript table and four-panel figure directly from the same download, run the following from the repository root with Python, NumPy and Matplotlib (the figure was verified with NumPy 2.3.3 and Matplotlib 3.10.6):
+
+```sh
+python examples/softwarex/reproduce_example_2.py examples/softwarex/example-2-remediations-125.warp --output-dir output
+```
+
+The script writes `table7.csv` and `figure5.png`. Panel D counts candidates meeting both targets (Axe ≤ 3 and Lighthouse ≥ 94).
 
 ## Restore in A11yResearch
 
@@ -31,8 +43,7 @@ not report its outcome as part of the controlled 125-page comparison.
    for import or inspection, and no evaluator/model execution is requested.
 
 Original local IDs in the manifest are provenance; destination IDs differ.
-Re-importing creates a separate copy. Comparison-study membership is not bundled;
-use **Compare with original** for an accepted restored run. External assets may
+Re-importing creates a separate copy. For an individual accepted run, **Compare with original** uses its execution-time measurements. External assets may
 have changed, and frozen automated scores do not establish full WCAG conformance.
 Missing optional legacy artifacts are documented rather than reconstructed.
 

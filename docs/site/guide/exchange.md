@@ -156,7 +156,9 @@ results do not initiate browser acquisition or evaluator calls.
 
 ## What this does not export
 
-Neither package type is a complete database backup. Comparison-study membership,
+A remediation package may include paired measurements made on its stored original and retained candidate. Import restores these as a study under **Comparisons**, with the supplied groups and measurement times. The runs retain their execution-time measurements. Exporting these runs again preserves their paired measurements.
+
+Neither package type is a complete database backup. Manually assembled comparison-study membership,
 browser-extension delivery requests/sessions, configuration secrets and the
 Qdrant corpus are not transferred. Remediation packages restore recorded terminal
 runs, not resumable active jobs. Back up the installation separately when
